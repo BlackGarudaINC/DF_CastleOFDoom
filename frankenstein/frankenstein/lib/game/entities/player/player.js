@@ -6,6 +6,7 @@ ig.module(
 	'game.entities.spawn',
 	'game.entities.player.playerattack',
 	'game.entities.player.meleeattack',
+	'game.entities.player.groundpound',
 	'game.entities.item.clubitem',
 	'game.entities.item.pitchforkitem',
 	'game.entities.item.ballandchainitem',
@@ -59,6 +60,7 @@ EntityPlayer = EntityBase.extend({
 	accelAir: 600,
 	jump: 500,	
 	speed: 64,
+	groundPoundSpeed: 500,
 
 	usedDoubleJump: false, // Whether or not the player used the second jump yet
 	tempInvincible: false, // You're invincible for a set time after getting hit
@@ -69,6 +71,7 @@ EntityPlayer = EntityBase.extend({
 	runStartTimer: null,	// You have to hit over twice in a row really fast to start running
 	runLeft: false,			// This ensures that you hit over twice in the same direction
 	running: false,			// Whether or not you're actually running at the moment
+	poundTimer: null,		// Timer once you hit the ground after a pound before you can move again
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
@@ -87,6 +90,7 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'run', 0.12, [2,3,2,4] );
 		this.addAnim( 'jump', 0.05, [5,6], true ); // stop at the last frame
 		this.addAnim( 'flip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'pound', 0.05, [19, 20, 21, 22, 22, 22], true);
 		this.addAnim( 'fall', 1, [7] ); 
 		this.addAnim( 'pain', 0.3, [14], true );
 		this.addAnim( 'death', 0.2, [14, 56, 57, 58, 59, 59, 59, 59, 59, 60, 61], true );
@@ -104,30 +108,35 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'clubfall', 1, [82] ); 
 		this.addAnim( 'clubpain', 0.3, [67], true );
 		this.addAnim( 'clubflip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'clubpound', 0.05, [19, 20, 21, 22, 22, 22], true);
 		this.addAnim( 'ballidle', 1, [88, 89]);
 		this.addAnim( 'ballrun', 0.12, [96,97,96,98] );
 		this.addAnim( 'balljump', 0.05, [104,105], true );
 		this.addAnim( 'ballfall', 1, [106] ); 
 		this.addAnim( 'ballpain', 0.3, [75], true );
 		this.addAnim( 'ballflip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'ballpound', 0.05, [19, 20, 21, 22, 22, 22], true);
 		this.addAnim( 'pitchforkidle', 1, [64, 65]);
 		this.addAnim( 'pitchforkrun', 0.12, [72,73,72,74] );
 		this.addAnim( 'pitchforkjump', 0.05, [80,81], true );
 		this.addAnim( 'pitchforkfall', 1, [82] ); 
 		this.addAnim( 'pitchforkpain', 0.3, [67], true );
 		this.addAnim( 'pitchforkflip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'pitchforkpound', 0.05, [19, 20, 21, 22, 22, 22], true);
 		this.addAnim( 'scytheidle', 1, [68, 69]);
 		this.addAnim( 'scytherun', 0.12, [76,77,76,78] );
 		this.addAnim( 'scythejump', 0.05, [84,85], true );
 		this.addAnim( 'scythefall', 1, [86] ); 
 		this.addAnim( 'scythepain', 0.3, [91], true );
 		this.addAnim( 'scytheflip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'scythepound', 0.05, [19, 20, 21, 22, 22, 22], true);
 		this.addAnim( 'hammeridle', 1, [92, 93]);
 		this.addAnim( 'hammerrun', 0.12, [100,101,100,102] );
 		this.addAnim( 'hammerjump', 0.05, [108,109], true );
 		this.addAnim( 'hammerfall', 1, [110] ); 
 		this.addAnim( 'hammerpain', 0.3, [83], true );
 		this.addAnim( 'hammerflip', 0.1, [19, 20, 21, 22]);
+		this.addAnim( 'hammerpound', 0.05, [19, 20, 21, 22, 22, 22], true);
 
 		this.zIndex = 100;
 
@@ -158,6 +167,11 @@ EntityPlayer = EntityBase.extend({
 		return (this.currentAnim == this.anims.attack1 || this.currentAnim == this.anims.attack2 || this.currentAnim == this.anims.throwing || this.currentAnim == this.anims.club || this.currentAnim == this.anims.pitchfork || this.currentAnim == this.anims.ballandchain || this.currentAnim == this.anims.scythe || this.currentAnim == this.anims.hammer);
 	},
 
+	// returns if you are ground pounding
+	pounding: function() {
+		return (this.currentAnim == this.anims.pound || this.currentAnim == this.anims.clubpound || this.currentAnim == this.anims.ballpound || this.currentAnim == this.anims.pitchforkpound || this.currentAnim == this.anims.scythepound || this.currentAnim == this.anims.hammerpound);
+	},
+
 	handleInput: function() {
 
 		// Check for running
@@ -175,49 +189,60 @@ EntityPlayer = EntityBase.extend({
 			}
 		}
 
-		// Handle user input; move left or right
-		var accel = this.standing ? this.accelGround : this.accelAir;
-		if( ig.input.state('left') && (!this.attacking() || !this.standing) ) {
-			if (!this.runLeft) { this.running = false; }
-			this.vel.x = -this.speed * (this.running ? 2 : 1);
-			this.flip = true;
-		}
-		else if( ig.input.state('right') && (!this.attacking() || !this.standing) ) {
-			if (this.runLeft) { this.running = false; }
-			this.vel.x = this.speed * (this.running ? 2 : 1);
-			this.flip = false;
-		}
-		else {
-			// this.accel.x = 0;
-			this.vel.x = 0;
-			this.running = false;
+		// You can't press any buttons while pounding
+		if (!this.pounding()) {
+
+			// Handle user input; move left or right
+			var accel = this.standing ? this.accelGround : this.accelAir;
+			if( ig.input.state('left') && (!this.attacking() || !this.standing) ) {
+				if (!this.runLeft) { this.running = false; }
+				this.vel.x = -this.speed * (this.running ? 2 : 1);
+				this.flip = true;
+			}
+			else if( ig.input.state('right') && (!this.attacking() || !this.standing) ) {
+				if (this.runLeft) { this.running = false; }
+				this.vel.x = this.speed * (this.running ? 2 : 1);
+				this.flip = false;
+			}
+			else {
+				// this.accel.x = 0;
+				this.vel.x = 0;
+				this.running = false;
+			}
+
+			// jump
+			if( this.standing && ig.input.pressed('jump') ) {
+
+				this.vel.y = -this.jump;
+				this.sfxJump.play();
+				this.usedDoubleJump = false;
+			}
+
+			// double jump
+			if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
+				this.usedDoubleJump = true;
+				this.vel.y = -this.jump;
+				this.flipAnimation();
+				this.sfxJump.play();
+			}
+			
+			// throw attack
+			if( ig.input.pressed('shoot') && !this.attacking()) {
+				this.throwAttack();
+			}
+
+			// attack
+			if (ig.input.pressed('attack') && !this.attacking()) {
+
+				// Check if this is actually a ground pound
+				if (ig.input.state('down') && !this.standing && ig.game.playerState.groundPound) {
+					this.groundPound();
+				} else {
+					this.meleeAttack();
+				}
+			}
 		}
 
-		// jump
-		if( this.standing && ig.input.pressed('jump') ) {
-
-			this.vel.y = -this.jump;
-			this.sfxJump.play();
-			this.usedDoubleJump = false;
-		}
-
-		// double jump
-		if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
-			this.usedDoubleJump = true;
-			this.vel.y = -this.jump;
-			this.flipAnimation();
-			this.sfxJump.play();
-		}
-		
-		// throw attack
-		if( ig.input.pressed('shoot') && !this.attacking() ) {
-			this.throwAttack();
-		}
-
-		// attack
-		if (ig.input.pressed('attack') && !this.attacking()) {
-			this.meleeAttack();
-		}
 	},
 
 	// Use the proper throw attack
@@ -229,6 +254,12 @@ EntityPlayer = EntityBase.extend({
 				ig.game.spawnEntity( entity, this.pos.x, this.pos.y, {flip:this.flip} );
 			}
 		}
+	},
+
+	// Ground pound
+	groundPound: function() {
+		this.poundAnimation();
+		this.gravityFactor = 0; // Float momentarily
 	},
 
 	// Use the proper melee attack
@@ -310,6 +341,12 @@ EntityPlayer = EntityBase.extend({
 		if (this.runStartTimer != null && this.runStartTimer.delta() > 0) {
 			this.runStartTimer = null;
 		}
+
+		// Check if done ground pounding
+		if (this.poundTimer != null && this.poundTimer.delta() > 0) {
+			this.poundTimer = null;
+			this.idleAnimation();
+		}
 	},
 
 	// Figure out which animation to use
@@ -325,6 +362,23 @@ EntityPlayer = EntityBase.extend({
 			// We're actually dead and the death (pain) animation is 
 			// finished. Remove ourself from the game world.
 			this.kill();
+		}
+		else if (this.pounding()) { 
+			if (!this.standing) {
+				// When ground pounding, keep ground pounding until we hit the ground.
+				if (this.currentAnim.loopCount > 0) {
+					this.vel.y = this.groundPoundSpeed;
+					// The first time the player starts moving, spawn the ground pound attack
+					if (this.gravityFactor == 0) {
+						ig.game.spawnEntity( EntityGroundpound, this.pos.x, this.pos.y, {} );
+					}
+				} else {
+					this.vel.y = 0;
+				}
+			} else if (this.poundTimer == null) {
+				// Once we hit the ground, set the timer before you can move again
+				this.poundTimer = new ig.Timer(0.5);
+			}
 		}
 		else if( this.vel.y < 0 && !this.standing ) {
 			if (!this.jumping || this.inFlipAnimation()) { this.jumpAnimation(); }
@@ -346,6 +400,11 @@ EntityPlayer = EntityBase.extend({
 		if (this.standing) {
 			this.jumping = false;
 			this.falling = false;
+		}
+
+		// Make sure gravity is always on unless ground pounding
+		if (!this.pounding() || this.currentAnim.loopCount > 0) {
+			this.gravityFactor = this.originalGravity;
 		}
 		
 		this.currentAnim.flip.x = this.flip;
@@ -440,6 +499,28 @@ EntityPlayer = EntityBase.extend({
 			break;
 		}
 	},
+	poundAnimation: function() {
+		switch(ig.game.playerState.meleeWeapon) {
+		case 1:  // Club
+			this.currentAnim = this.anims.clubpound.rewind();
+			break;
+		case 2:  // Pitchfork
+			this.currentAnim = this.anims.pitchforkpound.rewind();
+			break;
+		case 3:  // Ball and chain
+			this.currentAnim = this.anims.ballpound.rewind();
+			break;
+		case 4:  // Scythe
+			this.currentAnim = this.anims.scythepound.rewind();
+			break;
+		case 5:  // Hammer
+			this.currentAnim = this.anims.hammerpound.rewind();
+			break;
+		default: // unarmed
+			this.currentAnim = this.anims.pound.rewind();
+			break;
+		}
+	},
 	fallAnimation: function() {
 		switch(ig.game.playerState.meleeWeapon) {
 		case 1:  // Club
@@ -507,7 +588,6 @@ EntityPlayer = EntityBase.extend({
 		} else if (!this.inPainAnimation()) {
 			this.vel.x = 0;
 		}
-		
 
 		this.handleAnimations();
 		this.handleTimers();
@@ -818,7 +898,7 @@ EntityPlayer = EntityBase.extend({
 	},
 
 	receiveDamage: function( amount, from ) {
-		if( this.inPainAnimation() || this.currentAnim == this.anims.death || this.tempInvincible) {
+		if( this.inPainAnimation() || this.currentAnim == this.anims.death || this.tempInvincible || this.pounding()) {
 			// Already in pain, dead, or invincible? Do nothing.
 			return;
 		}

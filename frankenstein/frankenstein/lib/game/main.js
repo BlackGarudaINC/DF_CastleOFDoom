@@ -48,7 +48,8 @@ MyGame = ig.Game.extend({
 		stamina: 60,
 		gold: 20,
 		doubleJump: true,
-		run: true
+		run: true,
+		groundPound: true
 	},
 
 	/* Weapon indexes:

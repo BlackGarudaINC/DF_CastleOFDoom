@@ -14,9 +14,12 @@ EntityBase = ig.Entity.extend({
 	flashKillCount: 0, 		// Number of times this flashed so far for the flash kill
 	instantDeath: false, 	// Flash before disappearing by default (if true, you disappear on death without flashing)
 	ignorePhysics: false,	// True if the object just floats there
+	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
+
+		this.originalGravity = this.gravityFactor;
 	},
 	
 	// Check every active timer

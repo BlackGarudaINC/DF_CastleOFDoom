@@ -18,6 +18,7 @@ EntityAcidfire = EntityPlayerattack.extend({
 
 	damage: 0.4,
 	bounceback: 0.6,
+	stayAfterDamage: true,
 		
 	animSheet: new ig.AnimationSheet( 'media/sprites/Acid_ThrowWeapon.png', 8, 8 ),	
 	
@@ -72,14 +73,7 @@ EntityAcidfire = EntityPlayerattack.extend({
 			this.kill();
 		}
 		this.parent();
-	},
-
-	// Override the damage dealing so that it doesn't get removed when it hits an enemy
-	dealDamage: function( other ) {
-		if (!other.dead) {
-			other.receiveDamage( this.damage, this, this.bounceback );
-		}
-	}	
+	}
 
 });
 

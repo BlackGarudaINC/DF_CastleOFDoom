@@ -25,6 +25,7 @@ EntityPlayerattack = EntityBase.extend({
 	damage: 1,
 	killTimer: null, // Used if it just disappears eventually
 	bounceback: 1, // Multiplier for how far the enemy bounces back (if applicable)
+	stayAfterDamage: false, // Don't die as soon as you deal damage
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -54,7 +55,9 @@ EntityPlayerattack = EntityBase.extend({
 				dir = true;
 			}
 			other.receiveDamage( this.damage, this, this.bounceback, dir );
-			this.kill();
+			if (!this.stayAfterDamage) {
+				this.kill();
+			}
 		}
 	},
 	
