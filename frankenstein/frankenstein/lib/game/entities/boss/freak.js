@@ -17,7 +17,7 @@ EntityFreak = EntityBoss.extend({
 	killWhenDead: false, // Use death animation instead of killing right away
 	knockback: true,    // If they bounce back from damage
 	knockbackForce: 100, // How much force pushes them back
-	speed: 120,
+	speed: 200,
 	damageFlash: true,
 
 	attackTimer: null, 	 // countdown to when it attacks
