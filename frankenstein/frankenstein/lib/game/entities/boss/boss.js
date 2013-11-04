@@ -117,7 +117,11 @@ EntityBoss = EntityEnemy.extend({
 		for (var i in doors) {
 			console.log(i);
 			if (!isNaN(i)) {
-				doors[i].delayedOpen();
+				if (this.alreadyDead) {
+					doors[i].open();
+				} else {
+					doors[i].delayedOpen();
+				}
 			}
 		}
 		
