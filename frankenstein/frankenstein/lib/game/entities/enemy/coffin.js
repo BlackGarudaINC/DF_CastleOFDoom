@@ -23,6 +23,9 @@ EntityCoffin = EntityEnemy.extend({
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/skeleton01.png', 32, 32 ),
 	
+	dealsDamage: false,
+	drawHealthBar: false,
+
 	health: 8,
 	
 	init: function( x, y, settings ) {
