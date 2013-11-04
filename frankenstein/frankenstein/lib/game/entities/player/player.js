@@ -82,6 +82,7 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'idle', 1, [0, 1] );
 		this.addAnim( 'run', 0.12, [2,3,2,4] );
 		this.addAnim( 'jump', 0.05, [5,6], true ); // stop at the last frame
+		this.addAnim( 'flip', 0.1, [19, 20, 21, 22]);
 		this.addAnim( 'fall', 1, [7] ); 
 		this.addAnim( 'pain', 0.3, [14], true );
 		this.addAnim( 'death', 0.2, [14, 56, 57, 58, 59, 59, 59, 59, 59, 60, 61], true );
@@ -98,26 +99,31 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'clubjump', 0.05, [80,81], true );
 		this.addAnim( 'clubfall', 1, [82] ); 
 		this.addAnim( 'clubpain', 0.3, [67], true );
+		this.addAnim( 'clubflip', 0.1, [19, 20, 21, 22]);
 		this.addAnim( 'ballidle', 1, [88, 89]);
 		this.addAnim( 'ballrun', 0.12, [96,97,96,98] );
 		this.addAnim( 'balljump', 0.05, [104,105], true );
 		this.addAnim( 'ballfall', 1, [106] ); 
 		this.addAnim( 'ballpain', 0.3, [75], true );
+		this.addAnim( 'ballflip', 0.1, [19, 20, 21, 22]);
 		this.addAnim( 'pitchforkidle', 1, [64, 65]);
 		this.addAnim( 'pitchforkrun', 0.12, [72,73,72,74] );
 		this.addAnim( 'pitchforkjump', 0.05, [80,81], true );
 		this.addAnim( 'pitchforkfall', 1, [82] ); 
 		this.addAnim( 'pitchforkpain', 0.3, [67], true );
+		this.addAnim( 'pitchforkflip', 0.1, [19, 20, 21, 22]);
 		this.addAnim( 'scytheidle', 1, [68, 69]);
 		this.addAnim( 'scytherun', 0.12, [76,77,76,78] );
 		this.addAnim( 'scythejump', 0.05, [84,85], true );
 		this.addAnim( 'scythefall', 1, [86] ); 
 		this.addAnim( 'scythepain', 0.3, [91], true );
+		this.addAnim( 'scytheflip', 0.1, [19, 20, 21, 22]);
 		this.addAnim( 'hammeridle', 1, [92, 93]);
 		this.addAnim( 'hammerrun', 0.12, [100,101,100,102] );
 		this.addAnim( 'hammerjump', 0.05, [108,109], true );
 		this.addAnim( 'hammerfall', 1, [110] ); 
 		this.addAnim( 'hammerpain', 0.3, [83], true );
+		this.addAnim( 'hammerflip', 0.1, [19, 20, 21, 22]);
 
 		this.zIndex = 100;
 
@@ -179,6 +185,7 @@ EntityPlayer = EntityBase.extend({
 		if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
 			this.usedDoubleJump = true;
 			this.vel.y = -this.jump;
+			this.flipAnimation();
 			this.sfxJump.play();
 		}
 		
@@ -284,19 +291,10 @@ EntityPlayer = EntityBase.extend({
 	handleAnimations: function() {
 
 		// Check if in one of the animations that override idle states
-		if( (this.inPainAnimation() || this.currentAnim == this.anims.death || this.attacking()) &&
+		if( (this.inPainAnimation() || this.currentAnim == this.anims.death || this.attacking() || this.inFlipAnimation()) &&
 			this.currentAnim.loopCount < 1
 		) {
-			// Do nothing if we're in pain, dying, or attacking and we're only on the first animation loop
-
-			// // If we're dead, fade out
-			// if( this.health <= 0 ) {
-			// 	// The pain animation is 0.3 seconds long, so in order to 
-			// 	// completely fade out in this time, we have to reduce alpha
-			// 	// by 3.3 per second === 1 in 0.3 seconds
-			// 	var dec = (1/this.currentAnim.frameTime) * ig.system.tick;
-			// 	this.currentAnim.alpha = (this.currentAnim.alpha - dec).limit(0,1);
-			// }
+			// Do nothing if we're in pain, dying, flipping, or attacking and we're only on the first animation loop
 		}
 		else if( ig.game.playerState.health <= 0 ) {
 			// We're actually dead and the death (pain) animation is 
@@ -304,12 +302,12 @@ EntityPlayer = EntityBase.extend({
 			this.kill();
 		}
 		else if( this.vel.y < 0 && !this.standing ) {
-			if (!this.jumping) { this.jumpAnimation(); }
+			if (!this.jumping || this.inFlipAnimation()) { this.jumpAnimation(); }
 			this.jumping = true;
 			this.falling = false;
 		}
 		else if( this.vel.y > 0 && !this.standing) {
-			if (!this.falling) { this.fallAnimation(); }
+			if (!this.falling || this.inFlipAnimation()) { this.fallAnimation(); }
 			this.jumping = false;
 			this.falling = true;
 		}
@@ -395,6 +393,28 @@ EntityPlayer = EntityBase.extend({
 			break;
 		}
 	},
+	flipAnimation: function() {
+		switch(ig.game.playerState.meleeWeapon) {
+		case 1:  // Club
+			this.currentAnim = this.anims.clubflip.rewind();
+			break;
+		case 2:  // Pitchfork
+			this.currentAnim = this.anims.pitchforkflip.rewind();
+			break;
+		case 3:  // Ball and chain
+			this.currentAnim = this.anims.ballflip.rewind();
+			break;
+		case 4:  // Scythe
+			this.currentAnim = this.anims.scytheflip.rewind();
+			break;
+		case 5:  // Hammer
+			this.currentAnim = this.anims.hammerflip.rewind();
+			break;
+		default: // unarmed
+			this.currentAnim = this.anims.flip.rewind();
+			break;
+		}
+	},
 	fallAnimation: function() {
 		switch(ig.game.playerState.meleeWeapon) {
 		case 1:  // Club
@@ -444,7 +464,11 @@ EntityPlayer = EntityBase.extend({
 	inPainAnimation: function() {
 		return (this.currentAnim == this.anims.pain || this.currentAnim == this.anims.clubpain || this.currentAnim == this.anims.pitchforkpain || this.currentAnim == this.anims.ballpain || this.currentAnim == this.anims.scythepain || this.currentAnim == this.anims.hammerpain);
 	},
-	
+
+	// Returns true if any of the flip animations are running
+	inFlipAnimation: function() {
+		return (this.currentAnim == this.anims.flip || this.currentAnim == this.anims.clubflip || this.currentAnim == this.anims.pitchforkflip || this.currentAnim == this.anims.ballflip || this.currentAnim == this.anims.scytheflip || this.currentAnim == this.anims.hammerflip);
+	},
 	
 	myUpdate: function() {
 

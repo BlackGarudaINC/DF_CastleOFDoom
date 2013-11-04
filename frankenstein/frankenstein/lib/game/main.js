@@ -47,7 +47,8 @@ MyGame = ig.Game.extend({
 		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing
 		stamina: 60,
 		gold: 20,
-		doubleJump: false
+		doubleJump: true,
+		run: true
 	},
 
 	/* Weapon indexes:
