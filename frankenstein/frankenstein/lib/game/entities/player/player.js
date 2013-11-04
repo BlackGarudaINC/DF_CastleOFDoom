@@ -61,7 +61,7 @@ EntityPlayer = EntityBase.extend({
 	jump: 500,	
 	speed: 64,
 	groundPoundSpeed: 500,
-	slideSpeed: 100,
+	slideSpeed: 160,
 
 	usedDoubleJump: false, // Whether or not the player used the second jump yet
 	tempInvincible: false, // You're invincible for a set time after getting hit
@@ -73,6 +73,7 @@ EntityPlayer = EntityBase.extend({
 	runLeft: false,			// This ensures that you hit over twice in the same direction
 	running: false,			// Whether or not you're actually running at the moment
 	poundTimer: null,		// Timer once you hit the ground after a pound before you can move again
+	slideTimer: null,		// Timer for how long a slide lasts
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
@@ -80,7 +81,7 @@ EntityPlayer = EntityBase.extend({
 
 	postInitCalled: false, // Used to keep track of the post init function, called in the first update cycle
 
-
+	// debugDraw: true,
 
 	
 	init: function( x, y, settings ) {
@@ -196,8 +197,8 @@ EntityPlayer = EntityBase.extend({
 			}
 		}
 
-		// You can't press any buttons while pounding
-		if (!this.pounding()) {
+		// You can't press any buttons while pounding or sliding
+		if (!this.pounding() && !this.inSlideAnimation()) {
 
 			// Handle user input; move left or right
 			var accel = this.standing ? this.accelGround : this.accelAir;
@@ -220,9 +221,14 @@ EntityPlayer = EntityBase.extend({
 			// jump
 			if( this.standing && ig.input.pressed('jump') ) {
 
-				this.vel.y = -this.jump;
-				this.sfxJump.play();
-				this.usedDoubleJump = false;
+				// Check if it's a slide rather than a jump
+				if (ig.input.state('down') && ig.game.playerState.slide) {
+					this.slide();
+				} else {
+					this.vel.y = -this.jump;
+					this.sfxJump.play();
+					this.usedDoubleJump = false;
+				}
 			}
 
 			// double jump
@@ -261,6 +267,15 @@ EntityPlayer = EntityBase.extend({
 				ig.game.spawnEntity( entity, this.pos.x, this.pos.y, {flip:this.flip} );
 			}
 		}
+	},
+
+	// Slide across the ground
+	slide: function() {
+		this.slideAnimation();
+		this.slideTimer = new ig.Timer(0.3);
+		this.size.y = 14;
+		this.offset.y = 18;
+		this.pos.y += 12;
 	},
 
 	// Ground pound
@@ -354,6 +369,15 @@ EntityPlayer = EntityBase.extend({
 			this.poundTimer = null;
 			this.idleAnimation();
 		}
+
+		// Check if done sliding
+		if (this.slideTimer != null && this.slideTimer.delta() > 0) {
+			this.slideTimer = null;
+			this.idleAnimation();
+			this.size.y = this.originalSize.y;
+			this.offset.y = this.originalOffset.y;
+			this.pos.y -= 12;
+		}
 	},
 
 	// Figure out which animation to use
@@ -386,6 +410,10 @@ EntityPlayer = EntityBase.extend({
 				// Once we hit the ground, set the timer before you can move again
 				this.poundTimer = new ig.Timer(0.5);
 			}
+		}
+		else if (this.inSlideAnimation()) {
+			// Slide across the floor
+			this.vel.x = (this.flip ? -this.slideSpeed : this.slideSpeed);
 		}
 		else if( this.vel.y < 0 && !this.standing ) {
 			if (!this.jumping || this.inFlipAnimation()) { this.jumpAnimation(); }

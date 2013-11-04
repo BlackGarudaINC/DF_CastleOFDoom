@@ -15,11 +15,17 @@ EntityBase = ig.Entity.extend({
 	instantDeath: false, 	// Flash before disappearing by default (if true, you disappear on death without flashing)
 	ignorePhysics: false,	// True if the object just floats there
 	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
+	originalSize: {x:0, y:0},
+	originalOffset: {x:0, y:0},
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
 		this.originalGravity = this.gravityFactor;
+		this.originalSize.x = this.size.x;
+		this.originalSize.y = this.size.y;
+		this.originalOffset.x = this.offset.x;
+		this.originalOffset.y = this.offset.y;
 	},
 	
 	// Check every active timer
