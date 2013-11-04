@@ -99,7 +99,7 @@ EntityNpc = EntityBase.extend({
 		var rowPos = this.choice - total;
 
 		// Up arrow  - go to the previous row
-		if (ig.input.pressed('jump')) {
+		if (ig.input.pressed('up')) {
 			
 			// If you're in the first row, just go to the previous entry
 			if (row == 0) {

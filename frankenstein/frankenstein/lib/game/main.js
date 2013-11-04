@@ -92,17 +92,19 @@ MyGame = ig.Game.extend({
 	init: function() {
 		ig.input.bind( ig.KEY.LEFT_ARROW, 'left' );
 		ig.input.bind( ig.KEY.RIGHT_ARROW, 'right' );
-		ig.input.bind( ig.KEY.UP_ARROW, 'jump' );
+		ig.input.bind( ig.KEY.UP_ARROW, 'up' );
 		ig.input.bind( ig.KEY.DOWN_ARROW, 'down' );
 		ig.input.bind( ig.KEY.S, 'down' );
 		ig.input.bind( ig.KEY.A, 'left' );
 		ig.input.bind( ig.KEY.D, 'right' );
-		ig.input.bind( ig.KEY.W, 'jump' );
+		ig.input.bind( ig.KEY.W, 'up' );
 		ig.input.bind( ig.KEY.I, 'jump' );
 		ig.input.bind( ig.KEY.Y, 'shoot' );
 		ig.input.bind( ig.KEY.U, 'attack');
-		ig.input.bind( ig.KEY.C, 'shoot' );
+		ig.input.bind( ig.KEY.Z, 'shoot' );
 		ig.input.bind( ig.KEY.X, 'attack');
+		ig.input.bind( ig.KEY.SPACE, 'jump');
+		ig.input.bind( ig.KEY.SHIFT, 'jump');
 		ig.input.bind( ig.KEY.ENTER, 'pause');
 		ig.input.bind( ig.KEY.ESC, 'escape');
 

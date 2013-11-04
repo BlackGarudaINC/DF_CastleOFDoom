@@ -58,13 +58,17 @@ EntityPlayer = EntityBase.extend({
 	accelGround: 600,
 	accelAir: 600,
 	jump: 500,	
-	speed: 72,
+	speed: 64,
 
 	usedDoubleJump: false, // Whether or not the player used the second jump yet
 	tempInvincible: false, // You're invincible for a set time after getting hit
 	tempInvincibleTimer: null,
 	flashTimer: null, // Flash while temporarily invincible
 	enableInput: true, // Enable if the player can move (this is false when talking to NPCs)
+
+	runStartTimer: null,	// You have to hit over twice in a row really fast to start running
+	runLeft: false,			// This ensures that you hit over twice in the same direction
+	running: false,			// Whether or not you're actually running at the moment
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
@@ -156,21 +160,37 @@ EntityPlayer = EntityBase.extend({
 
 	handleInput: function() {
 
+		// Check for running
+		if (ig.game.playerState.run && (ig.input.pressed('left') || ig.input.pressed('right'))) {
+
+			if (this.runStartTimer == null) { // First press
+				this.runStartTimer = new ig.Timer(0.5);
+				this.runLeft = true;
+				this.running = false;
+				if (ig.input.pressed('right')) { this.runLeft = false; }
+			} else if ( (ig.input.pressed('left') && this.runLeft) || (ig.input.pressed('right') && !this.runLeft) ) {
+				// Start running on the second press if it's in the same direction
+				this.running = true;
+				this.runStartTimer = null;
+			}
+		}
+
 		// Handle user input; move left or right
 		var accel = this.standing ? this.accelGround : this.accelAir;
 		if( ig.input.state('left') && (!this.attacking() || !this.standing) ) {
-			// this.accel.x = -accel;
-			this.vel.x = -this.speed;
+			if (!this.runLeft) { this.running = false; }
+			this.vel.x = -this.speed * (this.running ? 2 : 1);
 			this.flip = true;
 		}
 		else if( ig.input.state('right') && (!this.attacking() || !this.standing) ) {
-			// this.accel.x = accel;
-			this.vel.x = this.speed;
+			if (this.runLeft) { this.running = false; }
+			this.vel.x = this.speed * (this.running ? 2 : 1);
 			this.flip = false;
 		}
 		else {
 			// this.accel.x = 0;
 			this.vel.x = 0;
+			this.running = false;
 		}
 
 		// jump
@@ -284,6 +304,11 @@ EntityPlayer = EntityBase.extend({
 				ig.game.playerState.stamina += 0.5;
 			}
 			this.staminaTimer.set(0.05);
+		}
+
+		// Check if the run start timer expired
+		if (this.runStartTimer != null && this.runStartTimer.delta() > 0) {
+			this.runStartTimer = null;
 		}
 	},
 
