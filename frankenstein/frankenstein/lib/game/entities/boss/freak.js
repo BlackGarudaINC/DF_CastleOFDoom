@@ -32,9 +32,9 @@ EntityFreak = EntityBoss.extend({
 		
 		this.addAnim( 'idle', 0.2, [0,1] );
 		this.addAnim( 'pain', 0.2, [2,3] );
-		this.addAnim( 'prepare', 0.5, [4] );
+		this.addAnim( 'prepare', 0.2, [4,4,4,4] );
 		this.addAnim( 'death', 0.1, [0, 2, 3, 5, 12, 13, 14, 15, 6], true );
-		this.addAnim( 'attack', 0.1, [8, 9, 10, 11]);
+		this.addAnim( 'attack', 0.025, [8, 9, 10, 11]);
 
 		this.attackTimer = new ig.Timer(5);
 		

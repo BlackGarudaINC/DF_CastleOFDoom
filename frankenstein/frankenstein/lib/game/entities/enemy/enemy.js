@@ -39,7 +39,8 @@ EntityEnemy = EntityBase.extend({
 	goldDropPercent: 0.3, 	// Percentage of gold item drops
 	goldDropValue: 10,		// Value of gold that this enemy drops
 
-	drawHealthBar: true, // Draw a health bar above if damaged
+	dealsDamage: true,		// Determines whether the enemy deals damage to the player
+	drawHealthBar: true, 	// Draw a health bar above if damaged
 	
 	init: function( x, y, settings ) {
 		this.startHealth = this.health;
@@ -174,7 +175,7 @@ EntityEnemy = EntityBase.extend({
 	},
 	
 	check: function( other ) {
-		if (!this.dead) {
+		if (!this.dead && this.dealsDamage) {
 			other.receiveDamage( this.damage, this );
 		}
 	},
