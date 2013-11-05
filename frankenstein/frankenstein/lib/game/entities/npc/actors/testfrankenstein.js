@@ -1,8 +1,8 @@
 ig.module(
-	'game.entities.npc.testfrankenstein'
+	'game.entities.npc.actors.testfrankenstein'
 )
 .requires(
-	'game.entities.npc.frankensteinactor'
+	'game.entities.npc.actors.frankensteinactor'
 )
 .defines(function(){
 	

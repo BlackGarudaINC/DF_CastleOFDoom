@@ -21,6 +21,7 @@ wm.config = {
 			'lib/game/entities/boss/*.js',
 			'lib/game/entities/item/*.js',
 			'lib/game/entities/npc/*.js',
+			'lib/game/entities/npc/actors/*.js',
 			'lib/game/entities/level/*.js'
 		],
 		

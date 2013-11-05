@@ -1,5 +1,5 @@
 ig.module(
-	'game.entities.npc.frankensteinactor'
+	'game.entities.npc.actors.frankensteinactor'
 )
 .requires(
 	'game.entities.npc.cutsceneactor'
