@@ -13,6 +13,8 @@ EntityScytheitem = EntityItem.extend({
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/TheCreature01.png', 32, 32 ),
 
+	isWeapon: true,
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		

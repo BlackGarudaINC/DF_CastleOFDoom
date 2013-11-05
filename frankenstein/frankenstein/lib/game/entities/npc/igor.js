@@ -14,6 +14,8 @@ EntityIgor = EntityNpc.extend({
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/Igor_Sprites.png', 32, 32 ),
 
+	storePurchase: new ig.Sound( 'media/sounds/Store/Purchase.*' ),
+
 	// The various states of Igor's dialog
 	// 0: Save / Shop / Cancel
 	// 1: Leave
@@ -115,6 +117,9 @@ EntityIgor = EntityNpc.extend({
 			}
 			this.needMoreMoneyToggle = !this.needMoreMoneyToggle;
 		} else {
+
+			// Play buy sound
+			this.storePurchase.play();
 
 			// Buy the item
 			ig.game.playerState.gold -= this.cost[item];

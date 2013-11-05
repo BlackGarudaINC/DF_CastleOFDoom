@@ -24,6 +24,10 @@ EntityNpc = EntityBase.extend({
 	choice: 0, 				// which choice the user selects on the given screen
 
 	zIndex: 110,
+
+	cursorMove: new ig.Sound( 'media/sounds/Menu/Cursor.*' ),
+	makeSelection: new ig.Sound( 'media/sounds/Menu/Select.*' ),
+	exitMenu: new ig.Sound( 'media/sounds/Menu/Cancel.*' ),
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -78,8 +82,10 @@ EntityNpc = EntityBase.extend({
 		// Left / Right always go to the next choice
 		if (ig.input.pressed('left')) {
 			this.choice--;
+			this.cursorMove.play();
 		} else if (ig.input.pressed('right')) {
 			this.choice++;
+			this.cursorMove.play();
 		}
 
 		// Calculate which row you're currently in, based on the array passed in
@@ -113,6 +119,8 @@ EntityNpc = EntityBase.extend({
 				}
 			}
 
+			this.cursorMove.play();
+
 		} else if (ig.input.pressed('down')) { // go to the next row
 
 			// If you're in the last row, just go to the next entry
@@ -126,6 +134,8 @@ EntityNpc = EntityBase.extend({
 					this.choice = total + choiceArr[row] + choiceArr[row + 1] - 1;
 				}
 			}
+
+			this.cursorMove.play();
 		}
 	},
 
@@ -151,7 +161,10 @@ EntityNpc = EntityBase.extend({
 
 		// Always leave if you hit escape
 		if (this.active && ig.input.pressed('escape')) {
+			this.exitMenu.play();
 			this.leave();
+		} else if( ig.input.pressed('attack') || ig.input.pressed('shoot') || ig.input.pressed('pause') ){
+			this.makeSelection.play();
 		}
 	},
 

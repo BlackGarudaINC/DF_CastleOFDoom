@@ -13,6 +13,8 @@ EntityGolditem = EntityItem.extend({
 	offset: {x: 0, y: 8},
 	animSheet: new ig.AnimationSheet( 'media/sprites/ItemObjetcs01.png', 16, 16 ),
 
+	goldCollected: new ig.Sound( 'media/sounds/Items/Gold.*' ),
+
 	value: 10, // Default monetary value
 
 	init: function( x, y, settings ) {
@@ -28,6 +30,9 @@ EntityGolditem = EntityItem.extend({
 
 		// Show how much the player got
 		ig.game.spawnEntity( EntityFadetext, this.pos.x + 10, this.pos.y, {text: "+" + this.value} );
+
+		// Play the gold collection sound
+		this.goldCollected.play();
 		
 		this.parent();
 	}

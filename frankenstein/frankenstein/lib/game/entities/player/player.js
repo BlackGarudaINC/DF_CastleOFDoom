@@ -45,8 +45,13 @@ EntityPlayer = EntityBase.extend({
 	itemHud2: new ig.Image( 'media/sprites/Items02_HUD.png' ),
 	goldHud: new ig.Image( 'media/sprites/GoldSack_HUD.png' ),
 	
-	sfxHurt: new ig.Sound( 'media/sounds/hurt.*' ),
+	sfxHurt1: new ig.Sound( 'media/sounds/Player/PlayerGetHit01.*' ),
 	sfxJump: new ig.Sound( 'media/sounds/jump.*' ),
+
+	// Attack Sounds
+	sfxPunch: new ig.Sound( 'media/sounds/Player/PlayerPunch.*' ),
+
+	sfxDeath: new ig.Sound( 'media/sounds/Player/PlayerGroan.*' ),
 
 	jumping: false,
 	falling: false,
@@ -330,6 +335,7 @@ EntityPlayer = EntityBase.extend({
 			} else {
 				this.currentAnim = this.anims.attack1.rewind();
 			}
+			this.sfxPunch.play();
 			break;
 		}
 
@@ -977,6 +983,7 @@ EntityPlayer = EntityBase.extend({
 		ig.game.playerState.health -= amount;
 		if (ig.game.playerState.health <= 0) {
 			this.currentAnim = this.anims.death.rewind();
+			this.sfxDeath.play();
 		} else {
 			this.painAnimation();
 		}
@@ -986,7 +993,7 @@ EntityPlayer = EntityBase.extend({
 		this.vel.y = -100;
 		
 		// Sound
-		this.sfxHurt.play();
+		this.sfxHurt1.play();
 
 		// Set temporary invincibility if not dead
 		if (this.currentAnim != this.anims.death) {

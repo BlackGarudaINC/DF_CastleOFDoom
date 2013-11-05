@@ -12,6 +12,8 @@ EntityBallandchainitem = EntityItem.extend({
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/BallAndChain_Weapon.png', 24, 12 ),
 
+	isWeapon: true,
+
 	// Give the player the weapon
 	collected: function( other ) {
 		other.changeMeleeWeapon(3);
