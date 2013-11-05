@@ -111,7 +111,7 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'clubslide', 0.1, [80] );
 		this.addAnim( 'clubfall', 1, [82] ); 
 		this.addAnim( 'clubpain', 0.3, [67], true );
-		this.addAnim( 'clubpound', 0.05, [19, 20, 21, 22, 22, 22], true);
+		this.addAnim( 'clubpound', 0.05, [120, 121, 122, 123, 123, 123], true);
 		this.addAnim( 'clubflip', 0.1, [120, 121, 122, 123]);
 		this.addAnim( 'ballidle', 1, [88, 89]);
 		this.addAnim( 'ballrun', 0.12, [96,97,96,98] );
@@ -119,7 +119,7 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'ballslide', 0.1, [104] );
 		this.addAnim( 'ballfall', 1, [106] ); 
 		this.addAnim( 'ballpain', 0.3, [75], true );
-		this.addAnim( 'ballpound', 0.05, [19, 20, 21, 22, 22, 22], true);
+		this.addAnim( 'ballpound', 0.05, [112, 113, 114, 115, 115, 115], true);
 		this.addAnim( 'ballflip', 0.1, [112, 113, 114, 115]);
 		this.addAnim( 'pitchforkidle', 1, [15, 23]);
 		this.addAnim( 'pitchforkrun', 0.12, [37,38,37,39] );
@@ -128,7 +128,7 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'pitchforkfall', 1, [107] ); 
 		this.addAnim( 'pitchforkpain', 0.3, [10], true );
 		this.addAnim( 'pitchforkflip', 0.1, [79, 87, 95, 103]);
-		this.addAnim( 'pitchforkpound', 0.05, [19, 20, 21, 22, 22, 22], true);
+		this.addAnim( 'pitchforkpound', 0.05, [79, 87, 95, 103, 103, 103], true);
 		this.addAnim( 'scytheidle', 1, [68, 69]);
 		this.addAnim( 'scytherun', 0.12, [76,77,76,78] );
 		this.addAnim( 'scythejump', 0.05, [84,85], true );
@@ -136,14 +136,14 @@ EntityPlayer = EntityBase.extend({
 		this.addAnim( 'scythefall', 1, [86] ); 
 		this.addAnim( 'scythepain', 0.3, [91], true );
 		this.addAnim( 'scytheflip', 0.1, [124, 125, 126, 127]);
-		this.addAnim( 'scythepound', 0.05, [19, 20, 21, 22, 22, 22], true);
+		this.addAnim( 'scythepound', 0.05, [124, 125, 126, 127, 127, 127], true);
 		this.addAnim( 'hammeridle', 1, [92, 93]);
 		this.addAnim( 'hammerrun', 0.12, [100,101,100,102] );
 		this.addAnim( 'hammerjump', 0.05, [108,109], true );
 		this.addAnim( 'hammerslide', 0.1, [108] );
 		this.addAnim( 'hammerfall', 1, [110] ); 
 		this.addAnim( 'hammerpain', 0.3, [83], true );
-		this.addAnim( 'hammerpound', 0.05, [19, 20, 21, 22, 22, 22], true);
+		this.addAnim( 'hammerpound', 0.05, [116, 117, 118, 119, 119, 119], true);
 		this.addAnim( 'hammerflip', 0.1, [116, 117, 118, 119]);
 
 		this.zIndex = 100;
