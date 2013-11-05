@@ -18,7 +18,6 @@ EntityBigdoor = EntityBase.extend({
 	flip: false,
 
 	opened: false,
-	firstUpdate: true, // We need to initialize the collision tiles in the first update loop since it's not ready yet while the game is loading
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -35,15 +34,11 @@ EntityBigdoor = EntityBase.extend({
 		}
 	},
 
-	myUpdate: function() {
-
-		if (this.firstUpdate) {
-			this.toggleCollisionMap();
-			this.firstUpdate = false;
-		}
-
+	startUpdate: function() {
+		this.toggleCollisionMap();
 		this.parent();
 	},
+
 
 	handleAnimations: function() {
 		// Wait until the animation ends before opening the door

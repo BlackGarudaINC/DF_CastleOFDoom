@@ -87,6 +87,7 @@ MyGame = ig.Game.extend({
 	TWOPI: Math.PI * 2,
 
 	paused: false, // Whether or not the game is currently paused
+	cutsceneRunning: false, // Whether or not a cutscene is currently happening
 
 	// Where to spawn when going from one room to another
 	spawnLoc: null, 

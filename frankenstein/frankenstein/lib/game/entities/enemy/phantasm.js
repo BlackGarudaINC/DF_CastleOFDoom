@@ -23,6 +23,8 @@ EntityPhantasm = EntityEnemy.extend({
 	alphaMin: 0.5, 		// Limit to how transparent it can get
 	currAlpha: 1, 		// Current transparency value
 
+	// TODO: switch over to using the ignoreCollisions flag
+
 	animSheet: new ig.AnimationSheet( 'media/sprites/Phantasm01.png', 32, 32 ),
 	
 	health: 3,
