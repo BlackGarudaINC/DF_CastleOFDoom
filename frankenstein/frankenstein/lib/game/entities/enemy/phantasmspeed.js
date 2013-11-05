@@ -8,7 +8,7 @@ ig.module(
 .defines(function(){
 	
 EntityPhantasmspeed = EntityPhantasm.extend({
-	speed: 0.8, 		// This is moving manually (without physics)
+	speed: 34, 	
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Phantasm02.png', 32, 32 ),
 	

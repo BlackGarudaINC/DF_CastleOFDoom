@@ -14,9 +14,12 @@ EntityBase = ig.Entity.extend({
 	flashKillCount: 0, 		// Number of times this flashed so far for the flash kill
 	instantDeath: false, 	// Flash before disappearing by default (if true, you disappear on death without flashing)
 	ignorePhysics: false,	// True if the object just floats there
+	ignoreCollisions: false,// True if we want to go through solid walls
 	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
 	originalSize: {x:0, y:0},
 	originalOffset: {x:0, y:0},
+
+	firstLoop: true,
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -48,8 +51,25 @@ EntityBase = ig.Entity.extend({
 
 	},
 
+	handleMovementTrace: function( res ) {
+		if (this.ignoreCollisions) {
+		    // This completely ignores the trace result (res) and always
+		    // moves the entity according to its velocity
+		    this.pos.x += this.vel.x * ig.system.tick;
+		    this.pos.y += this.vel.y * ig.system.tick;
+		} else {
+			this.parent(res);
+		}
+	},
+
+	// Called after init, on the first update loop
+	startUpdate: function() {
+
+	},
+
 	// Update function to override in children
 	myUpdate: function() {
+
 		this.handleAnimations();
 		this.handleTimers();
 	},
@@ -61,6 +81,10 @@ EntityBase = ig.Entity.extend({
 		
 		// Don't do anything if the game is paused
 		if (!ig.game.paused) {
+			if (this.firstLoop) {
+				this.startUpdate();
+				this.firstLoop = false;
+			}
 			this.myUpdate();
 			if (!this.ignorePhysics) {
 				this.parent();

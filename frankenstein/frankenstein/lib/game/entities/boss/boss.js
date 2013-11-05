@@ -27,6 +27,7 @@ EntityBoss = EntityEnemy.extend({
 	phase: 0, 				// Bosses have multiple attack phases at every 25% mark of their health
 
 	alreadyDead: false,		// If you revisit a room with a defeated boss, it's already dead
+	waitToStart: false,		// If the boss is waiting for a cutscene before starting
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -39,6 +40,26 @@ EntityBoss = EntityEnemy.extend({
 				this.alreadyDead = true;
 			}
 		}
+	},
+
+	startUpdate: function() {
+
+		// If you're already dead, this is the time to kill yourself
+		if (this.alreadyDead) {
+			this.kill();
+		}
+
+		// Check if you're in a cutscene or if you can just start battling
+		if (!ig.game.cutsceneRunning) {
+			this.startBattle();
+		} else {
+			this.waitToStart = true;
+		}
+	},
+
+	// When the boss actually starts doing things (this could be delayed if there's a cutscene)
+	startBattle: function() {
+
 	},
 
 	draw: function() {
@@ -75,9 +96,10 @@ EntityBoss = EntityEnemy.extend({
 
 	myUpdate: function() {
 
-		// If you're already dead, this is the time to kill yourself
-		if (this.alreadyDead) {
-			this.kill();
+		// If you're waiting for a cutscene, check if it's over yet
+		if (this.waitToStart && !ig.game.cutsceneRunning) {
+			this.waitToStart = false;
+			this.startBattle();
 		}
 
 		// Check if you're entering a new phase of battle
@@ -115,7 +137,6 @@ EntityBoss = EntityEnemy.extend({
 		// Open all event doors in the room with a delayed open
 		var doors = ig.game.getEntitiesByType(EntityEventdoor);
 		for (var i in doors) {
-			console.log(i);
 			if (!isNaN(i)) {
 				if (this.alreadyDead) {
 					doors[i].open();
