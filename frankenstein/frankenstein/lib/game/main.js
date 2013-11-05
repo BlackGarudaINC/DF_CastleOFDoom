@@ -90,6 +90,10 @@ MyGame = ig.Game.extend({
 	paused: false, // Whether or not the game is currently paused
 	cutsceneRunning: false, // Whether or not a cutscene is currently happening
 
+	fadeOut: false,	// If the screen is fading out to black
+	fadeIn: false,	// If the screen is fading back in
+	fadeAlpha: 0,	// Transparency while fading
+
 	// Where to spawn when going from one room to another
 	spawnLoc: null, 
 	
@@ -257,33 +261,35 @@ MyGame = ig.Game.extend({
 		// Call the parent implementation to draw all Entities and BackgroundMaps
 		this.parent();
 		
-		return;
+		// Draw a fading box if necessary for room transitions
+		if (this.fadeOut || this.fadeIn) {
+			ig.system.context.fillStyle = "rgba(0,0,0," + this.fadeAlpha + ")";
+			ig.system.context.beginPath();
+			ig.system.context.rect(
+			                0, 
+			                0, 
+			                ig.system.width * ig.system.scale, 
+			                ig.system.height * ig.system.scale
+			            );
+			ig.system.context.closePath();
+			ig.system.context.fill();
 
-		// Draw the heart and number of coins in the upper left corner.
-		// 'this.player' is set by the player's init method
-		if( this.player ) {
-			var x = 16, 
-				y = 16;
-
-			for( var i = 0; i < this.player.maxHealth; i++ ) {
-				// Full or empty heart?
-				if( this.player.health > i ) {
-					this.heartFull.draw( x, y );
+			if (this.fadeOut) {
+				this.fadeAlpha += 2 * ig.system.tick;
+				if (this.fadeAlpha > 1) {
+					this.fadeAlpha = 1;
+					this.fadeOut = false;
+					this.fadeIn = true;
 				}
-				else {
-					this.heartEmpty.draw( x, y );	
+			} else {
+				this.fadeAlpha -= 2 * ig.system.tick;
+				if (this.fadeAlpha < 0) {
+					this.fadeAlpha = 0;
+					this.fadeIn = false;
 				}
-
-				x += this.heartEmpty.width + 8;
 			}
-
-			// We only want to draw the 0th tile of coin sprite-sheet
-			x += 48;
-			this.coinIcon.drawTile( x, y+6, 0, 36 );
-
-			x += 42;
-			this.font.draw( 'x ' + this.player.coins, x, y+10 )
 		}
+
 		
 		// Draw touch buttons, if we have any
 		if( window.myTouchButtons ) {

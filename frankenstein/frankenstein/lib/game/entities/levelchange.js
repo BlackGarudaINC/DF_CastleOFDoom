@@ -34,17 +34,32 @@ EntityLevelchange = EntityBase.extend({
 	level: null,
 	spawn: null,
 	active: true,	// certain doors inherit from this and aren't initially active
+	fadeTimer: null,
+
+	handleTimers: function() {
+
+		if (this.fadeTimer != null && this.fadeTimer.delta() > 0) {
+			this.changeLevel();
+		}
+
+		this.parent();
+	},
+
+	changeLevel: function() {
+		var levelName = this.level.replace(/^(Level)?(\w)(\w*)/, function( m, l, a, b ) {
+			return a.toUpperCase() + b;
+		});
+
+		ig.game.spawnLoc = this.spawn;
+		
+		ig.game.currentLevelName = levelName;
+		ig.game.loadLevelDeferred( ig.global['Level'+levelName] );
+	},
 	
 	check: function( other ) {
-		if( this.level && this.active ) {
-			var levelName = this.level.replace(/^(Level)?(\w)(\w*)/, function( m, l, a, b ) {
-				return a.toUpperCase() + b;
-			});
-
-			ig.game.spawnLoc = this.spawn;
-			
-			ig.game.currentLevelName = levelName;
-			ig.game.loadLevelDeferred( ig.global['Level'+levelName] );
+		if( this.level && this.active && this.fadeTimer == null ) {
+			this.fadeTimer = new ig.Timer(0.5);
+			ig.game.fadeOut = true;
 		}
 	}
 });
