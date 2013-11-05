@@ -19,11 +19,10 @@ EntityPhantasm = EntityEnemy.extend({
 	killWhenDead: false, // use death animation
 	instantDeath: true, // disappear after death animation rather than flashing out
 	wallReverse: false, // Don't reverse when you hit a wall
-	speed: 0.2, 		// This is moving manually (without physics)
+	speed: 16, 		
 	alphaMin: 0.5, 		// Limit to how transparent it can get
 	currAlpha: 1, 		// Current transparency value
-
-	// TODO: switch over to using the ignoreCollisions flag
+	ignoreCollisions: true,
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Phantasm01.png', 32, 32 ),
 	
@@ -70,12 +69,12 @@ EntityPhantasm = EntityEnemy.extend({
 					this.flip = (ig.game.player.pos.x > this.pos.x);
 				}
 
-				var ydir = (ig.game.player.pos.y > this.pos.y) ? 1 : -1;
-				this.pos.y += this.speed * ydir;
-			} 
+				this.vel.y = (ig.game.player.pos.y > this.pos.y) ? this.speed : -this.speed;
+			} else {
+				this.vel.y = 0;
+			}
 
-			var xdir = this.flip ? 1 : -1;
-			this.pos.x += this.speed * xdir;
+			this.vel.x = this.flip ? this.speed : -this.speed;
 		}
 
 		this.currentAnim.flip.x = !this.flip;
