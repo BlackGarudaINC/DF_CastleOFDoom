@@ -24,6 +24,7 @@ EntityPhantasm = EntityEnemy.extend({
 	currAlpha: 1, 		// Current transparency value
 	ignoreCollisions: true,
 	attackRange: 150,	// Only switch to attack mode if the player is within this distance
+	gravityFactor: 0,	// Float (don't use gravity)
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Phantasm01.png', 32, 32 ),
 	
@@ -36,9 +37,6 @@ EntityPhantasm = EntityEnemy.extend({
 		this.addAnim( 'attack', 0.2, [2,3] );
 		this.addAnim( 'death', 0.1, [4, 5, 6, 7], true);
 
-		// Float (don't use gravity)
-		this.gravityFactor = 0;
-
 		// It moves / stops moving every so often
 		this.attackTimer = new ig.Timer(2);
 	},
@@ -49,8 +47,8 @@ EntityPhantasm = EntityEnemy.extend({
 		if (this.attackTimer.delta() > 0 && this.currentAnim != this.anims.death) {
 			if (this.currentAnim == this.anims.idle && this.distanceTo(ig.game.player) < this.attackRange) {
 				this.currentAnim = this.anims.attack;
-				this.vel.x = 0;
 				this.attackTimer.set(2);
+				this.prepareAttack();
 			} else {
 				this.currentAnim = this.anims.idle;
 				this.attackTimer.set(5);
@@ -59,26 +57,34 @@ EntityPhantasm = EntityEnemy.extend({
 
 		this.parent();
 	},
+
+	// Any other ghost types that override this can make calculations when it's time to attack
+	prepareAttack: function() {
+
+	},
+
+	// Calculate the velocities
+	setVelocity: function() {
+		if (this.currentAnim == this.anims.attack) { // Move towards the player
+
+			// Change the flip value if you're not roughly in the same x loc
+			if (this.pos.x - 4 > ig.game.player.pos.x || this.pos.x + 4 < ig.game.player.pos.x) {
+				this.flip = (ig.game.player.pos.x > this.pos.x);
+			}
+
+			this.vel.y = (ig.game.player.pos.y > this.pos.y) ? this.speed : -this.speed;
+		} else {
+			this.vel.y = 0;
+		}
+
+		this.vel.x = this.flip ? this.speed : -this.speed;
+	},
 	
 	myUpdate: function() {
 		
 		if (!this.tempInvincible && !this.dead) {
-			if (this.currentAnim == this.anims.attack) { // Move towards the player
-
-				// Change the flip value if you're not roughly in the same x loc
-				if (this.pos.x - 4 > ig.game.player.pos.x || this.pos.x + 4 < ig.game.player.pos.x) {
-					this.flip = (ig.game.player.pos.x > this.pos.x);
-				}
-
-				this.vel.y = (ig.game.player.pos.y > this.pos.y) ? this.speed : -this.speed;
-			} else {
-				this.vel.y = 0;
-			}
-
-			this.vel.x = this.flip ? this.speed : -this.speed;
+			this.setVelocity();
 		}
-
-		this.currentAnim.flip.x = !this.flip;
 
 		// Turn partially transparent when in a wall
 		if( ig.game.collisionMap.getTile(this.pos.x + 10, this.pos.y) || ig.game.collisionMap.getTile(this.pos.x + 10, this.pos.y + this.size.y) ) {
@@ -92,6 +98,8 @@ EntityPhantasm = EntityEnemy.extend({
 		this.currentAnim.alpha = this.currAlpha;
 		
 		this.parent();
+
+		this.currentAnim.flip.x = !this.flip;
 	}
 });
 
