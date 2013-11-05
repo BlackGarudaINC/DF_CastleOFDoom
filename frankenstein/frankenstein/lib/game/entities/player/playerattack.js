@@ -19,7 +19,6 @@ EntityPlayerattack = EntityBase.extend({
 	collides: ig.Entity.COLLIDES.NONE,
 		
 	animSheet: new ig.AnimationSheet( 'media/sprites/PlayerAttack.png', 24, 32 ),
-	sfxSpawn: new ig.Sound( 'media/sounds/fireball.*' ),
 
 	visible: true,
 	damage: 1,
@@ -32,7 +31,6 @@ EntityPlayerattack = EntityBase.extend({
 		
 		this.addAnim( 'idle', 1, [0] );
 		
-		this.sfxSpawn.play();
 	},
 
 	handleTimers: function() {

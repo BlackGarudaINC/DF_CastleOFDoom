@@ -10,6 +10,8 @@ EntityBombitem = EntityItem.extend({
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Bomb_WeaponThrow.png', 16, 16 ),
 
+	isWeapon: true,
+
 	// Give the player the weapon
 	collected: function( other ) {
 		other.changeThrowingWeapon(4);

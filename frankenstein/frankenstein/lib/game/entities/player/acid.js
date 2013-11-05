@@ -18,7 +18,9 @@ EntityAcid = EntityPlayerattack.extend({
 	damage: 0.1,
 	bounceback: 0.2,
 		
-	animSheet: new ig.AnimationSheet( 'media/sprites/Acid_ThrowWeapon.png', 8, 8 ),	
+	animSheet: new ig.AnimationSheet( 'media/sprites/Acid_ThrowWeapon.png', 8, 8 ),
+
+	acidImpact: new ig.Sound( 'media/sounds/Weapons/AcidVile.*' ),	
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -34,6 +36,9 @@ EntityAcid = EntityPlayerattack.extend({
 		ig.game.spawnEntity( EntityAcidparticle, this.pos.x, this.pos.y, {image: 3} );
 		ig.game.spawnEntity( EntityAcidfire, this.pos.x + 4, this.pos.y, {count: 4, direction: 1} );
 		ig.game.spawnEntity( EntityAcidfire, this.pos.x - 4, this.pos.y, {count: 4, direction: -1} );
+
+		this.acidImpact.play();
+
 		this.parent();
 	},
 		

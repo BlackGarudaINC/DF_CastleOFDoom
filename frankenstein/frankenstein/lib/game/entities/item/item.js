@@ -19,7 +19,10 @@ EntityItem = EntityBase.extend({
 	justDropped: false,		// True right after dropped
 	disappearTimer: null,	// Timer until the item flashes out and goes away
 	inStore: false,			// If an item is in a store, it has different properties
-	// sfxCollect: new ig.Sound( 'media/sounds/coin.*' ),
+
+	isWeapon: false,		// Check on whether the item is a weapon.
+
+	weaponCollected: new ig.Sound('media/sounds/Items/Weapon.*' ),
 		
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -83,6 +86,10 @@ EntityItem = EntityBase.extend({
 
 	// Logic for when the item is collected
 	collected: function( other ) {
+		if(this.isWeapon){
+			this.weaponCollected.play();
+		}
+
 		this.kill();
 	},
 	

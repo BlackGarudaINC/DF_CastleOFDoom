@@ -40,7 +40,7 @@ MyGame = ig.Game.extend({
 	
 	// Player vars that are global across levels
 	playerState: {
-		meleeWeapon: 4,
+		meleeWeapon: null,
 		throwWeapon: 1,
 		maxHealth: 6,
 		health: 6,
@@ -114,7 +114,7 @@ MyGame = ig.Game.extend({
 		ig.music.volume = 0.5;
 		ig.music.loop = true;
 		ig.music.add( 'media/music/Castle01.*', 'Castle01' );
-		// ig.music.play();
+		//ig.music.play();
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();
