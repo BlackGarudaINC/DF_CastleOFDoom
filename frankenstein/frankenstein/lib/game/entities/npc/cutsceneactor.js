@@ -22,6 +22,14 @@ EntityCutsceneactor = EntityBase.extend({
 	// so each actor can act accordingly
 	eventCallback: function( eventNum ) {
 
+	},
+
+	// All actors must also extend this function.
+	// It is called when the cutscene has already been triggered in the past,
+	// so rather than show it again, we just skip it.
+	// In many cases, cancel would just be "this.kill();"
+	cancel: function() {
+
 	}
 	
 	

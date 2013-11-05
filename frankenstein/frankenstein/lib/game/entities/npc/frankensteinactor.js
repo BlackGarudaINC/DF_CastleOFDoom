@@ -55,6 +55,13 @@ EntityFrankensteinactor = EntityCutsceneactor.extend({
 		}
 
 		this.currentAnim.flip.x = !this.flip;
+	},
+
+	// If a cutscene is skipped, just kill off Dr. Frankenstein from the scene
+	cancel: function() {
+		this.parent();
+
+		this.kill();
 	}
 	
 	

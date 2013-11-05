@@ -76,6 +76,7 @@ MyGame = ig.Game.extend({
 
 	// Permanent one-time events
 	oneTimeEvents: {
+		cutscenes: [],	// Room names of completed cutscenes
 		bosses: []		// Room names of defeated bosses
 	},
 

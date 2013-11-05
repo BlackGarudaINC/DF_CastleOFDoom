@@ -38,9 +38,30 @@ EntityCutscene = EntityBase.extend({
 
 	// Trigger the first event on the first update
 	startUpdate: function() {
-		this.triggerEvent();
-		ig.game.player.enableInput = false;
+
+		// Make sure the cutscene hasn't already been played
+		if (ig.game.oneTimeEvents.cutscenes.indexOf(ig.game.currentLevelName) != -1) {
+			this.cancel();
+		} else {
+			this.triggerEvent();
+			ig.game.player.enableInput = false;
+		}
+		
 		this.parent();
+	},
+
+	// If the cutscene was already played, cancel it for all the actors
+	cancel: function() {
+
+		var actors = ig.game.getEntitiesByType(EntityCutsceneactor);
+		for (var i in actors) {
+			if (!isNaN(i)) {
+				actors[i].cancel();
+			}
+		}
+
+		ig.game.cutsceneRunning = false;
+		this.kill();
 	},
 
 	// Trigger whatever the next event is
@@ -67,6 +88,7 @@ EntityCutscene = EntityBase.extend({
 
 	// Return control back to the game
 	endCutscene: function() {
+		ig.game.oneTimeEvents.cutscenes.push(ig.game.currentLevelName);
 		ig.game.player.enableInput = true;
 		ig.game.cutsceneRunning = false;
 		this.kill();
