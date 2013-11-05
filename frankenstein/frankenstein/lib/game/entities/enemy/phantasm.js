@@ -23,6 +23,7 @@ EntityPhantasm = EntityEnemy.extend({
 	alphaMin: 0.5, 		// Limit to how transparent it can get
 	currAlpha: 1, 		// Current transparency value
 	ignoreCollisions: true,
+	attackRange: 150,	// Only switch to attack mode if the player is within this distance
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Phantasm01.png', 32, 32 ),
 	
@@ -46,7 +47,7 @@ EntityPhantasm = EntityEnemy.extend({
 
 		// Check if it's time to switch between moving and not moving
 		if (this.attackTimer.delta() > 0 && this.currentAnim != this.anims.death) {
-			if (this.currentAnim == this.anims.idle) {
+			if (this.currentAnim == this.anims.idle && this.distanceTo(ig.game.player) < this.attackRange) {
 				this.currentAnim = this.anims.attack;
 				this.vel.x = 0;
 				this.attackTimer.set(2);
@@ -80,7 +81,7 @@ EntityPhantasm = EntityEnemy.extend({
 		this.currentAnim.flip.x = !this.flip;
 
 		// Turn partially transparent when in a wall
-		if( ig.game.collisionMap.getTile(this.pos.x, this.pos.y) ) {
+		if( ig.game.collisionMap.getTile(this.pos.x + 10, this.pos.y) || ig.game.collisionMap.getTile(this.pos.x + 10, this.pos.y + this.size.y) ) {
 			if (this.currAlpha > this.alphaMin) {
 				this.currAlpha -= 0.01;
 			}
