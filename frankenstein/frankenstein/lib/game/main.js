@@ -49,7 +49,7 @@ MyGame = ig.Game.extend({
 		gold: 20,
 		doubleJump: true,
 		run: true,
-		groundPound: true,
+		groundPound: false,
 		slide: true
 	},
 
