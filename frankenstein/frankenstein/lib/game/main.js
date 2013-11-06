@@ -130,6 +130,10 @@ MyGame = ig.Game.extend({
 		ig.music.volume = 0.5;
 		ig.music.loop = true;
 		ig.music.add( 'media/music/Castle01.*', 'Castle01' );
+		ig.music.add( 'media/music/Castle02.*', 'Castle02' );
+		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
+		ig.music.add( 'media/music/Map.*', 'Map' );
+		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
 		//ig.music.play();
 
 		// Put this back in to clear save data upfront for testing
@@ -332,66 +336,63 @@ MyTitle = ig.Game.extend({
 	clearColor: "#d0f4f7",
 	gravity: 800,
 
-	// The title image
-	title: new ig.Image( 'media/title.png' ),
+	// The title logo image
+	title: new ig.Image( 'media/sprites/TitleMenu_GameLogo.png' ),
 
-	// Load a font
-	font: new ig.Font( 'media/fredoka-one.font.png' ),
+	// The title bg image
+	titleBG: new ig.Image( 'media/sprites/TitleMenu_BG01.png' ),
+
+	// The title instructions to proceed past the start screen
+	pressStart: new ig.Image( 'media/sprites/TItleMenu_PushStart.png' ),
+
+	// Copyright protection image
+	watermarkImg: new ig.Image( 'media/sprites/TitleMenu_BlackGaruda_Watermark.png' ),
 
 	init: function() {
 		// Bind keys
-		ig.input.bind( ig.KEY.LEFT_ARROW, 'left' );
-		ig.input.bind( ig.KEY.RIGHT_ARROW, 'right' );
-		ig.input.bind( ig.KEY.UP_ARROW, 'jump' );
-		ig.input.bind( ig.KEY.A, 'left' );
-		ig.input.bind( ig.KEY.D, 'right' );
-		ig.input.bind( ig.KEY.W, 'jump' );
-		ig.input.bind( ig.KEY.X, 'jump' );
-		ig.input.bind( ig.KEY.C, 'shoot' );
+		ig.input.bind( ig.KEY.SPACE, 'space' );
+		ig.input.bind( ig.KEY.ENTER, 'enter' );
+
+		// Load up the music
+		ig.music.volume = 0.5;
+		ig.music.loop = true;
+		ig.music.add( 'media/music/Map.*', 'Map' );
+		ig.music.play();
 		
 		// Align touch buttons to the screen size, if we have any
 		if( window.myTouchButtons ) {
 			window.myTouchButtons.align(); 
 		}
 
-		// We want the font's chars to slightly touch each other,
-		// so set the letter spacing to -2px.
-		this.font.letterSpacing = -2;
-
 		this.loadLevel( LevelTitle );
-		this.maxY = this.backgroundMaps[0].pxHeight - ig.system.height;
 	},
 
 	update: function() {
 		// Check for buttons; start the game if pressed
-		if( ig.input.pressed('jump') || ig.input.pressed('shoot') ) {
+		if( ig.input.pressed('space') || ig.input.pressed('enter') ) {
 			ig.system.setGame( MyGame );
 			return;
 		}
 		
-		
 		this.parent();
-
-		// Scroll the screen down; apply some damping.
-		var move = this.maxY - this.screen.y;
-		if( move > 5 ) {
-			this.screen.y += move * ig.system.tick;
-			this.titleAlpha = this.screen.y / this.maxY;
-		}
-		this.screen.x = (this.backgroundMaps[0].pxWidth - ig.system.width)/2;
 	},
 
 	draw: function() {
 		this.parent();
 
-		var cx = ig.system.width/2;
-		this.title.draw( cx - this.title.width/2, 60 );
+		var screenCenter = ig.system.width / 2;
 		
-		var startText = ig.ua.mobile
-			? 'Press Button to Play!'
-			: 'Press X or C to Play!';
-		
-		this.font.draw( startText, cx, 420, ig.Font.ALIGN.CENTER);
+		// Draw the Title Background
+		this.titleBG.draw( 0, 0 );
+
+		// Draw the Title Logo
+		this.title.draw( screenCenter - this.title.width / 2, 30 );
+
+		// Draw the Title Instructions
+		this.pressStart.draw( screenCenter - this.pressStart.width / 2, 150 );
+
+		// Draw the Title Watermark
+		this.watermarkImg.draw(screenCenter - this.watermarkImg.width / 2, 225 );
 
 		// Draw touch buttons, if we have any
 		if( window.myTouchButtons ) {
@@ -469,8 +470,8 @@ window.addEventListener('resize', function(){
 // as our loading screen
 var width = window.innerWidth * scale,
 	height = window.innerHeight * scale;
-// ig.main( '#canvas', MyTitle, 60, width, height, 1, ig.ImpactSplashLoader );
+//ig.main( '#canvas', MyTitle, 60, width, height, 1, ig.ImpactSplashLoader );
 ig.System.scaleMode = ig.System.SCALE.CRISP;
-ig.main( '#canvas', MyGame, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
+ig.main( '#canvas', MyTitle, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
 
 });
