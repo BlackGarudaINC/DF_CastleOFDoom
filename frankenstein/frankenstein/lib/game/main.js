@@ -35,10 +35,20 @@ MyGame = ig.Game.extend({
 
 	// Pause images and variables
 	pauseMoves: new ig.Image( 'media/sprites/PauseScreen.png' ),
+	howToPlay: new ig.Image( 'media/sprites/HowToPlay_Layout.png' ),
+	runMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	doubleJumpMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	groundPoundMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	slideMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	energizeMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	electricChargeMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
 	pauseState: 0,
+	pauseStates: 3,
 
 	/* Pause states:
-	 * 0: Moves learned
+	 * 0: Map
+	 * 1: How to play
+	 * 2: Moves learned
 	 *
 	 */
 
@@ -56,10 +66,15 @@ MyGame = ig.Game.extend({
 		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing
 		stamina: 60,
 		gold: 20,
-		doubleJump: true,
+		energized: false, // Whether or not you're currently energized
+
+		// Learned moves from books, in the order that they're learned
 		run: false,
+		doubleJump: true,
 		groundPound: true,
-		slide: true
+		energize: true,
+		slide: true,
+		electricCharge: true
 	},
 
 	/* Weapon indexes:
@@ -255,6 +270,17 @@ MyGame = ig.Game.extend({
 		if ( ig.input.pressed('pause') && this.player.enableInput ) {
 			this.togglePause();
 		}
+
+		// If paused, check on arrow keys for changing pause menus
+		if (this.paused) {
+			if (ig.input.pressed('left')) {
+				this.pauseState -= 1;
+				if (this.pauseState < 0) { this.pauseState = this.pauseStates - 1; }
+			} else if (ig.input.pressed('right')) {
+				this.pauseState += 1;
+				if (this.pauseState >= this.pauseStates) { this.pauseState = 0; }
+			}
+		}
 		
 		// Camera follows the player
 		this.camera.follow( this.player );
@@ -268,14 +294,34 @@ MyGame = ig.Game.extend({
 	// Pause / unpause the game
 	togglePause: function() {
 		this.paused = !this.paused;
-		this.pauseState = 0;
+		this.pauseState = 2;
 		ig.Timer.timeScale = (this.paused == 0 ? 1 : 0);
 	},
 
 	// Draw the pause screen
 	pauseDraw: function() {
-		if (this.pauseState == 0) {
+		if (this.pauseState == 1) {
+			this.howToPlay.drawTile( 0, 0, 0, 320, 240 );
+		} else if (this.pauseState == 2) {
 			this.pauseMoves.drawTile( 0, 0, 0, 320, 240 );
+			if (this.playerState.run) {
+				this.runMove.drawTile( 12, 57, 0, 141, 51 );
+			}
+			if (this.playerState.doubleJump) {
+				this.doubleJumpMove.drawTile( 170, 57, 0, 141, 51 );
+			}
+			if (this.playerState.groundPound) {
+				this.groundPoundMove.drawTile( 12, 119, 0, 141, 51 );
+			}
+			if (this.playerState.energize) {
+				this.energizeMove.drawTile( 170, 119, 0, 141, 51 );
+			}
+			if (this.playerState.slide) {
+				this.slideMove.drawTile( 12, 180, 0, 141, 51 );
+			}
+			if (this.playerState.electricCharge) {
+				this.electricChargeMove.drawTile( 170, 180, 0, 141, 51 );
+			}
 		}
 	},
 	
