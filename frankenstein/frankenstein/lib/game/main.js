@@ -516,8 +516,9 @@ window.addEventListener('resize', function(){
 // as our loading screen
 var width = window.innerWidth * scale,
 	height = window.innerHeight * scale;
-//ig.main( '#canvas', MyTitle, 60, width, height, 1, ig.ImpactSplashLoader );
+
 ig.System.scaleMode = ig.System.SCALE.CRISP;
-ig.main( '#canvas', MyTitle, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
+ig.main( '#canvas', MyGame, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
+//ig.main( '#canvas', MyTitle, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
 
 });
