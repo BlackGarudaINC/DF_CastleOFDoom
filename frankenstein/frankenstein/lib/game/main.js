@@ -35,6 +35,12 @@ MyGame = ig.Game.extend({
 
 	// Pause images and variables
 	pauseMoves: new ig.Image( 'media/sprites/PauseScreen.png' ),
+	runMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	doubleJumpMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	groundPoundMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	slideMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	energizeMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
+	electricChargeMove: new ig.Image( 'media/sprites/PauseScreenRun.png' ),
 	pauseState: 0,
 
 	/* Pause states:
@@ -58,12 +64,12 @@ MyGame = ig.Game.extend({
 		gold: 20,
 		energized: false, // Whether or not you're currently energized
 
-		// Learned moves from books
-		doubleJump: true,
+		// Learned moves from books, in the order that they're learned
 		run: false,
+		doubleJump: true,
 		groundPound: true,
-		slide: true,
 		energize: true,
+		slide: true,
 		electricCharge: true
 	},
 
@@ -277,6 +283,24 @@ MyGame = ig.Game.extend({
 	pauseDraw: function() {
 		if (this.pauseState == 0) {
 			this.pauseMoves.drawTile( 0, 0, 0, 320, 240 );
+			if (this.playerState.run) {
+				this.runMove.drawTile( 12, 57, 0, 141, 51 );
+			}
+			if (this.playerState.doubleJump) {
+				this.doubleJumpMove.drawTile( 170, 57, 0, 141, 51 );
+			}
+			if (this.playerState.groundPound) {
+				this.groundPoundMove.drawTile( 12, 119, 0, 141, 51 );
+			}
+			if (this.playerState.energize) {
+				this.energizeMove.drawTile( 170, 119, 0, 141, 51 );
+			}
+			if (this.playerState.slide) {
+				this.slideMove.drawTile( 12, 180, 0, 141, 51 );
+			}
+			if (this.playerState.electricCharge) {
+				this.electricChargeMove.drawTile( 170, 180, 0, 141, 51 );
+			}
 		}
 	},
 	
