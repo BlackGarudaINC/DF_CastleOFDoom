@@ -264,16 +264,6 @@ MyGame = ig.Game.extend({
 		
 		// Draw a fading box if necessary for room transitions
 		if (this.fadeOut || this.fadeIn) {
-			ig.system.context.fillStyle = "rgba(0,0,0," + this.fadeAlpha + ")";
-			ig.system.context.beginPath();
-			ig.system.context.rect(
-			                0, 
-			                0, 
-			                ig.system.width * ig.system.scale, 
-			                ig.system.height * ig.system.scale
-			            );
-			ig.system.context.closePath();
-			ig.system.context.fill();
 
 			if (this.fadeOut) {
 				this.fadeAlpha += 2 * ig.system.tick;
@@ -289,6 +279,18 @@ MyGame = ig.Game.extend({
 					this.fadeIn = false;
 				}
 			}
+
+			ig.system.context.fillStyle = "rgba(0,0,0," + this.fadeAlpha + ")";
+			ig.system.context.beginPath();
+			ig.system.context.rect(
+			                0, 
+			                0, 
+			                ig.system.width * ig.system.scale, 
+			                ig.system.height * ig.system.scale
+			            );
+			ig.system.context.closePath();
+			ig.system.context.fill();
+
 		}
 
 		
