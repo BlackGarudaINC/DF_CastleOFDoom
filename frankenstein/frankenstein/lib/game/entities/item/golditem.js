@@ -27,6 +27,9 @@ EntityGolditem = EntityItem.extend({
 	// Give the player the weapon
 	collected: function( other ) {
 		ig.game.playerState.gold += this.value;
+		if (ig.game.playerState.gold > 999) {
+			ig.game.playerState.gold = 999;
+		}
 
 		// Show how much the player got
 		ig.game.spawnEntity( EntityFadetext, this.pos.x + 10, this.pos.y, {text: "+" + this.value} );
