@@ -803,8 +803,10 @@ EntityPlayer = EntityBase.extend({
 
 	draw: function() {
 
-		if (ig.game.playerState.energized) {
-			this.drawElectricity();
+		if (ig.system.running) {
+			if (ig.game.playerState.energized) {
+				this.drawElectricity();
+			}
 		}
 
 		this.parent();

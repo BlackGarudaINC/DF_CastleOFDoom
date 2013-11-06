@@ -21,10 +21,12 @@ EntityBookcontents = EntityBase.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.bookImage = new ig.Image( 'media/sprites/' + this.move + '.png' );
+		if (ig.system.running) {
+			this.bookImage = new ig.Image( 'media/sprites/' + this.move + '.png' );
 
-		// Stop the player from moving while viewing the contents
-		ig.game.player.enableInput = false;
+			// Stop the player from moving while viewing the contents
+			ig.game.player.enableInput = false;
+		}
 	},
 
 	// Once one of these buttons is pressed, stop reading the book

@@ -16,7 +16,8 @@ ig.module(
 	'game.levels.test2',
 	'game.levels.testsave',
 	'game.levels.testbosssmall',
-	'game.levels.testboss'
+	'game.levels.testboss',
+	'game.levels.testsnake'
 )
 .defines(function(){
 	
