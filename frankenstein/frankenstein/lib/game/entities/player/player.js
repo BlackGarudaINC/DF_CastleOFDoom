@@ -94,7 +94,7 @@ EntityPlayer = EntityBase.extend({
 		this.parent( x, y, settings );
 		
 		// Add the animations
-		this.addAnim( 'idle', 1, [0, 1] );
+		this.addAnim( 'idle', 0.5, [0, 1] );
 		this.addAnim( 'run', 0.12, [2,3,2,4] );
 		this.addAnim( 'jump', 0.05, [5,6], true ); // stop at the last frame
 		this.addAnim( 'slide', 0.1, [94] );
@@ -803,8 +803,10 @@ EntityPlayer = EntityBase.extend({
 
 	draw: function() {
 
-		if (ig.game.playerState.energized) {
-			this.drawElectricity();
+		if (ig.system.running) {
+			if (ig.game.playerState.energized) {
+				this.drawElectricity();
+			}
 		}
 
 		this.parent();

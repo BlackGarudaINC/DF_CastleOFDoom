@@ -16,7 +16,8 @@ ig.module(
 	'game.levels.test2',
 	'game.levels.testsave',
 	'game.levels.testbosssmall',
-	'game.levels.testboss'
+	'game.levels.testboss',
+	'game.levels.testsnake'
 )
 .defines(function(){
 	
@@ -516,9 +517,8 @@ window.addEventListener('resize', function(){
 // as our loading screen
 var width = window.innerWidth * scale,
 	height = window.innerHeight * scale;
-
 ig.System.scaleMode = ig.System.SCALE.CRISP;
+// ig.main( '#canvas', MyTitle, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
 ig.main( '#canvas', MyGame, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
-//ig.main( '#canvas', MyTitle, 60, mywidth, myheight, 3, ig.ImpactSplashLoader );
 
 });
