@@ -16,6 +16,8 @@ EntityFrankensteinactor = EntityCutsceneactor.extend({
 
 	speed: 80,
 
+	sfxDFLaugh: new ig.Sound( 'media/sounds/Enemies/DrFrank02.*' ),
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
@@ -33,6 +35,7 @@ EntityFrankensteinactor = EntityCutsceneactor.extend({
 	jumpAway: function() {
 		this.vel.y = -300;
 		this.ignoreCollisions = true;
+		this.sfxDFLaugh.play();
 	},
 
 	myUpdate: function() {

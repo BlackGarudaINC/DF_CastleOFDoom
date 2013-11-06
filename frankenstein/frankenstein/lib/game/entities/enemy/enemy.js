@@ -41,6 +41,8 @@ EntityEnemy = EntityBase.extend({
 
 	dealsDamage: true,		// Determines whether the enemy deals damage to the player
 	drawHealthBar: true, 	// Draw a health bar above if damaged
+
+	sfxReceiveHit: new ig.Sound( 'media/sounds/Enemies/EnemyGetHit.*' ),
 	
 	init: function( x, y, settings ) {
 		this.startHealth = this.health;
@@ -234,6 +236,8 @@ EntityEnemy = EntityBase.extend({
 			if (this.anims.pain && this.showsPain) {
 				this.currentAnim = this.anims.pain.rewind();
 			}
+
+			this.sfxReceiveHit.play();
 		}
 	}
 });
