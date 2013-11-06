@@ -71,7 +71,8 @@ MyGame = ig.Game.extend({
 	// Which treasure chests have been open, and other global treasure information
 	treasure: {
 		silverGroup: 1, // Current group of silver chests available
-		silverOpen: []
+		silverOpen: [],
+		goldOpen: []
 	},
 
 	// Permanent one-time events
