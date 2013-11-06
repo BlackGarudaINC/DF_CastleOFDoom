@@ -49,7 +49,7 @@ MyGame = ig.Game.extend({
 		gold: 20,
 		doubleJump: true,
 		run: true,
-		groundPound: true,
+		groundPound: false,
 		slide: true
 	},
 
@@ -264,6 +264,22 @@ MyGame = ig.Game.extend({
 		
 		// Draw a fading box if necessary for room transitions
 		if (this.fadeOut || this.fadeIn) {
+
+			if (this.fadeOut) {
+				this.fadeAlpha += 2 * ig.system.tick;
+				if (this.fadeAlpha > 1) {
+					this.fadeAlpha = 1;
+					this.fadeOut = false;
+					this.fadeIn = true;
+				}
+			} else {
+				this.fadeAlpha -= 2 * ig.system.tick;
+				if (this.fadeAlpha < 0.01) {
+					this.fadeAlpha = 0;
+					this.fadeIn = false;
+				}
+			}
+
 			ig.system.context.fillStyle = "rgba(0,0,0," + this.fadeAlpha + ")";
 			ig.system.context.beginPath();
 			ig.system.context.rect(
@@ -275,20 +291,6 @@ MyGame = ig.Game.extend({
 			ig.system.context.closePath();
 			ig.system.context.fill();
 
-			if (this.fadeOut) {
-				this.fadeAlpha += 2 * ig.system.tick;
-				if (this.fadeAlpha > 1) {
-					this.fadeAlpha = 1;
-					this.fadeOut = false;
-					this.fadeIn = true;
-				}
-			} else {
-				this.fadeAlpha -= 2 * ig.system.tick;
-				if (this.fadeAlpha < 0) {
-					this.fadeAlpha = 0;
-					this.fadeIn = false;
-				}
-			}
 		}
 
 		
