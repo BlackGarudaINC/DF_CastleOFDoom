@@ -8,8 +8,8 @@ ig.module(
 .defines(function(){
 	
 EntitySerpentking = EntityBoss.extend({
-	size: {x: 28, y: 32},
-	offset: {x: 18, y: 32},
+	size: {x: 52, y: 38},
+	offset: {x: 12, y: 0},
 	maxVel: {x: 200, y: 600},
 	friction: {x: 150, y: 0},
 
@@ -23,6 +23,7 @@ EntitySerpentking = EntityBoss.extend({
 	attackTimer: null, 	 // countdown to when it attacks
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
+	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
 	
 	health: 20,
 	// debugDraw: true,
@@ -68,6 +69,17 @@ EntitySerpentking = EntityBoss.extend({
 		// if (this.currentAnim == this.anims.prepare && this.currentAnim.loopCount > 0) {
 		// 	this.currentAnim = this.anims.attack;
 		// }
+
+		this.parent();
+	},
+
+	
+	draw: function() {
+
+		// Draw the other half of the mouth
+		if (this.visible) {
+			this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 20, 2, 64, 32 );
+		}
 
 		this.parent();
 	},
