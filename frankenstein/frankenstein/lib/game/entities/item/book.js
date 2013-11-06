@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.item.book'
 )
 .requires(
-	'game.entities.item.item'
+	'game.entities.item.item',
+	'game.entities.item.bookcontents'
 )
 .defines(function(){
 	
@@ -13,7 +14,7 @@ EntityBook = EntityItem.extend({
 	offset: {x: 8, y: 16},
 	animSheet: new ig.AnimationSheet( 'media/sprites/Notebook01.png', 32, 32 ),
 
-	move: "",
+	move: "",					// the move that this book teaches
 	gravityFactor: 0,
 
 	// Specify the name of the move in Weltmeister, based on the playerState variable names in main.js.
@@ -23,9 +24,12 @@ EntityBook = EntityItem.extend({
 
 		this.addAnim( 'open', 0.1, [1] );
 
-		// Check if the move is already learned, and if so, open the book
-		if (ig.game.playerState[this.move]) {
-			this.openBook();
+		if (ig.system.running) {
+
+			// Check if the move is already learned, and if so, open the book
+			if (ig.game.playerState[this.move]) {
+				this.openBook();
+			}
 		}
 	},
 
@@ -40,6 +44,7 @@ EntityBook = EntityItem.extend({
 		if (this.currentAnim != this.anims.open) {
 			this.openBook();
 			ig.game.playerState[this.move] = true;
+			ig.game.spawnEntity( EntityBookcontents, 0, 0, {move: this.move} );
 		}	
 	}
 });
