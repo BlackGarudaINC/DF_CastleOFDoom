@@ -132,6 +132,9 @@ EntityBoss = EntityEnemy.extend({
 
 			// Mark this room as having a defeated boss
 			ig.game.oneTimeEvents.bosses.push(ig.game.currentLevelName);
+
+			// Reset the silver treasure chests so you can find new spoils
+			ig.game.resetSilverChests();
 		}
 
 		// Open all event doors in the room with a delayed open
