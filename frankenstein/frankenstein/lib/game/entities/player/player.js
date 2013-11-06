@@ -800,6 +800,11 @@ EntityPlayer = EntityBase.extend({
 			} else if (this.currentAnim.frame == 2) {
 				frame = 36;
 			}
+		} else if (this.currentAnim == this.anims.ballslide) {
+			if (this.currentAnim.frame == 0) {
+				frame = 139;
+				behind = true;
+			} 
 		}
 
 		// Draw the actual overflow part
