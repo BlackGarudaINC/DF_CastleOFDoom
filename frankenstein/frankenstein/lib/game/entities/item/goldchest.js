@@ -3,7 +3,8 @@ ig.module(
 )
 .requires(
 	'game.entities.item.treasure',
-	'game.entities.item.heartcontaineritem'
+	'game.entities.item.heartcontaineritem',
+	'game.entities.item.staminaitem'
 )
 .defines(function(){
 	

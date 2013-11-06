@@ -1,12 +1,12 @@
 ig.module(
-	'game.entities.item.heartcontaineritem'
+	'game.entities.item.staminaitem'
 )
 .requires(
 	'game.entities.item.item'
 )
 .defines(function(){
 	
-EntityHeartcontaineritem = EntityItem.extend({
+EntityStaminaitem = EntityItem.extend({
 
 	// These can only be spawned by gold treasure chests
 	_wmIgnore: true,
@@ -19,14 +19,14 @@ EntityHeartcontaineritem = EntityItem.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
-		this.addAnim( 'idle', 0.1, [10] );
+		// TODO: this is just placeholder art for now
+		this.addAnim( 'idle', 0.1, [9] );
 		this.currentAnim = this.anims.idle;
 	},
 
 	// Give the player the weapon
 	collected: function( other ) {
-		ig.game.playerState.maxHealth += 2;
-		ig.game.playerState.health = ig.game.playerState.maxHealth;
+		ig.game.playerState.maxStamina += 16;
 		this.parent();
 	}
 });
