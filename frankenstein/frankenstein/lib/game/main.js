@@ -33,6 +33,15 @@ MyGame = ig.Game.extend({
 	goldFont: new ig.Font( 'media/sprites/GothicFont_GoldMetal_Size_16.png' ),
 	whiteFont: new ig.Font( 'media/sprites/GothicFont_White_Size_16.png' ),
 
+	// Pause images and variables
+	pauseMoves: new ig.Image( 'media/sprites/PauseScreen.png' ),
+	pauseState: 0,
+
+	/* Pause states:
+	 * 0: Moves learned
+	 *
+	 */
+
 	// HUD icons
 	// heartFull: new ig.Image( 'media/heart-full.png' ),
 	// heartEmpty: new ig.Image( 'media/heart-empty.png' ),
@@ -255,12 +264,25 @@ MyGame = ig.Game.extend({
 	// Pause / unpause the game
 	togglePause: function() {
 		this.paused = !this.paused;
+		this.pauseState = 0;
 		ig.Timer.timeScale = (this.paused == 0 ? 1 : 0);
+	},
+
+	// Draw the pause screen
+	pauseDraw: function() {
+		if (this.pauseState == 0) {
+			this.pauseMoves.drawTile( 0, 0, 0, 320, 240 );
+		}
 	},
 	
 	draw: function() {
 		// Call the parent implementation to draw all Entities and BackgroundMaps
 		this.parent();
+
+		// Draw the pause screen when paused
+		if (this.paused) {
+			this.pauseDraw();
+		}
 		
 		// Draw a fading box if necessary for room transitions
 		if (this.fadeOut || this.fadeIn) {
