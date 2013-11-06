@@ -274,7 +274,7 @@ MyGame = ig.Game.extend({
 				}
 			} else {
 				this.fadeAlpha -= 2 * ig.system.tick;
-				if (this.fadeAlpha < 0) {
+				if (this.fadeAlpha < 0.01) {
 					this.fadeAlpha = 0;
 					this.fadeIn = false;
 				}
