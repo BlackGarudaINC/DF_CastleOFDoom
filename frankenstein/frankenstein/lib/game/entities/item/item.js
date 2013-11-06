@@ -21,6 +21,7 @@ EntityItem = EntityBase.extend({
 	inStore: false,			// If an item is in a store, it has different properties
 
 	isWeapon: false,		// Check on whether the item is a weapon.
+	goldItem: false,		// Special items from gold chests
 
 	weaponCollected: new ig.Sound('media/sounds/Items/Weapon.*' ),
 		
@@ -88,6 +89,11 @@ EntityItem = EntityBase.extend({
 	collected: function( other ) {
 		if(this.isWeapon){
 			this.weaponCollected.play();
+		}
+
+		// If this is a special gold item, mark the gold chest for this room as opened as soon as it's collected
+		if (this.goldItem) {
+			ig.game.treasure.goldOpen.push(ig.game.currentLevelName);
 		}
 
 		this.kill();
