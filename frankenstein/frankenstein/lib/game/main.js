@@ -48,8 +48,8 @@ MyGame = ig.Game.extend({
 		stamina: 60,
 		gold: 20,
 		doubleJump: true,
-		run: true,
-		groundPound: false,
+		run: false,
+		groundPound: true,
 		slide: true
 	},
 

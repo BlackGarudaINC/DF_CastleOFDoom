@@ -13,6 +13,8 @@ EntityItem = EntityBase.extend({
 	checkAgainst: ig.Entity.TYPE.A, // Check against friendly
 	collides: ig.Entity.COLLIDES.NEVER,
 
+	zIndex: 10,
+
 	dropped: false, 		// true if something drops this item rather than it just being in the level to start
 	direction: 0, 			// If dropped, this is the x direction to move (-1 for left, 0 for none, or 1 for right)
 	justDroppedTimer: null, // For the first small amount of time after dropping, you can't pick it up
@@ -32,7 +34,6 @@ EntityItem = EntityBase.extend({
 
 		if (!this.inStore) {
 			this.friction.x = 1000.0;
-			this.zIndex = 10;
 
 			// Drop the item on the ground
 			if (settings.dropped) {
