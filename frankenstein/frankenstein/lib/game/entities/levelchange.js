@@ -35,6 +35,7 @@ EntityLevelchange = EntityBase.extend({
 	spawn: null,
 	active: true,	// certain doors inherit from this and aren't initially active
 	fadeTimer: null,
+	requireUp: true,	// Require the player to press "up" to go in
 
 	handleTimers: function() {
 
@@ -57,7 +58,7 @@ EntityLevelchange = EntityBase.extend({
 	},
 	
 	check: function( other ) {
-		if( this.level && this.active && this.fadeTimer == null ) {
+		if( this.level && this.active && this.fadeTimer == null && (ig.input.state('up') || !this.requireUp) ) {
 			this.fadeTimer = new ig.Timer(0.5);
 			ig.game.fadeOut = true;
 		}
