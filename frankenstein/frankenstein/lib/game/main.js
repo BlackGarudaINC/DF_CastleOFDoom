@@ -56,10 +56,15 @@ MyGame = ig.Game.extend({
 		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing
 		stamina: 60,
 		gold: 20,
+		energized: false, // Whether or not you're currently energized
+
+		// Learned moves from books
 		doubleJump: true,
 		run: false,
 		groundPound: true,
-		slide: true
+		slide: true,
+		energize: true,
+		electricCharge: true
 	},
 
 	/* Weapon indexes:

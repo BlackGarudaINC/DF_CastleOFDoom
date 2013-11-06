@@ -82,9 +82,10 @@ EntityPlayer = EntityBase.extend({
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
-	coins: 0,
-
-	postInitCalled: false, // Used to keep track of the post init function, called in the first update cycle
+	energized: false,		// True if the player is currently electrified
+	electricDrawTimer: null,// When to update the sprite being drawn for electricity
+	electricFrame: 0,		// Current frame to draw for electricity
+	numElectricFrames: 4,	// number of frames of electricity
 
 	// debugDraw: true,
 
@@ -161,7 +162,7 @@ EntityPlayer = EntityBase.extend({
 	},
 
 	// Separate initializations that depend on other entities in the room
-	postInit: function() {
+	startUpdate: function() {
 		// Check if we just changed rooms, and if so, where to go
 		if (ig.game.spawnLoc) {
 			var spawn = ig.game.getEntityByName(ig.game.spawnLoc);
@@ -173,7 +174,12 @@ EntityPlayer = EntityBase.extend({
 			this.flip = true;
 		}
 
-		this.postInitCalled = true;
+		// If you came into the room energized, start the timer back up
+		if (ig.game.playerState.energized) {
+			this.electricDrawTimer = new ig.Timer(0.05);
+		}
+
+		this.parent();
 	},
 
 	attacking: function() {
@@ -374,6 +380,15 @@ EntityPlayer = EntityBase.extend({
 		if (this.poundTimer != null && this.poundTimer.delta() > 0) {
 			this.poundTimer = null;
 			this.idleAnimation();
+		}
+
+		// Check if it's time to update the electric frame
+		if (this.electricDrawTimer != null && this.electricDrawTimer.delta() > 0) {
+			this.electricDrawTimer.set(0.05 + (Math.random() * 0.05));
+			this.electricFrame += 1;
+			if (this.electricFrame >= this.numElectricFrames) {
+				this.electricFrame = 0;
+			}
 		}
 
 		// Check if done sliding
@@ -652,11 +667,6 @@ EntityPlayer = EntityBase.extend({
 	
 	myUpdate: function() {
 
-		// Check if this is the first cycle, and if so, call postInit
-		if (!this.postInitCalled) {
-			this.postInit();
-		}
-
 		if (this.currentAnim != this.anims.death && !this.inPainAnimation() && this.enableInput) {
 			this.handleInput();
 		} else if (!this.inPainAnimation()) {
@@ -756,7 +766,47 @@ EntityPlayer = EntityBase.extend({
 		ig.game.whiteFont.draw( ig.game.playerState.gold, ig.system.width-94, ig.system.height - 16, ig.Font.ALIGN.LEFT);
 	},
 
+	// Draw the electricity behind the player 
+	drawElectricity: function() {
+		frame = 0;
+
+		if (this.standing) {
+			switch(this.electricFrame) {
+			case 0:
+			case 2:
+				frame = 128;
+				break;
+			case 1:
+				frame = 129;
+				break;
+			case 3:
+				frame = 130;
+				break;
+			}
+		} else {
+			switch(this.electricFrame) {
+			case 0:
+			case 2:
+				frame = 128;
+				break;
+			case 1:
+				frame = 131;
+				break;
+			case 3:
+				frame = 132;
+				break;
+			}
+		}
+
+		this.playerImage.drawTile( this.pos.x - ig.game.screen.x - 8, this.pos.y - ig.game.screen.y - 6, frame, 32, 32 );
+	},
+
 	draw: function() {
+
+		if (ig.game.playerState.energized) {
+			this.drawElectricity();
+		}
+
 		this.parent();
 
 		this.drawAttackOverflow();
@@ -852,6 +902,20 @@ EntityPlayer = EntityBase.extend({
 		var dir = -1;
 		if (this.flip) {dir = 1;}
 		ig.game.spawnEntity( weapon, this.pos.x + 10, this.pos.y, {dropped: true, direction: dir} );
+	},
+
+	// Energize the player from electricity
+	getEnergized: function() {
+		if (!ig.game.playerState.energized) {
+			ig.game.playerState.energized = true;
+			this.electricDrawTimer = new ig.Timer(0.05);
+		}
+	},
+
+	// Stop being energized
+	loseEnergized: function() {
+		ig.game.playerState.energized = false;
+		this.electricDrawTimer = false;
 	},
 
 	// Given a weaponID, return the weapon item
@@ -971,10 +1035,6 @@ EntityPlayer = EntityBase.extend({
 		ig.game.load();
 	},
 
-	giveCoins: function( amount ) {
-		// Custom function, called from the EntityCoin
-		this.coins += amount;
-	},
 
 	receiveDamage: function( amount, from ) {
 		if( this.inPainAnimation() || this.currentAnim == this.anims.death || this.tempInvincible || this.pounding()) {
