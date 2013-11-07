@@ -17,9 +17,10 @@ EntitySerpentking = EntityBoss.extend({
 	edgeReverse: false,
 	killWhenDead: true, 
 	knockback: false,    // If they bounce back from damage
-	speed: 200,
+	speed: 40,
 	damageFlash: true,
 	gravityFactor: 0,
+	moveLeft: true,		// Direction it's currently moving
 
 	attackTimer: null, 	 // countdown to when it attacks
 	
@@ -49,14 +50,14 @@ EntitySerpentking = EntityBoss.extend({
 	startBattle: function() {
 		this.parent();
 
-
-		// this.attackTimer = new ig.Timer(4);
+		this.attackTimer = new ig.Timer(1);
+		this.vel.x = -this.speed;
 	},
 
 	// Configure the body to the standard, idle position
 	idleConfiguration: function() {
 		if (this.childNode) {
-			this.childNode.configure({ initOffset: {x: 10, y:16} });
+			this.childNode.configure({ initOffset: {x: 10, y: 14}, lowRange: {x: -10, y: 14}, highRange: {x: 30, y: 14} });
 		}
 	},
 
@@ -67,16 +68,12 @@ EntitySerpentking = EntityBoss.extend({
 	handleTimers: function() {
 
 		// Check if it's time to attack again
-		// if (this.attackTimer != null && this.attackTimer.delta() > 0) {
+		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 
-		// 	// Get ready to attack
-		// 	if (this.currentAnim == this.anims.idle) {
-		// 		this.currentAnim = this.anims.prepare.rewind();
-		// 		this.attackTimer = null;
-		// 		this.showsPain = false;
-		// 	} 
+			this.attackTimer.set(3);
+			this.moveLeft = !this.moveLeft;
 			
-		// }
+		}
 
 		this.parent();
 	},
@@ -104,6 +101,8 @@ EntitySerpentking = EntityBoss.extend({
 	
 	
 	myUpdate: function() {
+
+		this.vel.x = (this.moveLeft ? -this.speed : this.speed); 
 
 		// // If idle, always look at the player
 		// if (this.currentAnim == this.anims.idle || this.currentAnim == this.anims.prepare) {

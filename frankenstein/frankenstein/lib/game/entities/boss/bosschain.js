@@ -14,6 +14,8 @@ EntityBosschain = EntityBosspart.extend({
 
 	parentNode: null,	// this node's parent in this chain
 	childNode: null,	// this node's child in this chain (null if this node is the tail)
+	lowRange: {x:0, y:0}, 	// Offsets from the parent where it's allowed to be
+	highRange: {x: 0, y:0},
 
 	// In addition to the boss, the following parameters are required in settings:
 	// parentNode: whoever just created this
@@ -42,6 +44,8 @@ EntityBosschain = EntityBosspart.extend({
 	// Set the location and movement configuration for this chain part
 	// Required settings:
 	// initOffset: Where to start it, relative to the parent
+	// lowRange: The minimum x, y offset from the parent
+	// highRange: The maximum x, y offset from the parent
 	configure: function( settings ) {
 
 		// Position it
@@ -54,10 +58,46 @@ EntityBosschain = EntityBosspart.extend({
 			this.pos.y += this.boss.chainOrigin.y;
 		}
 
+		// Set the ranges
+		this.lowRange = settings.lowRange;
+		this.highRange = settings.highRange;
+
 		// Configure the rest of the chain
 		if (this.childNode != null) {
 			this.childNode.configure(settings);
 		}
+	},
+
+	myUpdate: function() {
+
+		// Check if you're out of range, and if so, move at the boss's speed towards the range
+		var target = {x: 0, y: 0};
+		target.x  = this.parentNode.pos.x;
+		target.y  = this.parentNode.pos.y;
+		var outOfRange = false;
+		if (this.parentNode == this.boss) {
+			target.x += this.boss.chainOrigin.x;
+			target.y += this.boss.chainOrigin.y;
+		}
+
+		if (target.x + this.lowRange.x < this.pos.x) {
+			target.x += this.lowRange.x;
+			outOfRange = true;
+		} else if (target.x + this.highRange.x > this.pos.x) {
+			target.x += this.highRange.x;
+			outOfRange = true;
+		}
+
+		// If not in the range, set the velocity to move towards the target
+		if (outOfRange) {
+			if (this.pos.x < target.x) {
+				this.vel.x = this.boss.speed;
+			} else if (this.pos.x > target.x) {
+				this.vel.x = -this.boss.speed;
+			}
+		}
+
+		this.parent();
 	},
 
 	// If the boss isn't dead yet, we need to link the chain to account for the missing part

@@ -16,6 +16,7 @@ EntityBosspart = EntityEnemy.extend({
 	drawHealthBar: false,
 	damageFlash: true,
 	dropsItems: false, 
+	ignoreCollisions: true,
 
 	boss: null,				// Instance of the boss
 	damageBoss: false,		// Does the damage this part takes also hurt the main boss?
