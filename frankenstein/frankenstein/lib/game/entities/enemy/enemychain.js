@@ -18,6 +18,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	highRange: {x: 0, y:0},
 	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
 	speed: {x: 0, y:0}, // the speed to move in each direction
+	configured: false,	// False until it becomes initially configured
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -78,10 +79,19 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (this.childNode != null) {
 			this.childNode.configure(settings);
 		}
+
+		this.configured = true;
 	},
 
 
 	myUpdate: function() {
+
+		this.parent();
+
+		// Don't do anything if it hasn't been configured yet
+		if (!this.configured) {
+			return;
+		}
 
 		// Check if you're out of range, and if so, move at the master's speed towards the range
 		var target = {x: 0, y: 0};
@@ -147,9 +157,6 @@ EntityEnemychain = EntityEnemypart.extend({
 			}
 		}
 			
-
-
-		this.parent();
 	},
 
 	// If the master isn't dead yet, we need to link the chain to account for the missing part

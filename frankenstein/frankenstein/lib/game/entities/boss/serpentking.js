@@ -4,7 +4,8 @@ ig.module(
 .requires(
 	'impact.entity',
 	'game.entities.boss.boss',
-	'game.entities.boss.serpentbody'
+	'game.entities.boss.serpentbody',
+	'game.entities.boss.serpentacid'
 )
 .defines(function(){
 	
@@ -34,8 +35,9 @@ EntitySerpentking = EntityBoss.extend({
 	// debugDraw: true,
 
 	// Different attack states:
-	// 0: Move to new position
+	// 0: No state yet
 	// 1: Idle / shoot acid
+	// 2: Move to a new position
 	state: 0,
 
 	
@@ -66,14 +68,16 @@ EntitySerpentking = EntityBoss.extend({
 
 	// Hang out on the right and shoot acid
 	idleAttack: function() {
-		this.reverseTimer = new ig.Timer(1);
-		this.state = 1;
-		this.movementDir = true;
 
 		// Configure for the idle attack
 		if (this.childNode) {
 			this.childNode.configure({ lowRange: {x: 8, y: -4}, highRange: {x: 8, y: 12}, speed: {x: this.speed, y:this.speed} });
 		}
+
+		this.reverseTimer = new ig.Timer(1);
+		this.attackTimer = new ig.Timer(2);
+		this.state = 1;
+		this.movementDir = true;
 	},
 
 	defaultAnimation: function() {
@@ -81,6 +85,12 @@ EntitySerpentking = EntityBoss.extend({
 	},
 
 	handleTimers: function() {
+
+		this.parent();
+
+		if (this.dead) {
+			return;
+		}
 
 		// Check if it's time to reverse movement
 		if (this.reverseTimer != null && this.reverseTimer.delta() > 0) {
@@ -92,22 +102,14 @@ EntitySerpentking = EntityBoss.extend({
 
 		// Check if it's time to attack again
 		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
-
-			this.attackTimer.set(3);
+			// Shoot acid
+			if (this.state == 1) {
+				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+10, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
+			}
+			this.attackTimer.set(1);
 		}
-
-		this.parent();
 	},
 
-	handleAnimations: function() {
-
-		// Check if done preparing to attack
-		// if (this.currentAnim == this.anims.prepare && this.currentAnim.loopCount > 0) {
-		// 	this.currentAnim = this.anims.attack;
-		// }
-
-		this.parent();
-	},
 
 	// Make it stop and fall to the ground when dead
 	deathCallback: function() {
@@ -132,29 +134,14 @@ EntitySerpentking = EntityBoss.extend({
 	
 	myUpdate: function() {
 
-		if (!this.dead) {
-			this.vel.y = (this.movementDir ? -this.speed : this.speed); 
-			// this.vel.x = (this.movementDir ? -this.speed : this.speed); 
+		this.parent();
+
+		if (this.dead || this.state == 0) {
+			return;
 		}
 
-		// // If idle, always look at the player
-		// if (this.currentAnim == this.anims.idle || this.currentAnim == this.anims.prepare) {
-		// 	this.flip = (ig.game.player.pos.x > this.pos.x);
-		// }
+		this.vel.y = (this.movementDir ? -this.speed : this.speed); 
 
-		// // If attacking, move 
-		// if (this.currentAnim == this.anims.attack) {
-		// 	this.vel.x = (this.flip ? this.speed : -this.speed)
-
-		// 	// During certain phases of battle, jump while moving
-		// 	if (this.standing && (this.phase == 1 || this.phase == 3)) {
-		// 		this.vel.y = -350;
-		// 	}
-		// }
-
-		// this.currentAnim.flip.x = !this.flip;
-
-		this.parent();
 		
 	}
 });
