@@ -9,14 +9,12 @@ ig.module(
 	
 
 EntitySerpentbody = EntityBosschain.extend({
-	
-	_wmIgnore: false,
 
 	size: {x: 32, y: 32},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 32, 32 ),
 
-	damagesBoss: true,
+	damageBoss: true,
 	health: 10,
 
 	init: function( x, y, settings ) {

@@ -3,7 +3,8 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'game.entities.boss.boss'
+	'game.entities.boss.boss',
+	'game.entities.boss.serpentbody'
 )
 .defines(function(){
 	
@@ -34,10 +35,16 @@ EntitySerpentking = EntityBoss.extend({
 		// There's not really any animations, just overflow drawing
 		this.addAnim( 'idle', 1, [0] );
 
+		if (ig.system.running) {
+			// Spawn the body parts
+			ig.game.spawnEntity( EntitySerpentbody, this.pos.x - 40, this.pos.y, {boss: this} );
+		}
+
 	},
 
 	startBattle: function() {
 		this.parent();
+
 
 		// this.attackTimer = new ig.Timer(4);
 	},
