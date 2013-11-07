@@ -43,6 +43,11 @@ EntityEnemy = EntityBase.extend({
 	dealsDamage: true,		// Determines whether the enemy deals damage to the player
 	drawHealthBar: true, 	// Draw a health bar above if damaged
 
+	childNode: null,		// first node in an enemy chain, if there is one
+	enemyParts: [],			// array of the various parts of this enemy, if it has any
+	flashParts: false,		// If true, all enemy parts will flash when hit
+	chainOrigin: {x: 0, y:0 }, // If this enemy has a chain, this is the offset from the position where the chain will originate
+
 	sfxReceiveHit: new ig.Sound( 'media/sounds/Enemies/EnemyGetHit.*' ),
 	
 	init: function( x, y, settings ) {
@@ -50,6 +55,16 @@ EntityEnemy = EntityBase.extend({
 
 		this.parent( x, y, settings );
 		
+	},
+
+	// The first child node registers itself as the first node if there's a chain involved
+	registerChild: function( node ) {
+		this.childNode = node;
+	},
+
+	// Register an enemy part in the enemy parts array, if applicable
+	registerPart: function( part ) {
+		this.enemyParts.push(part);
 	},
 	
 	// Check every active timer
@@ -198,6 +213,14 @@ EntityEnemy = EntityBase.extend({
 			this.currentAnim = this.anims.death.rewind();
 			this.deathCallback();
 		}
+
+		// Inform all the parts that their master is dying, if applicable
+		for (var i in this.enemyParts) {
+			if (!isNaN(i)) {
+				this.enemyParts[i].die();
+			}
+		}
+
 	},
 
 	showDamage: function() {
@@ -219,6 +242,13 @@ EntityEnemy = EntityBase.extend({
 			// Switch to the pain animation if one exists
 			if (this.anims.pain && this.showsPain) {
 				this.currentAnim = this.anims.pain.rewind();
+			}
+		}
+
+		// Inform all the enemy parts that you've taken damage, if applicable
+		for (var i in this.enemyParts) {
+			if (!isNaN(i)) {
+				this.enemyParts[i].showDamage();
 			}
 		}
 	},
