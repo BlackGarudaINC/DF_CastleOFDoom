@@ -16,7 +16,7 @@ EntitySerpentbody = EntityBosschain.extend({
 
 	damageBoss: true,
 	damageMultiplier: 0.5,	// Damage to the body only does half damage
-	health: 5,
+	health: 1,
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );

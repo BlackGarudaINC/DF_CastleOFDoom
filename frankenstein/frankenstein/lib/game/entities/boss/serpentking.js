@@ -51,13 +51,14 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent();
 
 		this.attackTimer = new ig.Timer(1);
+		this.vel.y = -this.speed;
 		this.vel.x = -this.speed;
 	},
 
 	// Configure the body to the standard, idle position
 	idleConfiguration: function() {
 		if (this.childNode) {
-			this.childNode.configure({ initOffset: {x: 10, y: 14}, lowRange: {x: -10, y: 14}, highRange: {x: 10, y: 14} });
+			this.childNode.configure({ initOffset: {x: 10, y: 4}, lowRange: {x: -10, y: -6}, highRange: {x: 10, y: 14} });
 		}
 	},
 
@@ -102,6 +103,7 @@ EntitySerpentking = EntityBoss.extend({
 	
 	myUpdate: function() {
 
+		this.vel.y = (this.moveLeft ? -this.speed : this.speed); 
 		this.vel.x = (this.moveLeft ? -this.speed : this.speed); 
 
 		// // If idle, always look at the player
