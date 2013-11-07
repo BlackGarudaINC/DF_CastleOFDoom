@@ -29,8 +29,9 @@ EntityBoss = EntityEnemy.extend({
 	alreadyDead: false,		// If you revisit a room with a defeated boss, it's already dead
 	waitToStart: false,		// If the boss is waiting for a cutscene before starting
 
-	firstNode: null,		// first node in a boss chain, if there is one
+	childNode: null,		// first node in a boss chain, if there is one
 	bossParts: [],			// array of the various parts of this boss, if it has any
+	chainOrigin: {x: 0, y:0 }, // If this boss has a chain, this is the offset from the position where the chain will originate
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -67,7 +68,7 @@ EntityBoss = EntityEnemy.extend({
 
 	// The first child node registers itself as the first node if there's a boss chain involved
 	registerChild: function( node ) {
-		this.firstNode = node;
+		this.childNode = node;
 	},
 
 	// Register a boss part in the boss part array, if applicable

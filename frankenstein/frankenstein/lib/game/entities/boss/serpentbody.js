@@ -15,6 +15,7 @@ EntitySerpentbody = EntityBosschain.extend({
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 32, 32 ),
 
 	damageBoss: true,
+	damageMultiplier: 0.5,	// Damage to the body only does half damage
 	health: 10,
 
 	init: function( x, y, settings ) {

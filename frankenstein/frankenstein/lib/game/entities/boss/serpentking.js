@@ -26,6 +26,8 @@ EntitySerpentking = EntityBoss.extend({
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
 	
+	chainOrigin: {x: 32, y:0 }, // Offset the body chain a little back
+
 	health: 20,
 	// debugDraw: true,
 	
@@ -39,13 +41,9 @@ EntitySerpentking = EntityBoss.extend({
 			// Spawn the body parts 
 			// (it doesn't matter where they go since they'll move when going into formation)
 			ig.game.spawnEntity( EntitySerpentbody, this.pos.x + 10, this.pos.y, {boss: this, parentNode: this, numNodes: 10, nodeEntity: EntitySerpentbody} );
+			this.idleConfiguration();
 		}
 
-	},
-
-	// The first body part registers itself as the first Node
-	registerChild: function( node ) {
-		this.firstNode = node;
 	},
 
 	startBattle: function() {
@@ -53,6 +51,13 @@ EntitySerpentking = EntityBoss.extend({
 
 
 		// this.attackTimer = new ig.Timer(4);
+	},
+
+	// Configure the body to the standard, idle position
+	idleConfiguration: function() {
+		if (this.childNode) {
+			this.childNode.configure({ initOffset: {x: 10, y:16} });
+		}
 	},
 
 	defaultAnimation: function() {
