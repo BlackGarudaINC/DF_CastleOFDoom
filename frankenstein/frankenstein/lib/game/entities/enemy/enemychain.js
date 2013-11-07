@@ -1,14 +1,14 @@
 ig.module(
-	'game.entities.boss.bosschain'
+	'game.entities.enemy.enemychain'
 )
 .requires(
-	'game.entities.boss.bosspart',
+	'game.entities.enemy.enemypart',
 	'impact.entity'
 )
 .defines(function(){
 	
-// A part of a boss that chains with a bunch of copies of itself, such as the serpent king's body
-EntityBosschain = EntityBosspart.extend({
+// A part of an enemy that chains with a bunch of copies of itself, such as the serpent king's body
+EntityEnemychain = EntityEnemypart.extend({
 	
 	gravityFactor: 0,
 
@@ -23,7 +23,7 @@ EntityBosschain = EntityBosspart.extend({
 	behindAbove: false,
 	behindBelow: false,
 
-	// In addition to the boss, the following parameters are required in settings:
+	// In addition to the master, the following parameters are required in settings:
 	// parentNode: whoever just created this
 	// numNodes: how many nodes to create after this
 	// nodeEntity: what type of entity we're creating in this chain
@@ -44,15 +44,15 @@ EntityBosschain = EntityBosspart.extend({
 		this.pos.x = this.parentNode.pos.x + settings.initOffset.x;
 		this.pos.y = this.parentNode.pos.y + settings.initOffset.y;
 
-		// If the parent is the boss itself, there may be some additional offset
-		if (this.parentNode == this.boss) {
-			this.pos.x += this.boss.chainOrigin.x;
-			this.pos.y += this.boss.chainOrigin.y;
+		// If the parent is the master itself, there may be some additional offset
+		if (this.parentNode == this.master) {
+			this.pos.x += this.master.chainOrigin.x;
+			this.pos.y += this.master.chainOrigin.y;
 		}
 
 		// If there are more nodes to be created in this chain, create them
 		if (settings.numNodes > 0) {
-			ig.game.spawnEntity( settings.nodeEntity, this.pos.x + 10, this.pos.y, {boss: this.boss, parentNode: this, numNodes: settings.numNodes - 1, nodeEntity: settings.nodeEntity, initOffset: settings.initOffset} );
+			ig.game.spawnEntity( settings.nodeEntity, this.pos.x + 10, this.pos.y, {master: this.master, parentNode: this, numNodes: settings.numNodes - 1, nodeEntity: settings.nodeEntity, initOffset: settings.initOffset} );
 		}
 	},
 
@@ -80,13 +80,13 @@ EntityBosschain = EntityBosspart.extend({
 
 	myUpdate: function() {
 
-		// Check if you're out of range, and if so, move at the boss's speed towards the range
+		// Check if you're out of range, and if so, move at the master's speed towards the range
 		var target = {x: 0, y: 0};
 		target.x  = this.parentNode.pos.x;
 		target.y  = this.parentNode.pos.y;
-		if (this.parentNode == this.boss) {
-			target.x += this.boss.chainOrigin.x;
-			target.y += this.boss.chainOrigin.y;
+		if (this.parentNode == this.master) {
+			target.x += this.master.chainOrigin.x;
+			target.y += this.master.chainOrigin.y;
 		}
 
 		// Check if the x pos is out of range
@@ -149,9 +149,9 @@ EntityBosschain = EntityBosspart.extend({
 		this.parent();
 	},
 
-	// If the boss isn't dead yet, we need to link the chain to account for the missing part
+	// If the master isn't dead yet, we need to link the chain to account for the missing part
 	kill: function() {
-		if (!this.boss.dead) {
+		if (!this.master.dead) {
 			this.parentNode.childNode = this.childNode;
 			if (this.childNode != null) {
 				this.childNode.parentNode = this.parentNode;

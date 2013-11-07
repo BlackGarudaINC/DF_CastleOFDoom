@@ -1,5 +1,5 @@
 ig.module(
-	'game.entities.boss.bosspart'
+	'game.entities.enemy.enemypart'
 )
 .requires(
 	'game.entities.enemy.enemy',
@@ -7,8 +7,8 @@ ig.module(
 )
 .defines(function(){
 	
-// Part of a boss, but not the actual boss itself (should be spawned directly from the boss)
-EntityBosspart = EntityEnemy.extend({
+// Part of an enemy, but not the actual enemy itself (should be spawned directly from the enemy)
+EntityEnemypart = EntityEnemy.extend({
 
 	_wmIgnore: true,
 
@@ -18,23 +18,23 @@ EntityBosspart = EntityEnemy.extend({
 	dropsItems: false, 
 	ignoreCollisions: true,
 
-	boss: null,				// Instance of the boss
-	damageBoss: false,		// Does the damage this part takes also hurt the main boss?
+	master: null,			// Instance of the controlling enemy
+	damageMaster: false,	// Does the damage this part takes also hurt the main enemy?
 	damageMultiplier: 1,	// Does damage to this part hurt more or less than other parts?
 
-	// "boss" should be passed in at spawn
+	// "master" should be passed in at spawn
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
 		// Register this part with the boss
-		this.boss.registerPart(this);
+		this.master.registerPart(this);
 	},
 
-	// Check if the damage also hurts the main boss
+	// Check if the damage also hurts the master
 	receiveDamage: function( amount, from, bounceback, direction ) {
 
-		if (this.damageBoss) {
-			this.boss.receiveDamage( amount*this.damageMultiplier, from, bounceback, direction );
+		if (this.damageMaster) {
+			this.master.receiveDamage( amount*this.damageMultiplier, from, bounceback, direction );
 		}
 
 		this.parent( amount, from, bounceback, direction );

@@ -41,7 +41,7 @@ EntitySerpentking = EntityBoss.extend({
 
 		if (ig.system.running && !this.alreadyDead) {
 			// Spawn the body parts, using initial offsets provided
-			ig.game.spawnEntity( EntitySerpentbody, this.pos.x, this.pos.y, {boss: this, parentNode: this, numNodes: 20, nodeEntity: EntitySerpentbody, initOffset: {x: 5, y: 2}} );
+			ig.game.spawnEntity( EntitySerpentbody, this.pos.x, this.pos.y, {master: this, parentNode: this, numNodes: 20, nodeEntity: EntitySerpentbody, initOffset: {x: 5, y: 2}} );
 			this.idleConfiguration();
 		}
 

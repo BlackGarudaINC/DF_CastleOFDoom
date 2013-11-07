@@ -2,19 +2,19 @@ ig.module(
 	'game.entities.boss.serpentbody'
 )
 .requires(
-	'game.entities.boss.bosschain',
+	'game.entities.enemy.enemychain',
 	'impact.entity'
 )
 .defines(function(){
 	
 
-EntitySerpentbody = EntityBosschain.extend({
+EntitySerpentbody = EntityEnemychain.extend({
 
 	size: {x: 32, y: 32},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 32, 32 ),
 
-	damageBoss: true,
+	damageMaster: true,
 	damageMultiplier: 0.3,	// Damage to the body does a lot less damage than head damage
 	invincible: true,		// You can't destroy the individual body segments
 	killWhenDead: false,
