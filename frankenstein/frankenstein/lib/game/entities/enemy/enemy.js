@@ -183,6 +183,11 @@ EntityEnemy = EntityBase.extend({
 		}
 	},
 
+	// This is for if you ever need to do anything when moving to the death animation
+	deathCallback: function() {
+
+	},
+
 	// Take damage
 	// Amount: How much damage you take
 	// From: Entity giving damage
@@ -205,6 +210,7 @@ EntityEnemy = EntityBase.extend({
 				this.kill();
 			} else {
 				this.currentAnim = this.anims.death.rewind();
+				this.deathCallback();
 			}
 		}
 

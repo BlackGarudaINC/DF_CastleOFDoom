@@ -14,8 +14,7 @@ EntitySerpentking = EntityBoss.extend({
 	maxVel: {x: 200, y: 600},
 	friction: {x: 150, y: 0},
 
-	edgeReverse: false,
-	killWhenDead: true, 
+	edgeReverse: false, 
 	knockback: false,    // If they bounce back from damage
 	speed: 40,
 	damageFlash: true,
@@ -29,14 +28,15 @@ EntitySerpentking = EntityBoss.extend({
 	
 	chainOrigin: {x: 32, y:0 }, // Offset the body chain a little back
 
-	health: 20,
+	health: 5,
 	// debugDraw: true,
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
-		// There's not really any animations, just overflow drawing
+		// There's not really any major animations, just overflow drawing
 		this.addAnim( 'idle', 1, [0] );
+		this.addAnim( 'death', 2, [0, 0], true );
 
 		if (ig.system.running && !this.alreadyDead) {
 			// Spawn the body parts 
@@ -89,6 +89,16 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent();
 	},
 
+	// Make it stop and fall to the ground when dead
+	deathCallback: function() {
+		this.vel.x = 0;
+		this.vel.y = 0;
+		this.gravityFactor = ig.game.gravity;
+		this.ignoreCollisions = false;
+		console.log('death');
+
+		this.parent();
+	},
 	
 	draw: function() {
 
@@ -103,8 +113,10 @@ EntitySerpentking = EntityBoss.extend({
 	
 	myUpdate: function() {
 
-		this.vel.y = (this.moveLeft ? -this.speed : this.speed); 
-		this.vel.x = (this.moveLeft ? -this.speed : this.speed); 
+		if (!this.dead) {
+			this.vel.y = (this.moveLeft ? -this.speed : this.speed); 
+			this.vel.x = (this.moveLeft ? -this.speed : this.speed); 
+		}
 
 		// // If idle, always look at the player
 		// if (this.currentAnim == this.anims.idle || this.currentAnim == this.anims.prepare) {
