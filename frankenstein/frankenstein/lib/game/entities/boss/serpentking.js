@@ -20,6 +20,7 @@ EntitySerpentking = EntityBoss.extend({
 	damageFlash: true,
 	gravityFactor: 0,
 	moveLeft: true,		// Direction it's currently moving
+	flashParts: true,	// All parts flash when hit
 
 	attackTimer: null, 	 // countdown to when it attacks
 	
@@ -95,7 +96,6 @@ EntitySerpentking = EntityBoss.extend({
 		this.vel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
-		console.log('death');
 
 		this.parent();
 	},

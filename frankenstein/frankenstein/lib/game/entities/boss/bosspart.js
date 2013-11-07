@@ -38,6 +38,11 @@ EntityBosspart = EntityEnemy.extend({
 		}
 
 		this.parent( amount, from, bounceback, direction );
+	},
+
+	// Called when the master has started its death animation
+	masterIsDead: function() {
+		this.die();
 	}
 	
 	

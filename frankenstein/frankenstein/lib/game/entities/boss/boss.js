@@ -31,6 +31,7 @@ EntityBoss = EntityEnemy.extend({
 
 	childNode: null,		// first node in a boss chain, if there is one
 	bossParts: [],			// array of the various parts of this boss, if it has any
+	flashParts: false,		// If true, all boss parts will flash when hit
 	chainOrigin: {x: 0, y:0 }, // If this boss has a chain, this is the offset from the position where the chain will originate
 
 	init: function( x, y, settings ) {
@@ -131,19 +132,24 @@ EntityBoss = EntityEnemy.extend({
 
 		this.parent();
 	},
+
+	die: function() {
+
+		// Inform all the parts that their master is dying
+		for (var i in this.bossParts) {
+			if (!isNaN(i)) {
+				this.bossParts[i].die();
+			}
+		}
+
+		this.parent();
+	},
 	
 	kill: function() {
 		this.parent();
 
 		// If it wasn't already defeated
 		if (!this.alreadyDead) {
-
-			// Kill all the boss parts that weren't already destroyed
-			for (var i in this.bossParts) {
-				if (!isNaN(i)) {
-					this.bossParts[i].kill();
-				}
-			}
 
 			// Drop money and a lot of hearts
 			ig.game.spawnEntity( EntityGolditem, this.pos.x + 10, this.pos.y, {dropped: true, direction: 0, value: this.goldDropValue} );

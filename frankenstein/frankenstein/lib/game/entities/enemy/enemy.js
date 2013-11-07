@@ -188,6 +188,18 @@ EntityEnemy = EntityBase.extend({
 
 	},
 
+	// This handles the logic for dying
+	die: function() {
+		this.dead = true;
+		this.health = 0;
+		if (this.killWhenDead) {
+			this.kill();
+		} else {
+			this.currentAnim = this.anims.death.rewind();
+			this.deathCallback();
+		}
+	},
+
 	// Take damage
 	// Amount: How much damage you take
 	// From: Entity giving damage
@@ -204,14 +216,7 @@ EntityEnemy = EntityBase.extend({
 
 		// Check if dead
 		if (this.health <= 0) {
-			this.dead = true;
-			this.health = 0;
-			if (this.killWhenDead) {
-				this.kill();
-			} else {
-				this.currentAnim = this.anims.death.rewind();
-				this.deathCallback();
-			}
+			this.die();
 		}
 
 		// knockback if enabled
