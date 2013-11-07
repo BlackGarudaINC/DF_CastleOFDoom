@@ -15,6 +15,7 @@ EntityMeleeattack = EntityPlayerattack.extend({
 	flip: false,
 	attackDelayTimer: null,
 	debugDraw: false,
+	hit: false,		// once it makes contact, this is true
 
 	// REQUIRED SETTINGS:
 	// flip: player's flip setting at time of attack
@@ -48,6 +49,11 @@ EntityMeleeattack = EntityPlayerattack.extend({
 
 	// Always be next to the player
 	myUpdate: function() {
+		// Check if it made contact, and if so, remove it
+		if (this.hit) {
+			this.kill();
+		}
+
 		if (this.flip) {
 			this.pos.x = ig.game.player.pos.x - this.size.x;
 		} else {
@@ -62,7 +68,7 @@ EntityMeleeattack = EntityPlayerattack.extend({
 	dealDamage: function( other ) {
 		if (!other.dead && this.attackDelayTimer == null) {
 			other.receiveDamage( this.damage, this, this.bounceback, this.flip );
-			this.kill();
+			this.hit = true;
 		}
 	},
 	
