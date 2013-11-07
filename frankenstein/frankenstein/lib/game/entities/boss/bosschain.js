@@ -27,6 +27,7 @@ EntityBosschain = EntityBosspart.extend({
 	// parentNode: whoever just created this
 	// numNodes: how many nodes to create after this
 	// nodeEntity: what type of entity we're creating in this chain
+	// initOffset: Where to start it, relative to the parent
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
@@ -39,24 +40,6 @@ EntityBosschain = EntityBosspart.extend({
 		// Set the speed, taking the damping into account
 		this.speed = this.parentNode.speed * this.speedDamping;
 
-		// If there are more nodes to be created in this chain, create them
-		if (settings.numNodes > 0) {
-			ig.game.spawnEntity( settings.nodeEntity, this.pos.x + 10, this.pos.y, {boss: this.boss, parentNode: this, numNodes: settings.numNodes - 1, nodeEntity: settings.nodeEntity} );
-		}
-	},
-
-	// After a child is created, it calls back to register itself with its parent
-	registerChild: function( node ) {
-		this.childNode = node;
-	},
-
-	// Set the location and movement configuration for this chain part
-	// Required settings:
-	// initOffset: Where to start it, relative to the parent
-	// lowRange: The minimum x, y offset from the parent
-	// highRange: The maximum x, y offset from the parent
-	configure: function( settings ) {
-
 		// Position it
 		this.pos.x = this.parentNode.pos.x + settings.initOffset.x;
 		this.pos.y = this.parentNode.pos.y + settings.initOffset.y;
@@ -66,6 +49,23 @@ EntityBosschain = EntityBosspart.extend({
 			this.pos.x += this.boss.chainOrigin.x;
 			this.pos.y += this.boss.chainOrigin.y;
 		}
+
+		// If there are more nodes to be created in this chain, create them
+		if (settings.numNodes > 0) {
+			ig.game.spawnEntity( settings.nodeEntity, this.pos.x + 10, this.pos.y, {boss: this.boss, parentNode: this, numNodes: settings.numNodes - 1, nodeEntity: settings.nodeEntity, initOffset: settings.initOffset} );
+		}
+	},
+
+	// After a child is created, it calls back to register itself with its parent
+	registerChild: function( node ) {
+		this.childNode = node;
+	},
+
+	// Set the movement configuration for this chain part
+	// Required settings:
+	// lowRange: The minimum x, y offset from the parent
+	// highRange: The maximum x, y offset from the parent
+	configure: function( settings ) {
 
 		// Set the ranges
 		this.lowRange = settings.lowRange;

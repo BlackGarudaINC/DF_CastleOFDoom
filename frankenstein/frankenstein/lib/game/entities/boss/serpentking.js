@@ -40,9 +40,8 @@ EntitySerpentking = EntityBoss.extend({
 		this.addAnim( 'death', 2, [0, 0], true );
 
 		if (ig.system.running && !this.alreadyDead) {
-			// Spawn the body parts 
-			// (it doesn't matter where they go since they'll move when going into formation)
-			ig.game.spawnEntity( EntitySerpentbody, this.pos.x + 10, this.pos.y, {boss: this, parentNode: this, numNodes: 10, nodeEntity: EntitySerpentbody} );
+			// Spawn the body parts, using initial offsets provided
+			ig.game.spawnEntity( EntitySerpentbody, this.pos.x, this.pos.y, {boss: this, parentNode: this, numNodes: 20, nodeEntity: EntitySerpentbody, initOffset: {x: 5, y: 2}} );
 			this.idleConfiguration();
 		}
 
@@ -59,7 +58,7 @@ EntitySerpentking = EntityBoss.extend({
 	// Configure the body to the standard, idle position
 	idleConfiguration: function() {
 		if (this.childNode) {
-			this.childNode.configure({ initOffset: {x: 10, y: 4}, lowRange: {x: -10, y: -6}, highRange: {x: 10, y: 14} });
+			this.childNode.configure({ lowRange: {x: -10, y: -6}, highRange: {x: 10, y: 14} });
 		}
 	},
 
