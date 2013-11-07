@@ -18,9 +18,6 @@ EntityBosschain = EntityBosspart.extend({
 	highRange: {x: 0, y:0},
 	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
 
-	xRangeTimer: null,	// Once you're out of range, wait a little before checking again
-	yRangeTimer: null,
-
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
 	behindAbove: false,
@@ -80,16 +77,6 @@ EntityBosschain = EntityBosspart.extend({
 		}
 	},
 
-	handleTimers: function() {
-		if (this.xRangeTimer != null && this.xRangeTimer.delta() > 0) {
-			this.xRangeTimer = null;
-		}
-		if (this.yRangeTimer != null && this.yRangeTimer.delta() > 0) {
-			this.yRangeTimer = null;
-		}
-
-		this.parent();
-	},
 
 	myUpdate: function() {
 
@@ -97,63 +84,67 @@ EntityBosschain = EntityBosspart.extend({
 		var target = {x: 0, y: 0};
 		target.x  = this.parentNode.pos.x;
 		target.y  = this.parentNode.pos.y;
-		var outOfRange = false;
 		if (this.parentNode == this.boss) {
 			target.x += this.boss.chainOrigin.x;
 			target.y += this.boss.chainOrigin.y;
 		}
 
 		// Check if the x pos is out of range
-		if (this.xRangeTimer == null) {
+		// First, we check if there is supposed to be any movement in the X-direction.
+		// If there is no x-range, we check if the velocity is 0 in the x-direction.
+		// If it's not, then something knocked it out of place so it's trying to move back into place.
+		// Once it gets close to the position it's supposed to be in, we put it in that position and turn off
+		// the x velocity.
+		if (this.highRange.x == this.lowRange.x && this.vel.x != 0 && this.pos.x > target.x + this.highRange.x - 4 && this.pos.x < target.x + this.highRange.x + 4) {
+			this.vel.x = 0;
+			this.pos.x = target.x + this.highRange.x;
+			this.behindLeft = false;
+			this.behindRight = false;
+		}
+		// If, as far as we know, the object isn't out of range to the left of where it should be,
+		// we check to see if it is now behind and to the left.
+		// However, if we already know it's behind to the left, we don't bother checking again since
+		// all of the proper variables are already set here.
+		if (!this.behindLeft) {
 			if (target.x + this.lowRange.x > this.pos.x + 0.5) {
-				target.x += this.lowRange.x;
-				outOfRange = true;
-			} else if (target.x + this.highRange.x < this.pos.x - 0.5) {
-				target.x += this.highRange.x;
-				outOfRange = true;
+				this.vel.x = this.speed;
+				this.behindLeft = true;
+				this.behindRight = false;
 			}
-
-			// If not in the range, set the velocity to move towards the target
-			// If there is no range in one direction and you're close enough to it,
-			// just set your position to that range and call it a day
-			if (outOfRange) {
-				console.log('x');
-				if (this.pos.x < target.x) {
-					this.vel.x = this.speed;
-				} else if (this.pos.x > target.x) {
-					this.vel.x = -this.speed;
-				}
-
-				this.xRangeTimer = new ig.Timer(0.2);
-				outOfRange = false;
+		} 
+		// Now we do the same check but to the right.
+		if (!this.behindRight) {
+			if (target.x + this.highRange.x < this.pos.x - 0.5) {
+				this.vel.x = -this.speed;
+				this.behindRight = true;
+				this.behindLeft = false;
 			}
 		}
 
-		// Now check the y pos
-		if (this.yRangeTimer == null) {
 
+		// Now check the y pos in the same way we checked X.
+		if (this.highRange.y == this.lowRange.y && this.vel.y != 0 && this.pos.y > target.y + this.highRange.y - 4 && this.pos.y < target.y + this.highRange.y + 4) {
+			this.vel.y = 0;
+			this.pos.y = target.y + this.highRange.y;
+			this.behindAbove = false;
+			this.behindBelow = false;
+		} 
+		if (!this.behindAbove) {
 			if (target.y + this.lowRange.y > this.pos.y + 0.5) {
-				target.y += this.lowRange.y;
-				outOfRange = true;
-			} else if (target.y + this.highRange.y < this.pos.y - 0.5) {
-				target.y += this.highRange.y;
-				outOfRange = true;
-			}
-			
-			if (outOfRange) {
-				console.log('y');
-				if (this.highRange.y == this.lowRange.y && this.pos.y > target.y - 4 && this.pos.y < target.y + 4) {
-					this.vel.y = 0;
-					this.pos.y = target.y
-				} else if (this.pos.y < target.y) {
-					this.vel.y = this.speed;
-				} else if (this.pos.y > target.y) {
-					this.vel.y = -this.speed;
-				}
-
-				this.yRangeTimer = new ig.Timer(0.1);
+				this.vel.y = this.speed;
+				this.behindAbove = true;
+				this.behindBelow = false;
+			} 
+		}
+		if (!this.behindBelow) {
+			if (target.y + this.highRange.y < this.pos.y - 0.5) {
+				this.vel.y = -this.speed;
+				this.behindBelow = true;
+				this.behindAbove = false;
 			}
 		}
+			
+
 
 		this.parent();
 	},
