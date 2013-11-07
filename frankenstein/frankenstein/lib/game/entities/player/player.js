@@ -400,7 +400,7 @@ EntityPlayer = EntityBase.extend({
 		if (this.slideTimer != null && this.slideTimer.delta() > 0) {
 
 			// Check if you can stand up, and if not, keep sliding a little longer
-			if( ig.game.collisionMap.getTile(this.pos.x, this.pos.y - 12) || ig.game.collisionMap.getTile(this.pos.x + this.size.x, this.pos.y - 12) ) {
+			if( ig.game.collisionMap.getTile(this.pos.x, this.pos.y - 12) || ig.game.collisionMap.getTile(this.pos.x + this.size.x-1, this.pos.y - 12) ) {
 				this.slideTimer.set(0.1);
 			} else {
 				this.slideTimer = null;
