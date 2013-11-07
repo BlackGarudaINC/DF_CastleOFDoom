@@ -29,6 +29,7 @@ EntityEnemy = EntityBase.extend({
 	tempInvincible: false, // It's invincible for a short time after getting hit
 	tempInvincibleTimer: null,
 	flashTimer: null,
+	invincible: false,		// Some enemies are completely invincible at times
 	
 	wallReverse: true,		// Reverse when hitting a wall
 	edgeReverse: true,		// Reverse at the edge of a platform
@@ -189,7 +190,7 @@ EntityEnemy = EntityBase.extend({
 	// Direction: (optional) Direction the attack knocks you in (usually this can be figured out from "From")
 	receiveDamage: function( amount, from, bounceback, direction ) {
 
-		if( this.currentAnim == this.anims.pain || this.currentAnim == this.anims.death || this.tempInvincible) {
+		if( this.currentAnim == this.anims.pain || this.currentAnim == this.anims.death || this.tempInvincible || this.invincible) {
 			// Already in pain, dead, or invincible? Do nothing.
 			return;
 		}

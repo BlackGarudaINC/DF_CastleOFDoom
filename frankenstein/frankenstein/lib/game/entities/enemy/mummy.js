@@ -3,7 +3,7 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'game.entities.skeleton'
+	'game.entities.enemy.skeleton'
 )
 .defines(function(){
 

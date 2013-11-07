@@ -3,7 +3,7 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'impact.entity.mummy'
+	'game.entities.enemy.mummy',
 	'game.entities.enemy.coffin'
 )
 .defines(function(){
