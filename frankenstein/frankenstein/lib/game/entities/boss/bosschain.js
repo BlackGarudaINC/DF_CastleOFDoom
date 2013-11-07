@@ -16,6 +16,15 @@ EntityBosschain = EntityBosspart.extend({
 	childNode: null,	// this node's child in this chain (null if this node is the tail)
 	lowRange: {x:0, y:0}, 	// Offsets from the parent where it's allowed to be
 	highRange: {x: 0, y:0},
+	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
+
+	xRangeTimer: null,	// Once you're out of range, wait a little before checking again
+	yRangeTimer: null,
+
+	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
+	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
+	behindAbove: false,
+	behindBelow: false,
 
 	// In addition to the boss, the following parameters are required in settings:
 	// parentNode: whoever just created this
@@ -29,6 +38,9 @@ EntityBosschain = EntityBosspart.extend({
 
 		// Each part should be behind the last
 		this.zIndex = this.parentNode.zIndex - 1;
+
+		// Set the speed, taking the damping into account
+		this.speed = this.parentNode.speed * this.speedDamping;
 
 		// If there are more nodes to be created in this chain, create them
 		if (settings.numNodes > 0) {
@@ -68,6 +80,17 @@ EntityBosschain = EntityBosspart.extend({
 		}
 	},
 
+	handleTimers: function() {
+		if (this.xRangeTimer != null && this.xRangeTimer.delta() > 0) {
+			this.xRangeTimer = null;
+		}
+		if (this.yRangeTimer != null && this.yRangeTimer.delta() > 0) {
+			this.yRangeTimer = null;
+		}
+
+		this.parent();
+	},
+
 	myUpdate: function() {
 
 		// Check if you're out of range, and if so, move at the boss's speed towards the range
@@ -80,23 +103,56 @@ EntityBosschain = EntityBosspart.extend({
 			target.y += this.boss.chainOrigin.y;
 		}
 
-		if (target.x + this.lowRange.x > this.pos.x) {
-			target.x += this.lowRange.x;
-			outOfRange = true;
-		} else if (target.x + this.highRange.x < this.pos.x) {
-			target.x += this.highRange.x;
-			outOfRange = true;
+		// Check if the x pos is out of range
+		if (this.xRangeTimer == null) {
+			if (target.x + this.lowRange.x > this.pos.x + 0.5) {
+				target.x += this.lowRange.x;
+				outOfRange = true;
+			} else if (target.x + this.highRange.x < this.pos.x - 0.5) {
+				target.x += this.highRange.x;
+				outOfRange = true;
+			}
+
+			// If not in the range, set the velocity to move towards the target
+			// If there is no range in one direction and you're close enough to it,
+			// just set your position to that range and call it a day
+			if (outOfRange) {
+				console.log('x');
+				if (this.pos.x < target.x) {
+					this.vel.x = this.speed;
+				} else if (this.pos.x > target.x) {
+					this.vel.x = -this.speed;
+				}
+
+				this.xRangeTimer = new ig.Timer(0.2);
+				outOfRange = false;
+			}
 		}
 
-		// If not in the range, set the velocity to move towards the target
-		if (outOfRange) {
-			if (this.pos.x < target.x) {
-				this.vel.x = this.boss.speed;
-			} else if (this.pos.x > target.x) {
-				this.vel.x = -this.boss.speed;
+		// Now check the y pos
+		if (this.yRangeTimer == null) {
+
+			if (target.y + this.lowRange.y > this.pos.y + 0.5) {
+				target.y += this.lowRange.y;
+				outOfRange = true;
+			} else if (target.y + this.highRange.y < this.pos.y - 0.5) {
+				target.y += this.highRange.y;
+				outOfRange = true;
 			}
-			this.pos.x = target.x;
-			// this.pos.y = target.y;
+			
+			if (outOfRange) {
+				console.log('y');
+				if (this.highRange.y == this.lowRange.y && this.pos.y > target.y - 4 && this.pos.y < target.y + 4) {
+					this.vel.y = 0;
+					this.pos.y = target.y
+				} else if (this.pos.y < target.y) {
+					this.vel.y = this.speed;
+				} else if (this.pos.y > target.y) {
+					this.vel.y = -this.speed;
+				}
+
+				this.yRangeTimer = new ig.Timer(0.1);
+			}
 		}
 
 		this.parent();
