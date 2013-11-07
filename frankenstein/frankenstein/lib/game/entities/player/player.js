@@ -384,10 +384,15 @@ EntityPlayer = EntityBase.extend({
 
 		// Check if it's time to update the electric frame
 		if (this.electricDrawTimer != null && this.electricDrawTimer.delta() > 0) {
-			this.electricDrawTimer.set(0.05 + (Math.random() * 0.05));
 			this.electricFrame += 1;
 			if (this.electricFrame >= this.numElectricFrames) {
 				this.electricFrame = 0;
+			}
+			// The timer has different random ranges depending on which frame is used
+			if (this.electricFrame == 0 || this.electricFrame == 2) {
+				this.electricDrawTimer.set(0.1 + (Math.random() * 0.25));
+			} else {
+				this.electricDrawTimer.set(0.05 + (Math.random() * 0.05));
 			}
 		}
 
