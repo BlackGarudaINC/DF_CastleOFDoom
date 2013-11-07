@@ -144,6 +144,17 @@ EntityBoss = EntityEnemy.extend({
 
 		this.parent();
 	},
+
+	// Inform all your parts that you've taken damage
+	showDamage: function() {
+		for (var i in this.bossParts) {
+			if (!isNaN(i)) {
+				this.bossParts[i].showDamage();
+			}
+		}
+
+		this.parent();
+	},
 	
 	kill: function() {
 		this.parent();

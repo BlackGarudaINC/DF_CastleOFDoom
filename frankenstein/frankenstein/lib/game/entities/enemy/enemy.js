@@ -200,35 +200,7 @@ EntityEnemy = EntityBase.extend({
 		}
 	},
 
-	// Take damage
-	// Amount: How much damage you take
-	// From: Entity giving damage
-	// Bounceback: Multiplier for the knockback force (some attacks knock you back more than usual)
-	// Direction: (optional) Direction the attack knocks you in (usually this can be figured out from "From")
-	receiveDamage: function( amount, from, bounceback, direction ) {
-
-		if( this.currentAnim == this.anims.pain || this.currentAnim == this.anims.death || this.tempInvincible || this.invincible) {
-			// Already in pain, dead, or invincible? Do nothing.
-			return;
-		}
-
-		this.health -= amount;
-
-		// Check if dead
-		if (this.health <= 0) {
-			this.die();
-		}
-
-		// knockback if enabled
-		if (this.knockback) {
-			if (direction === undefined) {
-				direction = from.pos.x > this.pos.x;
-			}
-			this.vel.x = direction ? -this.knockbackForce : this.knockbackForce;
-			this.vel.x *= bounceback;
-			this.vel.y = -100;
-		}
-
+	showDamage: function() {
 		// Set temporary invincibility if not dead
 		if (this.currentAnim != this.anims.death) {
 			if (this.tempInvincibleTimer === null) {
@@ -248,9 +220,40 @@ EntityEnemy = EntityBase.extend({
 			if (this.anims.pain && this.showsPain) {
 				this.currentAnim = this.anims.pain.rewind();
 			}
-
-			this.sfxReceiveHit.play();
 		}
+	},
+
+	// Take damage
+	// Amount: How much damage you take
+	// From: Entity giving damage
+	// Bounceback: Multiplier for the knockback force (some attacks knock you back more than usual)
+	// Direction: (optional) Direction the attack knocks you in (usually this can be figured out from "From")
+	receiveDamage: function( amount, from, bounceback, direction ) {
+
+		if( this.currentAnim == this.anims.pain || this.currentAnim == this.anims.death || this.tempInvincible || this.invincible) {
+			// Already in pain, dead, or invincible? Do nothing.
+			return;
+		}
+
+		this.health -= amount;
+		this.sfxReceiveHit.play();
+
+		// Check if dead
+		if (this.health <= 0) {
+			this.die();
+		}
+
+		// knockback if enabled
+		if (this.knockback) {
+			if (direction === undefined) {
+				direction = from.pos.x > this.pos.x;
+			}
+			this.vel.x = direction ? -this.knockbackForce : this.knockbackForce;
+			this.vel.x *= bounceback;
+			this.vel.y = -100;
+		}
+
+		this.showDamage();
 	}
 });
 
