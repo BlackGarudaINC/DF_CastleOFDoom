@@ -80,10 +80,10 @@ EntityBosschain = EntityBosspart.extend({
 			target.y += this.boss.chainOrigin.y;
 		}
 
-		if (target.x + this.lowRange.x < this.pos.x) {
+		if (target.x + this.lowRange.x > this.pos.x) {
 			target.x += this.lowRange.x;
 			outOfRange = true;
-		} else if (target.x + this.highRange.x > this.pos.x) {
+		} else if (target.x + this.highRange.x < this.pos.x) {
 			target.x += this.highRange.x;
 			outOfRange = true;
 		}
@@ -95,6 +95,8 @@ EntityBosschain = EntityBosspart.extend({
 			} else if (this.pos.x > target.x) {
 				this.vel.x = -this.boss.speed;
 			}
+			this.pos.x = target.x;
+			// this.pos.y = target.y;
 		}
 
 		this.parent();
