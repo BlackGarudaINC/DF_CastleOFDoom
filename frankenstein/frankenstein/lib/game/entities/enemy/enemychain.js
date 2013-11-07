@@ -17,6 +17,8 @@ EntityEnemychain = EntityEnemypart.extend({
 	lowRange: {x:0, y:0}, 	// Offsets from the parent where it's allowed to be
 	highRange: {x: 0, y:0},
 	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
+	speed: {x: 0, y:0}, // the speed to move in each direction
+	configured: false,	// False until it becomes initially configured
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -36,9 +38,6 @@ EntityEnemychain = EntityEnemypart.extend({
 
 		// Each part should be behind the last
 		this.zIndex = this.parentNode.zIndex - 1;
-
-		// Set the speed, taking the damping into account
-		this.speed = this.parentNode.speed * this.speedDamping;
 
 		// Position it
 		this.pos.x = this.parentNode.pos.x + settings.initOffset.x;
@@ -65,20 +64,34 @@ EntityEnemychain = EntityEnemypart.extend({
 	// Required settings:
 	// lowRange: The minimum x, y offset from the parent
 	// highRange: The maximum x, y offset from the parent
+	// speed: The x and y speed
 	configure: function( settings ) {
 
 		// Set the ranges
 		this.lowRange = settings.lowRange;
 		this.highRange = settings.highRange;
 
+		// Set the speed and apply the damping
+		this.speed.x = settings.speed.x * this.speedDamping;
+		this.speed.y = settings.speed.y * this.speedDamping;
+
 		// Configure the rest of the chain
 		if (this.childNode != null) {
 			this.childNode.configure(settings);
 		}
+
+		this.configured = true;
 	},
 
 
 	myUpdate: function() {
+
+		this.parent();
+
+		// Don't do anything if it hasn't been configured yet
+		if (!this.configured) {
+			return;
+		}
 
 		// Check if you're out of range, and if so, move at the master's speed towards the range
 		var target = {x: 0, y: 0};
@@ -107,7 +120,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		// all of the proper variables are already set here.
 		if (!this.behindLeft) {
 			if (target.x + this.lowRange.x > this.pos.x + 0.5) {
-				this.vel.x = this.speed;
+				this.vel.x = this.speed.x;
 				this.behindLeft = true;
 				this.behindRight = false;
 			}
@@ -115,7 +128,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		// Now we do the same check but to the right.
 		if (!this.behindRight) {
 			if (target.x + this.highRange.x < this.pos.x - 0.5) {
-				this.vel.x = -this.speed;
+				this.vel.x = -this.speed.x;
 				this.behindRight = true;
 				this.behindLeft = false;
 			}
@@ -131,22 +144,19 @@ EntityEnemychain = EntityEnemypart.extend({
 		} 
 		if (!this.behindAbove) {
 			if (target.y + this.lowRange.y > this.pos.y + 0.5) {
-				this.vel.y = this.speed;
+				this.vel.y = this.speed.y;
 				this.behindAbove = true;
 				this.behindBelow = false;
 			} 
 		}
 		if (!this.behindBelow) {
 			if (target.y + this.highRange.y < this.pos.y - 0.5) {
-				this.vel.y = -this.speed;
+				this.vel.y = -this.speed.y;
 				this.behindBelow = true;
 				this.behindAbove = false;
 			}
 		}
 			
-
-
-		this.parent();
 	},
 
 	// If the master isn't dead yet, we need to link the chain to account for the missing part
