@@ -22,6 +22,7 @@ EntitySerpentking = EntityBoss.extend({
 	gravityFactor: 0,
 	movementDir: true,	// This gets flipped to reverse movement directions
 	flashParts: true,	// All parts flash when hit
+	ignoreCollisions: true,
 
 	attackTimer: null, 	 	// countdown to when it attacks
 	reverseTimer: null,		// countdown to when it reverses direction

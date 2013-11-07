@@ -11,6 +11,8 @@ EntitySerpentacid = EntityEnemyprojectile.extend({
 
 	size: {x: 12, y: 12},
 	offset: {x: 10, y: 10},
+
+	ignoreCollisions: true,
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 32, 32 ),
 	

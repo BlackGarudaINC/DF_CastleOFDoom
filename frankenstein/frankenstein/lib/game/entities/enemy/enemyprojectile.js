@@ -33,7 +33,7 @@ EntityEnemyprojectile = EntityEnemy.extend({
 	myUpdate: function() {
 
 		// kill itself when it leaves the room
-		if (this.pos.x < 32 || this.pos.x > ig.game.levelWidth + 8) {
+		if (this.pos.x < -32 || this.pos.x > ig.game.levelWidth + 8 || this.pos.y < -32 || this.pos.y > ig.game.levelHeight + 8) {
 			this.kill();
 		}
 
