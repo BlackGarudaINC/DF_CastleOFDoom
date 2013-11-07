@@ -15,6 +15,7 @@ EntityBosspart = EntityEnemy.extend({
 	knockback: false,
 	drawHealthBar: false,
 	damageFlash: true,
+	dropsItems: false, 
 
 	boss: null,				// Instance of the boss
 	damageBoss: false,		// Does the damage this part takes also hurt the main boss?
@@ -24,13 +25,14 @@ EntityBosspart = EntityEnemy.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
+		// Register this part with the boss
+		this.boss.registerPart(this);
 	},
 
 	// Check if the damage also hurts the main boss
 	receiveDamage: function( amount, from, bounceback, direction ) {
 
 		if (this.damageBoss) {
-			console.log(this.boss);
 			this.boss.receiveDamage( amount*this.damageMultiplier, from, bounceback, direction );
 		}
 

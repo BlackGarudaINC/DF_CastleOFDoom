@@ -29,6 +29,9 @@ EntityBoss = EntityEnemy.extend({
 	alreadyDead: false,		// If you revisit a room with a defeated boss, it's already dead
 	waitToStart: false,		// If the boss is waiting for a cutscene before starting
 
+	firstNode: null,		// first node in a boss chain, if there is one
+	bossParts: [],			// array of the various parts of this boss, if it has any
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
@@ -60,6 +63,16 @@ EntityBoss = EntityEnemy.extend({
 	// When the boss actually starts doing things (this could be delayed if there's a cutscene)
 	startBattle: function() {
 
+	},
+
+	// The first child node registers itself as the first node if there's a boss chain involved
+	registerChild: function( node ) {
+		this.firstNode = node;
+	},
+
+	// Register a boss part in the boss part array, if applicable
+	registerPart: function( part ) {
+		this.bossParts.push(part);
 	},
 
 	draw: function() {
@@ -123,6 +136,13 @@ EntityBoss = EntityEnemy.extend({
 
 		// If it wasn't already defeated
 		if (!this.alreadyDead) {
+
+			// Kill all the boss parts that weren't already destroyed
+			for (var i in this.bossParts) {
+				if (!isNaN(i)) {
+					this.bossParts[i].kill();
+				}
+			}
 
 			// Drop money and a lot of hearts
 			ig.game.spawnEntity( EntityGolditem, this.pos.x + 10, this.pos.y, {dropped: true, direction: 0, value: this.goldDropValue} );

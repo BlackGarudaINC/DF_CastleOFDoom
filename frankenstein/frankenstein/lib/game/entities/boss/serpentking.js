@@ -35,11 +35,17 @@ EntitySerpentking = EntityBoss.extend({
 		// There's not really any animations, just overflow drawing
 		this.addAnim( 'idle', 1, [0] );
 
-		if (ig.system.running) {
-			// Spawn the body parts
-			ig.game.spawnEntity( EntitySerpentbody, this.pos.x - 40, this.pos.y, {boss: this} );
+		if (ig.system.running && !this.alreadyDead) {
+			// Spawn the body parts 
+			// (it doesn't matter where they go since they'll move when going into formation)
+			ig.game.spawnEntity( EntitySerpentbody, this.pos.x + 10, this.pos.y, {boss: this, parentNode: this, numNodes: 10, nodeEntity: EntitySerpentbody} );
 		}
 
+	},
+
+	// The first body part registers itself as the first Node
+	registerChild: function( node ) {
+		this.firstNode = node;
 	},
 
 	startBattle: function() {
