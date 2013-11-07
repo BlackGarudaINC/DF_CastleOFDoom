@@ -10,16 +10,22 @@ ig.module(
 
 EntitySarcophagus = EntityCoffin.extend({
 
-	size: {x: 30, y: 15},
-	offset: {x: 6, y: 8},
+	size: {x: 32, y: 10},
+	offset: {x: 0, y: 22},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Mummy.png', 32, 32),
+	sarcophagusCover: new ig.Image( 'media/sprites/Mummy.png' ),
 
 	init: function( x, y, settings ){
 		this.parent( x, y, settings );
 
 		this.addAnim( 'idle', 0.1, [15] );
+		this.currentAnim = this.anims.idle;
 
+	},
+
+	draw: function(){
+		this.sarcophagusCover.drawTile( this.pos.x - this.offset.x, this.pos.y - 22, 14, 32, 32 );
 	},
 
 	spawnSkeleton: function(){

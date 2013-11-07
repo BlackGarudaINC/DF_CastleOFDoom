@@ -3,7 +3,8 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'game.entities.enemy.skeleton'
+	'game.entities.enemy.skeleton',
+	'game.entities.enemy.mummywrap'
 )
 .defines(function(){
 
