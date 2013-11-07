@@ -19,10 +19,11 @@ EntitySerpentking = EntityBoss.extend({
 	speed: 40,
 	damageFlash: true,
 	gravityFactor: 0,
-	moveLeft: true,		// Direction it's currently moving
+	movementDir: true,	// This gets flipped to reverse movement directions
 	flashParts: true,	// All parts flash when hit
 
-	attackTimer: null, 	 // countdown to when it attacks
+	attackTimer: null, 	 	// countdown to when it attacks
+	reverseTimer: null,		// countdown to when it reverses direction
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
@@ -31,6 +32,12 @@ EntitySerpentking = EntityBoss.extend({
 
 	health: 5,
 	// debugDraw: true,
+
+	// Different attack states:
+	// 0: Move to new position
+	// 1: Idle / shoot acid
+	state: 0,
+
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -42,7 +49,6 @@ EntitySerpentking = EntityBoss.extend({
 		if (ig.system.running && !this.alreadyDead) {
 			// Spawn the body parts, using initial offsets provided
 			ig.game.spawnEntity( EntitySerpentbody, this.pos.x, this.pos.y, {master: this, parentNode: this, numNodes: 20, nodeEntity: EntitySerpentbody, initOffset: {x: 5, y: 2}} );
-			this.idleConfiguration();
 		}
 
 	},
@@ -50,15 +56,23 @@ EntitySerpentking = EntityBoss.extend({
 	startBattle: function() {
 		this.parent();
 
-		this.attackTimer = new ig.Timer(1);
-		this.vel.y = -this.speed;
-		this.vel.x = -this.speed;
+		this.newAttack();
 	},
 
-	// Configure the body to the standard, idle position
-	idleConfiguration: function() {
+	// Get a new attack, based on the current battle phase
+	newAttack: function() {
+		this.idleAttack();
+	},
+
+	// Hang out on the right and shoot acid
+	idleAttack: function() {
+		this.reverseTimer = new ig.Timer(1);
+		this.state = 1;
+		this.movementDir = true;
+
+		// Configure for the idle attack
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -10, y: -6}, highRange: {x: 10, y: 14} });
+			this.childNode.configure({ lowRange: {x: 8, y: -4}, highRange: {x: 8, y: 12}, speed: {x: this.speed, y:this.speed} });
 		}
 	},
 
@@ -68,12 +82,18 @@ EntitySerpentking = EntityBoss.extend({
 
 	handleTimers: function() {
 
+		// Check if it's time to reverse movement
+		if (this.reverseTimer != null && this.reverseTimer.delta() > 0) {
+			if (this.state == 1) {
+				this.reverseTimer.set(3);
+			}
+			this.movementDir = !this.movementDir;
+		}
+
 		// Check if it's time to attack again
 		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 
 			this.attackTimer.set(3);
-			this.moveLeft = !this.moveLeft;
-			
 		}
 
 		this.parent();
@@ -113,8 +133,8 @@ EntitySerpentking = EntityBoss.extend({
 	myUpdate: function() {
 
 		if (!this.dead) {
-			this.vel.y = (this.moveLeft ? -this.speed : this.speed); 
-			this.vel.x = (this.moveLeft ? -this.speed : this.speed); 
+			this.vel.y = (this.movementDir ? -this.speed : this.speed); 
+			// this.vel.x = (this.movementDir ? -this.speed : this.speed); 
 		}
 
 		// // If idle, always look at the player
