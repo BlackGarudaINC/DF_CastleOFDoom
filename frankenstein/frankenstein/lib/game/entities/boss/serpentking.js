@@ -70,6 +70,11 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent();
 
 		this.idleAttack();
+		this.tongue();
+	},
+
+	// Stick out the tongue once
+	tongue: function() {
 		ig.game.spawnEntity( EntitySerpenttongue, 40, 40, {master: this} );
 	},
 
