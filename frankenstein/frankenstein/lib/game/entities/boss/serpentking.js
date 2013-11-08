@@ -28,6 +28,7 @@ EntitySerpentking = EntityBoss.extend({
 	attackTimer: null, 	 	// countdown to when it attacks
 	reverseTimer: null,		// countdown to when it reverses direction
 	idleTimer: null,		// countdown used for in between, idle time
+	tongueTimer: null,		// countdown for pre-defined tongue action
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
@@ -44,7 +45,7 @@ EntitySerpentking = EntityBoss.extend({
 	state: 0,
 	nextState: 0,	// When in state 2 (move to a new position), this is the state it's moving to
 	targetPos: {x:0, y:0}, // In state 2, this is where it's trying to get to
-	acidRemaining: 0,	// How many acid shots are left, if in that phase
+	actionsRemaining: 0,	// How many actions are remaining in this state before changing states
 
 	idlePos: {x:0, y:0},	// Starting position (also the position of the idle attack)
 	
@@ -70,7 +71,6 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent();
 
 		this.idleAttack();
-		this.tongue();
 	},
 
 	// Stick out the tongue once
@@ -80,6 +80,8 @@ EntitySerpentking = EntityBoss.extend({
 
 	// Move to a new attack
 	newAttack: function( nextAttack ) {
+
+		this.tongue();
 
 		this.speed = 80;
 
@@ -104,6 +106,8 @@ EntitySerpentking = EntityBoss.extend({
 	// Hang out on the right and shoot acid
 	idleAttack: function() {
 
+		this.tongue();
+
 		this.speed = 40;
 
 		// Configure for the idle attack
@@ -115,7 +119,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
 		this.movementDir = true;
-		this.acidRemaining = 8;
+		this.actionsRemaining = 8;
 	},
 
 	defaultAnimation: function() {
@@ -154,15 +158,22 @@ EntitySerpentking = EntityBoss.extend({
 			if (this.state == 1) {
 				this.currentAnim = this.anims.shoot.rewind();
 				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+12, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
-				this.acidRemaining -= 1;
-				if (this.acidRemaining <= 0) {
+				this.actionsRemaining -= 1;
+				if (this.actionsRemaining <= 0) {
 					this.attackTimer = null;
-					this.idleTimer = new ig.Timer(5);
+					this.idleTimer = new ig.Timer(4);
+					this.tongueTimer = new ig.Timer(1);
 				} else {
 					this.attackTimer.set(1);
 				}
 			}
 		
+		}
+
+		// Check if it's time to stick out the tongue
+		if (this.tongueTimer != null && this.tongueTimer.delta() > 0) {
+			this.tongueTimer = null;
+			this.tongue();
 		}
 
 		// Check if it's time to stop being idle and do something new
