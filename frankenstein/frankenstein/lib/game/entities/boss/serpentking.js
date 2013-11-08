@@ -48,6 +48,9 @@ EntitySerpentking = EntityBoss.extend({
 	actionsRemaining: 0,	// How many actions are remaining in this state before changing states
 
 	idlePos: {x:0, y:0},	// Starting position (also the position of the idle attack)
+
+	xPositive: false,
+	yPositive: false,
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -133,6 +136,8 @@ EntitySerpentking = EntityBoss.extend({
 		this.state = 1;
 		this.vel.x = this.maxVel.x;
 		this.vel.y = -this.maxVel.y;
+		this.xPositive = true;
+		this.yPositive = false;
 		this.actionsRemaining = 80;
 	},
 
@@ -336,6 +341,20 @@ EntitySerpentking = EntityBoss.extend({
 				} else if (this.nextState == 3) {
 					this.biteAttack();
 				}
+			}
+		}
+
+		// Check if it reversed direction in the last frame
+		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
+			this.xPositive = !this.xPositive;
+			if (this.childNode != null) {
+				this.childNode.xFlip();
+			}
+		}
+		if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
+			this.yPositive = !this.yPositive;
+			if (this.childNode != null) {
+				this.childNode.yFlip();
 			}
 		}
 

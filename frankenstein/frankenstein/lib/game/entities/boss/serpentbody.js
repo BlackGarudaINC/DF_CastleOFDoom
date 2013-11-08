@@ -31,6 +31,8 @@ EntitySerpentbody = EntityEnemychain.extend({
 	deathCallback: function() {
 		this.vel.x = 0;
 		this.vel.y = 0;
+		this.accel.x = 0;
+		this.accel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
 

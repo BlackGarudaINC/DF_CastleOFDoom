@@ -23,11 +23,15 @@ EntityEnemychain = EntityEnemypart.extend({
 	angle: 0,			// Current rotation angle 
 	targetAngle: 0,		// Target rotation angle to move towards
 	accel: {x: 0, y: 0},
+	accelFactor: 3,		// For gradual turns, multiply the max velocity by this for the acceleration
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
 	behindAbove: false,
 	behindBelow: false,
+
+	xPositive: false,	// If you're moving in the positive or negative direction along each axis
+	yPositive: false,
 
 	// In addition to the master, the following parameters are required in settings:
 	// parentNode: whoever just created this
@@ -117,6 +121,14 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.targetAngle = Math.atan(this.vel.y / this.vel.x);
 	},
 
+	// Optionally, your parent can inform you when they flipped over, so that you can start reversing too
+	xFlip: function() {
+		this.accel.x = this.maxVel.x * (this.xPositive ? -this.accelFactor : this.accelFactor);
+	},
+	yFlip: function() {
+		this.accel.y = -this.maxVel.y * (this.yPositive ? -this.accelFactor : this.accelFactor);
+	},
+
 	myUpdate: function() {
 
 		this.parent();
@@ -126,7 +138,23 @@ EntityEnemychain = EntityEnemypart.extend({
 			return;
 		}
 
+		// Check if it reversed direction in the last frame, and if so, give the child a heads-up
+		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
+			this.xPositive = !this.xPositive;
+			if (this.childNode != null) {
+				this.childNode.xFlip();
+			}
+		}
+		if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
+			this.yPositive = !this.yPositive;
+			if (this.childNode != null) {
+				this.childNode.yFlip();
+			}
+		}
+
+		// *************************************************************************************
 		// Check if you're out of range, and if so, move at the master's speed towards the range
+		// *************************************************************************************
 		var target = {x: 0, y: 0};
 		target.x  = this.parentNode.pos.x;
 		target.y  = this.parentNode.pos.y;
@@ -157,7 +185,6 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.accel.x = this.maxVel.x * 20;
 				this.behindLeft = true;
 				this.behindRight = false;
-				this.setTargetAngle();
 			}
 		} 
 		// Now we do the same check but to the right.
@@ -166,10 +193,8 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.accel.x = -this.maxVel.x * 20;
 				this.behindRight = true;
 				this.behindLeft = false;
-				this.setTargetAngle();
 			}
 		}
-
 
 		// Now check the y pos in the same way we checked X.
 		if (this.highRange.y == this.lowRange.y && this.vel.y != 0 && this.pos.y > target.y + this.highRange.y - 4 && this.pos.y < target.y + this.highRange.y + 4) {
@@ -184,7 +209,6 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.accel.y = this.maxVel.y * 20;
 				this.behindAbove = true;
 				this.behindBelow = false;
-				this.setTargetAngle();
 			} 
 		}
 		if (!this.behindBelow) {
@@ -192,12 +216,15 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.accel.y = -this.maxVel.y * 20;
 				this.behindBelow = true;
 				this.behindAbove = false;
-				this.setTargetAngle();
 			}
 		}
 
+
+
+
 		// Set the rotation, if applicable
 		if (this.rotates && !this.dead) {
+			this.setTargetAngle();
 			if (this.angle < this.targetAngle) {
 				this.angle += 0.01;
 				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
