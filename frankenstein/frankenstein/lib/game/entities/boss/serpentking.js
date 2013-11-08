@@ -5,7 +5,8 @@ ig.module(
 	'impact.entity',
 	'game.entities.boss.boss',
 	'game.entities.boss.serpentbody',
-	'game.entities.boss.serpentacid'
+	'game.entities.boss.serpentacid',
+	'game.entities.boss.serpenttongue'
 )
 .defines(function(){
 	
@@ -52,6 +53,7 @@ EntitySerpentking = EntityBoss.extend({
 		
 		this.addAnim( 'idle', 1, [0] );
 		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid
+		this.addAnim( 'bite', 0.1, [4, 5, 8, 5, 4], true); 
 		this.addAnim( 'death', 2, [0, 0], true );
 
 		this.idlePos.x = this.pos.x;
@@ -68,6 +70,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent();
 
 		this.idleAttack();
+		ig.game.spawnEntity( EntitySerpenttongue, 40, 40, {master: this} );
 	},
 
 	// Move to a new attack
@@ -185,6 +188,8 @@ EntitySerpentking = EntityBoss.extend({
 			var tile = null;
 			if (this.currentAnim.tile == 5) {
 				tile = 9;
+			} else if (this.currentAnim.tile == 8) {
+				tile = 12;
 			}
 
 			if (tile != null) {

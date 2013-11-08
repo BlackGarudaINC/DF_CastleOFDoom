@@ -57,6 +57,7 @@ EntityItem = EntityBase.extend({
 			if (this.size.y <= 8) {
 				this.pos.y += 4;
 			}
+			this.zIndex = 120;
 		}
 	},
 

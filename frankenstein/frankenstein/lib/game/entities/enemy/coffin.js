@@ -26,6 +26,8 @@ EntityCoffin = EntityEnemy.extend({
 	dealsDamage: false,
 	drawHealthBar: false,
 
+	zIndex: -10,
+
 	health: 8,
 	
 	init: function( x, y, settings ) {

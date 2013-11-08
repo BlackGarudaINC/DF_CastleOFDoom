@@ -65,6 +65,9 @@ EntityBase = ig.Entity.extend({
 	// Called after init, on the first update loop
 	startUpdate: function() {
 
+		// Make sure all the z-indexes line up right for everything that was spawned
+		ig.game.sortEntitiesDeferred(); 
+		
 	},
 
 	// Update function to override in children
