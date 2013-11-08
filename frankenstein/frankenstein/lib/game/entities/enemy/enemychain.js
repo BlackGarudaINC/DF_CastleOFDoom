@@ -20,6 +20,9 @@ EntityEnemychain = EntityEnemypart.extend({
 	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
 	speed: {x: 0, y:0}, // the speed to move in each direction
 	configured: false,	// False until it becomes initially configured
+	rotates: false,		// Rotates based on its velocity
+	angle: 0,			// Current rotation angle 
+	targetAngle: 0,		// Target rotation angle to move towards
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -109,6 +112,11 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.behindBelow = false;
 	},
 
+	// calculate the rotation of this sprite, based on the velocities
+	setTargetAngle: function() {
+		this.targetAngle = Math.atan(this.vel.y / this.vel.x);
+	},
+
 	myUpdate: function() {
 
 		this.parent();
@@ -148,6 +156,7 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.vel.x = this.speed.x;
 				this.behindLeft = true;
 				this.behindRight = false;
+				this.setTargetAngle();
 			}
 		} 
 		// Now we do the same check but to the right.
@@ -156,6 +165,7 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.vel.x = -this.speed.x;
 				this.behindRight = true;
 				this.behindLeft = false;
+				this.setTargetAngle();
 			}
 		}
 
@@ -172,6 +182,7 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.vel.y = this.speed.y;
 				this.behindAbove = true;
 				this.behindBelow = false;
+				this.setTargetAngle();
 			} 
 		}
 		if (!this.behindBelow) {
@@ -179,7 +190,21 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.vel.y = -this.speed.y;
 				this.behindBelow = true;
 				this.behindAbove = false;
+				this.setTargetAngle();
 			}
+		}
+
+		// Set the rotation, if applicable
+		if (this.rotates) {
+			if (this.angle < this.targetAngle) {
+				this.angle += 0.1;
+				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
+			}
+			if (this.angle > this.targetAngle) {
+				this.angle -= 0.1;
+				if (this.angle < this.targetAngle) {this.angle = this.targetAngle;}
+			}
+			this.currentAnim.angle = this.angle;
 		}
 			
 	},

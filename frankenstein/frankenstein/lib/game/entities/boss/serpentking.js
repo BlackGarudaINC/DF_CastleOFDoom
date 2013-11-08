@@ -88,12 +88,18 @@ EntitySerpentking = EntityBoss.extend({
 
 		this.tongue();
 
-		this.speed = 80;
+		if (this.state == 1 && nextAttack == 3) {
+			// Do nothing, there's no need to re-configure the speed for the short distance
+		} else {
 
-		// Configure for the movement between attacks
-		if (this.childNode) {
-			this.childNode.configureSpeed({x: this.speed, y:this.speed});
+			this.speed = 80;
+
+			// Configure for the movement between attacks
+			if (this.childNode) {
+				this.childNode.configureSpeed({x: this.speed, y:this.speed});
+			}
 		}
+		
 
 		this.state = 2;
 		this.nextState = nextAttack;

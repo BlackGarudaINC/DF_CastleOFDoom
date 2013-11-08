@@ -18,6 +18,7 @@ EntitySerpentbody = EntityEnemychain.extend({
 	damageMultiplier: 0.3,	// Damage to the body does a lot less damage than head damage
 	invincible: true,		// You can't destroy the individual body segments
 	killWhenDead: false,
+	rotates: true,
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
