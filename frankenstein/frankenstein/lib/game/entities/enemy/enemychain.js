@@ -11,6 +11,7 @@ ig.module(
 EntityEnemychain = EntityEnemypart.extend({
 	
 	gravityFactor: 0,
+	maxVel: {x: 600, y: 600},
 
 	parentNode: null,	// this node's parent in this chain
 	childNode: null,	// this node's child in this chain (null if this node is the tail)
@@ -80,9 +81,33 @@ EntityEnemychain = EntityEnemypart.extend({
 			this.childNode.configure(settings);
 		}
 
+		// Reset all the "behind" variables
+		this.behindLeft = false;
+		this.behindRight = false;
+		this.behindAbove = false;
+		this.behindBelow = false;
+
 		this.configured = true;
 	},
 
+	// Only reconfigure the x,y speed
+	configureSpeed: function( speed ) {
+
+		// Set the speed and apply the damping
+		this.speed.x = speed.x * this.speedDamping;
+		this.speed.y = speed.y * this.speedDamping;
+
+		// Configure the rest of the chain
+		if (this.childNode != null) {
+			this.childNode.configureSpeed(speed);
+		}
+
+		// Reset all the "behind" variables
+		this.behindLeft = false;
+		this.behindRight = false;
+		this.behindAbove = false;
+		this.behindBelow = false;
+	},
 
 	myUpdate: function() {
 

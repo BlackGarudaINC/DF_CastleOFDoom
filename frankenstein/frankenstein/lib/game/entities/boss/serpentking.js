@@ -13,8 +13,7 @@ ig.module(
 EntitySerpentking = EntityBoss.extend({
 	size: {x: 52, y: 38},
 	offset: {x: 12, y: 0},
-	maxVel: {x: 200, y: 600},
-	friction: {x: 150, y: 0},
+	maxVel: {x: 600, y: 600},
 
 	edgeReverse: false, 
 	knockback: false,    // If they bounce back from damage
@@ -42,6 +41,7 @@ EntitySerpentking = EntityBoss.extend({
 	// 0: No state yet
 	// 1: Idle / shoot acid
 	// 2: Move to a new position
+	// 3: Bite quickly
 	state: 0,
 	nextState: 0,	// When in state 2 (move to a new position), this is the state it's moving to
 	targetPos: {x:0, y:0}, // In state 2, this is where it's trying to get to
@@ -54,7 +54,7 @@ EntitySerpentking = EntityBoss.extend({
 		
 		this.addAnim( 'idle', 1, [0] );
 		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid
-		this.addAnim( 'bite', 0.1, [4, 5, 8, 5, 4], true); 
+		this.addAnim( 'bite', 0.1, [0, 4, 5, 8, 8, 8, 8, 5, 4, 0], true); 
 		this.addAnim( 'death', 2, [0, 0], true );
 
 		this.idlePos.x = this.pos.x;
@@ -98,8 +98,8 @@ EntitySerpentking = EntityBoss.extend({
 			this.targetPos.x = this.idlePos.x;
 			this.targetPos.y = this.idlePos.y;
 		} else if (this.nextState == 3) {
-			this.targetPos.x = 40;
-			this.targetPos.y = 40;
+			this.targetPos.x = this.idlePos.x + 10;
+			this.targetPos.y = this.idlePos.y + 40;
 		}
 	},
 
@@ -119,7 +119,41 @@ EntitySerpentking = EntityBoss.extend({
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
 		this.movementDir = true;
+		this.actionsRemaining = 2;
+	},
+
+	// Bite quickly towards the player a bunch of times
+	biteAttack: function() {
+
+		this.tongue();
+
+		this.speed = 200;
+
+		if (this.childNode) {
+			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, speed: {x: 15, y:10} });
+		}
+
+		this.attackTimer = new ig.Timer(1);
+		this.reverseTimer = null;
+		this.state = 3;
 		this.actionsRemaining = 8;
+
+		this.vel.x = 15;
+		this.vel.y = -10;
+	},
+
+
+	// Bite towards the player
+	bite: function() {
+		this.currentAnim = this.anims.bite.rewind();
+		this.vel.x = -this.speed;
+		this.vel.y = -this.speed + Math.random()*this.speed*2;
+		this.actionsRemaining -= 1;
+
+		// Re-configure the rest of the parts to the new random speed
+		if (this.childNode) {
+			this.childNode.configureSpeed({x: this.speed, y: Math.abs(this.vel.y)});
+		}
 	},
 
 	defaultAnimation: function() {
@@ -130,6 +164,14 @@ EntitySerpentking = EntityBoss.extend({
 
 		if (this.currentAnim == this.anims.shoot && this.currentAnim.loopCount > 0) {
 			this.currentAnim = this.anims.idle;
+		}
+
+		// If biting, reverse once the animation is complete
+		if (this.currentAnim == this.anims.bite && this.currentAnim.loopCount > 0) {
+			this.vel.x = -this.vel.x;
+			this.vel.y = -this.vel.y;
+			this.currentAnim = this.anims.idle;
+			this.attackTimer = new ig.Timer(1);
 		}
 
 		this.parent();
@@ -167,7 +209,12 @@ EntitySerpentking = EntityBoss.extend({
 					this.attackTimer.set(1);
 				}
 			}
-		
+
+			// Start biting
+			if (this.state == 3) {
+				this.attackTimer = null;
+				this.bite();
+			}
 		}
 
 		// Check if it's time to stick out the tongue
@@ -259,7 +306,7 @@ EntitySerpentking = EntityBoss.extend({
 				if (this.nextState == 1) {
 					this.idleAttack();
 				} else if (this.nextState == 3) {
-					this.newAttack(1);
+					this.biteAttack();
 				}
 			}
 		}
