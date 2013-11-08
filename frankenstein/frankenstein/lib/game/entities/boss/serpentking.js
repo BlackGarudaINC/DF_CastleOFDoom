@@ -45,11 +45,14 @@ EntitySerpentking = EntityBoss.extend({
 	state: 0,
 	nextState: 0,	// When in state 2 (move to a new position), this is the state it's moving to
 	targetPos: {x:0, y:0}, // In state 2, this is where it's trying to get to
+	foundX: false,			// In state 2, if you made it to the x and y coordinates
+	foundY: false,
 	actionsRemaining: 0,	// How many actions are remaining in this state before changing states
+	accelFactor: 3,	// Accelerations are set to maxVel times this value
 
 	idlePos: {x:0, y:0},	// Starting position (also the position of the idle attack)
 
-	xPositive: false,
+	xPositive: false,		// The direction it was moving at the end of the last frame
 	yPositive: false,
 	
 	init: function( x, y, settings ) {
@@ -79,6 +82,8 @@ EntitySerpentking = EntityBoss.extend({
 		}
 
 		this.idleAttack();
+		this.vel.x = this.maxVel.x;
+		this.vel.y = -this.maxVel.y;
 	},
 
 	// Stick out the tongue once
@@ -95,17 +100,20 @@ EntitySerpentking = EntityBoss.extend({
 			// Do nothing, there's no need to re-configure the speed for the short distance
 		} else {
 
-			this.speed = 80;
+			this.maxVel.x = 80;
+			this.maxVel.y = 80;
 
 			// Configure for the movement between attacks
 			if (this.childNode) {
-				this.childNode.configureSpeed({x: this.speed, y:this.speed});
+				this.childNode.configureSpeed(this.maxVel);
 			}
 		}
 		
 
 		this.state = 2;
 		this.nextState = nextAttack;
+		this.foundX = false;
+		this.foundY = false;
 
 		// Locations where each attack takes place
 		if (this.nextState == 1) {
@@ -115,6 +123,10 @@ EntitySerpentking = EntityBoss.extend({
 			this.targetPos.x = this.idlePos.x + 10;
 			this.targetPos.y = this.idlePos.y + 40;
 		}
+
+		// Set the acceleration to move towards the target
+		this.accel.x = this.maxVel.x * (this.pos.x < this.targetPos.x ? this.accelFactor : -this.accelFactor);
+		this.accel.y = this.maxVel.y * (this.pos.y < this.targetPos.y ? this.accelFactor : -this.accelFactor);
 	},
 
 	// Hang out on the right and shoot acid
@@ -127,18 +139,16 @@ EntitySerpentking = EntityBoss.extend({
 
 		// Configure for the idle attack
 		if (this.childNode) {
-			this.childNode.configureSpeed({x: this.speed, y:this.speed});
+			this.childNode.configureSpeed(this.maxVel);
 		}
 
 		this.xReverseTimer = new ig.Timer(0.5);
 		this.yReverseTimer = new ig.Timer(1);
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
-		this.vel.x = this.maxVel.x;
-		this.vel.y = -this.maxVel.y;
 		this.xPositive = true;
 		this.yPositive = false;
-		this.actionsRemaining = 80;
+		this.actionsRemaining = 8;
 	},
 
 	// Bite quickly towards the player a bunch of times
@@ -146,7 +156,7 @@ EntitySerpentking = EntityBoss.extend({
 
 		this.tongue();
 
-		this.speed = 200;
+		this.maxVel.x = 200;
 
 		if (this.childNode) {
 			this.childNode.configureSpeed({x: 15, y: 10});
@@ -158,21 +168,25 @@ EntitySerpentking = EntityBoss.extend({
 		this.state = 3;
 		this.actionsRemaining = 8;
 
-		this.vel.x = 15;
-		this.vel.y = -10;
+		this.accel.x = 40;
+		this.accel.y = -10;
 	},
 
 
 	// Bite towards the player
 	bite: function() {
 		this.currentAnim = this.anims.bite.rewind();
-		this.vel.x = -this.speed;
-		this.vel.y = -this.speed + Math.random()*this.speed*2;
+		this.vel.x = 0;
+		this.vel.y = 0;
+		this.accel.x = -this.maxVel.x * this.accelFactor;
+		this.accel.y = -this.maxVel.x + Math.random()*this.maxVel.x*2;
+		this.maxVel.y = Math.abs(this.accel.y);
+		this.accel.y *= this.accelFactor;
 		this.actionsRemaining -= 1;
 
 		// Re-configure the rest of the parts to the new random speed
 		if (this.childNode) {
-			this.childNode.configureSpeed({x: this.speed, y: Math.abs(this.vel.y)});
+			this.childNode.configureSpeed(this.maxVel);
 		}
 	},
 
@@ -188,8 +202,10 @@ EntitySerpentking = EntityBoss.extend({
 
 		// If biting, reverse once the animation is complete
 		if (this.currentAnim == this.anims.bite && this.currentAnim.loopCount > 0) {
-			this.vel.x = -this.vel.x;
-			this.vel.y = -this.vel.y;
+			this.vel.x = 0;
+			this.vel.y = 0;
+			this.accel.x = -this.accel.x;
+			this.accel.y = -this.accel.y;
 			this.currentAnim = this.anims.idle;
 			this.attackTimer = new ig.Timer(1);
 		}
@@ -210,13 +226,13 @@ EntitySerpentking = EntityBoss.extend({
 			if (this.state == 1) {
 				this.xReverseTimer.set(1.5);
 			}
-			this.accel.x = -this.vel.x*3;
+			this.accel.x = -this.vel.x*this.accelFactor;
 		}
 		if (this.yReverseTimer != null && this.yReverseTimer.delta() > 0) {
 			if (this.state == 1) {
 				this.yReverseTimer.set(3);
 			}
-			this.accel.y = -this.vel.y*3;
+			this.accel.y = -this.vel.y*this.accelFactor;
 		}
 
 		// Check if it's time to attack again
@@ -276,6 +292,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.accel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
+		this.maxVel.y = 400;
 
 		this.parent();
 	},
@@ -310,32 +327,20 @@ EntitySerpentking = EntityBoss.extend({
 
 		if (this.state == 2) {
 
-			var madeIt = true;
-
-			// Move to the target position
-			if (this.pos.x < this.targetPos.x - 4) {
-				this.vel.x = this.speed;
-				madeIt = false;
-			} else if (this.pos.x > this.targetPos.x + 4) {
-				this.vel.x = -this.speed;
-				madeIt = false;
-			} else {
-				this.pos.x = this.targetPos.x;
-				this.vel.x = 0;
+			// Check if you made it to the target position
+			if (this.pos.x > this.targetPos.x - 4 && this.pos.x < this.targetPos.x + 4) {
+				this.accel.x = 0;
+				this.vel.x *= 0.9;
+				this.foundX = true;
 			}
-			if (this.pos.y < this.targetPos.y - 4) {
-				this.vel.y = this.speed;
-				madeIt = false;
-			} else if (this.pos.y > this.targetPos.y + 4) {
-				this.vel.y = -this.speed;
-				madeIt = false;
-			} else {
-				this.pos.y = this.targetPos.y;
-				this.vel.y = 0;
+			if (this.pos.y > this.targetPos.y - 4 && this.pos.y < this.targetPos.y + 4) {
+				this.accel.y = 0;
+				this.vel.y *= 0.9;
+				this.foundY = true;
 			}
 
 			// If you've reached your destination, go to the next state
-			if (madeIt) {
+			if (this.foundX && this.foundY) {
 				if (this.nextState == 1) {
 					this.idleAttack();
 				} else if (this.nextState == 3) {
@@ -344,7 +349,8 @@ EntitySerpentking = EntityBoss.extend({
 			}
 		}
 
-		// Check if it reversed direction in the last frame
+		// Check if it reversed direction in the last frame,
+		// and if so, notify the first child so that it can transition smoothly
 		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
 			this.xPositive = !this.xPositive;
 			if (this.childNode != null) {

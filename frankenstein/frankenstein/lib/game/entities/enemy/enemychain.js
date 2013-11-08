@@ -22,6 +22,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	rotates: false,		// Rotates based on its velocity
 	angle: 0,			// Current rotation angle 
 	targetAngle: 0,		// Target rotation angle to move towards
+	angleTimer: null,	// Timer to when it recalculates the target angle, to save on arctan calls
 	accel: {x: 0, y: 0},
 	accelFactor: 3,		// For gradual turns, multiply the max velocity by this for the acceleration
 
@@ -60,6 +61,11 @@ EntityEnemychain = EntityEnemypart.extend({
 		// If there are more nodes to be created in this chain, create them
 		if (settings.numNodes > 0) {
 			ig.game.spawnEntity( settings.nodeEntity, this.pos.x + 10, this.pos.y, {master: this.master, parentNode: this, numNodes: settings.numNodes - 1, nodeEntity: settings.nodeEntity, initOffset: settings.initOffset} );
+		}
+
+		// Set the rotation timer
+		if (this.rotates) {
+			this.angleTimer = new ig.Timer(0.5);
 		}
 	},
 
@@ -116,9 +122,20 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.behindBelow = false;
 	},
 
+	handleTimers: function() {
+		if (this.angleTimer != null && this.angleTimer.delta() > 0) {
+			this.angleTimer.reset();
+			this.setTargetAngle();
+		}
+
+		this.parent();
+	},
+
 	// calculate the rotation of this sprite, based on the velocities
 	setTargetAngle: function() {
-		this.targetAngle = Math.atan(this.vel.y / this.vel.x);
+		if (this.rotates) {
+			this.targetAngle = Math.atan(this.vel.y / this.vel.x);
+		}
 	},
 
 	// Optionally, your parent can inform you when they flipped over, so that you can start reversing too
@@ -224,7 +241,6 @@ EntityEnemychain = EntityEnemypart.extend({
 
 		// Set the rotation, if applicable
 		if (this.rotates && !this.dead) {
-			this.setTargetAngle();
 			if (this.angle < this.targetAngle) {
 				this.angle += 0.01;
 				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}

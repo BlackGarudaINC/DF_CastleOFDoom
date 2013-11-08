@@ -35,6 +35,7 @@ EntitySerpentbody = EntityEnemychain.extend({
 		this.accel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
+		this.maxVel.y = 400;
 
 		this.parent();
 	}
