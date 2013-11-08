@@ -20,19 +20,19 @@ EntitySerpentking = EntityBoss.extend({
 	speed: 40,
 	damageFlash: true,
 	gravityFactor: 0,
-	movementDir: true,	// This gets flipped to reverse movement directions
 	flashParts: true,	// All parts flash when hit
 	ignoreCollisions: true,
 
 	attackTimer: null, 	 	// countdown to when it attacks
-	reverseTimer: null,		// countdown to when it reverses direction
+	xReverseTimer: null,	// countdown to when it reverses x velocity
+	yReverseTimer: null,	// countdown to when it reverses y velocity
 	idleTimer: null,		// countdown used for in between, idle time
 	tongueTimer: null,		// countdown for pre-defined tongue action
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
 	
-	chainOrigin: {x: 32, y:0 }, // Offset the body chain a little back
+	chainOrigin: {x: 22, y:0 }, // Offset the body chain a little back
 
 	health: 5,
 	// debugDraw: true,
@@ -70,6 +70,11 @@ EntitySerpentking = EntityBoss.extend({
 	startBattle: function() {
 		this.parent();
 
+		// Configure the movement patterns for the body
+		if (this.childNode) {
+			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, speed: {x: 10, y: 10} });
+		}
+
 		this.idleAttack();
 	},
 
@@ -87,7 +92,7 @@ EntitySerpentking = EntityBoss.extend({
 
 		// Configure for the movement between attacks
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, speed: {x: this.speed, y:this.speed} });
+			this.childNode.configureSpeed({x: this.speed, y:this.speed});
 		}
 
 		this.state = 2;
@@ -112,14 +117,16 @@ EntitySerpentking = EntityBoss.extend({
 
 		// Configure for the idle attack
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: 8, y: -4}, highRange: {x: 8, y: 12}, speed: {x: this.speed, y:this.speed} });
+			this.childNode.configureSpeed({x: this.speed, y:this.speed});
 		}
 
-		this.reverseTimer = new ig.Timer(1);
+		this.xReverseTimer = new ig.Timer(0.5);
+		this.yReverseTimer = new ig.Timer(1);
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
-		this.movementDir = true;
-		this.actionsRemaining = 2;
+		this.vel.y = -this.speed;
+		this.vel.x = this.speed;
+		this.actionsRemaining = 8;
 	},
 
 	// Bite quickly towards the player a bunch of times
@@ -130,11 +137,12 @@ EntitySerpentking = EntityBoss.extend({
 		this.speed = 200;
 
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, speed: {x: 15, y:10} });
+			this.childNode.configureSpeed({x: 15, y: 10});
 		}
 
 		this.attackTimer = new ig.Timer(1);
-		this.reverseTimer = null;
+		this.xReverseTimer = null;
+		this.yReverseTimer = null;
 		this.state = 3;
 		this.actionsRemaining = 8;
 
@@ -186,11 +194,17 @@ EntitySerpentking = EntityBoss.extend({
 		}
 
 		// Check if it's time to reverse movement
-		if (this.reverseTimer != null && this.reverseTimer.delta() > 0) {
+		if (this.xReverseTimer != null && this.xReverseTimer.delta() > 0) {
 			if (this.state == 1) {
-				this.reverseTimer.set(3);
+				this.xReverseTimer.set(1.5);
 			}
-			this.movementDir = !this.movementDir;
+			this.vel.x = -this.vel.x;
+		}
+		if (this.yReverseTimer != null && this.yReverseTimer.delta() > 0) {
+			if (this.state == 1) {
+				this.yReverseTimer.set(3);
+			}
+			this.vel.y = -this.vel.y;
 		}
 
 		// Check if it's time to attack again
@@ -213,7 +227,11 @@ EntitySerpentking = EntityBoss.extend({
 			// Start biting
 			if (this.state == 3) {
 				this.attackTimer = null;
-				this.bite();
+				if (this.actionsRemaining <= 0) {
+					this.newAttack(1);
+				} else {
+					this.bite();
+				}	
 			}
 		}
 
@@ -228,6 +246,10 @@ EntitySerpentking = EntityBoss.extend({
 			if (this.state == 1) {
 				this.idleTimer = null;
 				this.newAttack(3);
+			}
+			if (this.state == 3) {
+				this.idleTimer = null;
+				this.newAttack(1);
 			}
 		}
 
@@ -272,10 +294,7 @@ EntitySerpentking = EntityBoss.extend({
 			return;
 		}
 
-		if (this.state == 1) {
-			// Move up and down slowly
-			this.vel.y = (this.movementDir ? -this.speed : this.speed); 
-		} else if (this.state == 2) {
+		if (this.state == 2) {
 
 			var madeIt = true;
 
