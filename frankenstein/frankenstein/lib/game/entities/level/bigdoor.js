@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.level.bigdoor'
 )
 .requires(
-	'game.entities.base'
+	'game.entities.base',
+	'game.entities.player.meleeattack'
 )
 .defines(function(){
 	
@@ -66,8 +67,8 @@ EntityBigdoor = EntityBase.extend({
 	},
 
 	// When receiving damage from the player, we open the door
-	receiveDamage: function() {
-		if (!this.opened && this.currentAnim == this.anims.closed) {
+	receiveDamage: function( amount, from ) {
+		if (!this.opened && this.currentAnim == this.anims.closed && from instanceof EntityMeleeattack) {
 			this.currentAnim = this.anims.opening.rewind();
 			this.currentAnim.flip.x = this.flip;
 		}
