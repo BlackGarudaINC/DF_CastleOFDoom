@@ -112,7 +112,7 @@ EntityNpc = EntityBase.extend({
 				this.choice--;
 			} else { 
 				// Go to the same position in the prev row if it's available in the prev row
-				if (choiceArr[row-1] >= rowPos) {
+				if (choiceArr[row-1] > rowPos) {
 					this.choice -= choiceArr[row-1];
 				} else {
 					this.choice = total - 1;

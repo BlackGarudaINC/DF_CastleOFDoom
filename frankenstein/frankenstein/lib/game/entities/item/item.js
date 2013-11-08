@@ -49,7 +49,14 @@ EntityItem = EntityBase.extend({
 				}
 			}
 		} else {
+			// Set it up for display in the shop
 			this.ignorePhysics = true;
+			if (this.size.x <= 8) {
+				this.pos.x += 4;
+			}
+			if (this.size.y <= 8) {
+				this.pos.y += 4;
+			}
 		}
 	},
 

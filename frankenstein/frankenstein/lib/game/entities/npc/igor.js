@@ -13,6 +13,8 @@ EntityIgor = EntityNpc.extend({
 	offset: {x: 6, y: 8},
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/Igor_Sprites.png', 32, 32 ),
+	shopImage: new ig.Image( 'media/sprites/ShopUI.png' ),
+	curserImage: new ig.Image( 'media/sprites/ShopCurser.png' ),
 
 	storePurchase: new ig.Sound( 'media/sounds/Store/Purchase.*' ),
 
@@ -29,6 +31,7 @@ EntityIgor = EntityNpc.extend({
 
 	buyMessage: "",		// Message displayed when buying things
 	needMoreMoneyToggle: true, // Switches between two "not enough cash" messages
+	shopSize: 0,		// Number of items in the shop, depending on what is set in weltmeister
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
@@ -36,9 +39,12 @@ EntityIgor = EntityNpc.extend({
 		this.addAnim( 'talk', 0.4, [2,3] );
 
 		if (ig.system.running) {
-			// Turn the item names into entity names
-			for (var i=1; i<=3; i++) {
-				this.item[i] = 'Entity' + this.item[i] + 'item';
+			// Turn the item names into entity names and find out how many are in the shop
+			for (var i=1; i<=6; i++) {
+				if (i in this.item) {
+					this.item[i] = 'Entity' + this.item[i] + 'item';
+					this.shopSize += 1;
+				}
 			}
 		}
 	},
@@ -86,12 +92,12 @@ EntityIgor = EntityNpc.extend({
 			}
 			
 		} else if (this.dialogState == 3) { // Shop
-			this.arrowInput([3, 1]);
+			this.arrowInput([1, 3]);
 			this.clampChoice(4);
 
 			if (this.ok()) {
-				if (this.choice < 3) { // Buy something
-					this.buyItem(this.choice + 1);
+				if (this.choice > 0 && this.choice <= 3) { // Buy something
+					this.buyItem(this.choice);
 				} else { // Leave
 					this.stopShopping();
 					this.dialogState = 1;
@@ -133,13 +139,14 @@ EntityIgor = EntityNpc.extend({
 	// Setup the store
 	startShopping: function() {
 		this.dialogState = 3;
-		this.choice = 3; // Default to buying nothing to prevent accidental buys
+		this.choice = 0; // Default to buying nothing to prevent accidental buys
 		this.buyMessage = "What are you buying?";
 
 		// Create the various items for sale in "store mode"
-		var xoffset = -64;
+		var xoffset = 0;
+		var yoffset = 90;
 		for (var i=1; i<=3; i++) {
-			ig.game.spawnEntity( this.item[i], ig.system.width/2 + xoffset, ig.system.height/2, {inStore: true} );
+			ig.game.spawnEntity( this.item[i], 30 + xoffset, yoffset, {inStore: true} );
 			xoffset += 60;
 		}
 	},
@@ -206,16 +213,26 @@ EntityIgor = EntityNpc.extend({
 
 				this.getFont(0).draw("Yes", ig.system.width/2 - 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
 				this.getFont(1).draw("No", ig.system.width/2 + 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
-			} else if (this.dialogState == 3) {
-				ig.game.whiteFont.draw(this.buyMessage, ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
+			} else if (this.dialogState == 3) { // shop
+				this.shopImage.drawTile( 0, 0, 0, 320, 240 );
 
-				var xoffset = -60;
+				ig.game.whiteFont.draw(this.buyMessage, 10, 18, ig.Font.ALIGN.LEFT);
+
+				this.getFont(0).draw("Leave Shop", 10, 45, ig.Font.ALIGN.LEFT);
+
+				var xoffset = 0;
+				var yoffset = 0;
 				for (var i=1; i<=3; i++) {
-					this.getFont(i-1).draw('$' + this.cost[i], ig.system.width/2 + xoffset, ig.system.height/2 + 30, ig.Font.ALIGN.CENTER);
+					this.getFont(i).draw(this.cost[i] + '$', 26 + xoffset, 114 + yoffset, ig.Font.ALIGN.LEFT);
 					xoffset += 60;
 				}
 
-				this.getFont(3).draw("Nothing", ig.system.width/2, ig.system.height/2 + 60, ig.Font.ALIGN.CENTER);
+				// Draw the cursor if necessary
+				if (this.choice > 0 && this.choice <= 3) {
+					this.curserImage.drawTile( this.choice*60 - 34, 86, 0, 24, 24 );
+				}
+
+				
 			} else if (this.dialogState == 4) {
 				ig.game.whiteFont.draw("Enjoy...whatever this is.", ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
 			}
