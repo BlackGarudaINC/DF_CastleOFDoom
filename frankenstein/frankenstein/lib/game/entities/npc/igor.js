@@ -92,11 +92,15 @@ EntityIgor = EntityNpc.extend({
 			}
 			
 		} else if (this.dialogState == 3) { // Shop
-			this.arrowInput([1, 3]);
-			this.clampChoice(4);
+			if (this.shopSize <= 3) {
+				this.arrowInput([1, this.shopSize]);
+			} else {
+				this.arrowInput([1, 3, this.shopSize - 3]);
+			}
+			this.clampChoice(this.shopSize + 1);
 
 			if (this.ok()) {
-				if (this.choice > 0 && this.choice <= 3) { // Buy something
+				if (this.choice > 0 && this.choice <= this.shopSize) { // Buy something
 					this.buyItem(this.choice);
 				} else { // Leave
 					this.stopShopping();
@@ -145,9 +149,13 @@ EntityIgor = EntityNpc.extend({
 		// Create the various items for sale in "store mode"
 		var xoffset = 0;
 		var yoffset = 90;
-		for (var i=1; i<=3; i++) {
+		for (var i=1; i<=this.shopSize; i++) {
 			ig.game.spawnEntity( this.item[i], 30 + xoffset, yoffset, {inStore: true} );
 			xoffset += 60;
+			if (i == 3) {
+				xoffset = 0;
+				yoffset += 60;
+			}
 		}
 	},
 
@@ -221,15 +229,21 @@ EntityIgor = EntityNpc.extend({
 				this.getFont(0).draw("Leave Shop", 10, 45, ig.Font.ALIGN.LEFT);
 
 				var xoffset = 0;
-				var yoffset = 0;
-				for (var i=1; i<=3; i++) {
-					this.getFont(i).draw(this.cost[i] + '$', 26 + xoffset, 114 + yoffset, ig.Font.ALIGN.LEFT);
+				var yoffset = 114;
+				for (var i=1; i<=this.shopSize; i++) {
+					this.getFont(i).draw(this.cost[i] + '$', 26 + xoffset, yoffset, ig.Font.ALIGN.LEFT);
 					xoffset += 60;
+					if (i == 3) {
+						xoffset = 0;
+						yoffset += 60;
+					}
 				}
 
 				// Draw the cursor if necessary
 				if (this.choice > 0 && this.choice <= 3) {
 					this.curserImage.drawTile( this.choice*60 - 34, 86, 0, 24, 24 );
+				} else if (this.choice > 3 && this.choice <= 6) {
+					this.curserImage.drawTile( (this.choice-3)*60 - 34, 146, 0, 24, 24 );
 				}
 
 				
