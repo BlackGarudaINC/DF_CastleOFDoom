@@ -196,13 +196,15 @@ EntityEnemychain = EntityEnemypart.extend({
 
 		// Set the rotation, if applicable
 		if (this.rotates) {
-			if (this.angle < this.targetAngle) {
-				this.angle += 0.1;
-				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
-			}
-			if (this.angle > this.targetAngle) {
-				this.angle -= 0.1;
-				if (this.angle < this.targetAngle) {this.angle = this.targetAngle;}
+			if (!this.dead) {
+				if (this.angle < this.targetAngle) {
+					this.angle += 0.1;
+					if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
+				}
+				if (this.angle > this.targetAngle) {
+					this.angle -= 0.1;
+					if (this.angle < this.targetAngle) {this.angle = this.targetAngle;}
+				}
 			}
 			this.currentAnim.angle = this.angle;
 		}

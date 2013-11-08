@@ -24,7 +24,7 @@ EntitySerpentbody = EntityEnemychain.extend({
 		this.parent( x, y, settings );
 
 		this.addAnim( 'idle', 1, [2] );
-		this.addAnim( 'death', 2, [2, 2], true );
+		this.addAnim( 'death', 4, [22], true );
 	},
 
 	// Make it stop and fall to the ground when dead

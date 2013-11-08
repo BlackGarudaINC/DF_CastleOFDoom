@@ -55,7 +55,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.addAnim( 'idle', 1, [0] );
 		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid
 		this.addAnim( 'bite', 0.1, [0, 4, 5, 8, 8, 8, 8, 5, 4, 0], true); 
-		this.addAnim( 'death', 2, [0, 0], true );
+		this.addAnim( 'death', 4, [10], true );
 
 		this.idlePos.x = this.pos.x;
 		this.idlePos.y = this.pos.y;
