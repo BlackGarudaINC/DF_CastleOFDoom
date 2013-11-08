@@ -40,12 +40,15 @@ EntitySerpentking = EntityBoss.extend({
 	// 1: Idle / shoot acid
 	// 2: Move to a new position
 	state: 0,
+	nextState: 0,	// When in state 2 (move to a new position), this is the state it's moving to
+	targetPos: {x:0, y:0}, // In state 2, this is where it's trying to get to
 
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
 		this.addAnim( 'idle', 1, [0] );
+		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid
 		this.addAnim( 'death', 2, [0, 0], true );
 
 		if (ig.system.running && !this.alreadyDead) {
@@ -84,6 +87,15 @@ EntitySerpentking = EntityBoss.extend({
 		return this.anims.idle;
 	},
 
+	handleAnimations: function() {
+
+		if (this.currentAnim == this.anims.shoot && this.currentAnim.loopCount > 0) {
+			this.currentAnim = this.anims.idle;
+		}
+
+		this.parent();
+	},
+
 	handleTimers: function() {
 
 		this.parent();
@@ -104,6 +116,7 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 			// Shoot acid
 			if (this.state == 1) {
+				this.currentAnim = this.anims.shoot.rewind();
 				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+12, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
 			}
 			this.attackTimer.set(1);
@@ -123,10 +136,17 @@ EntitySerpentking = EntityBoss.extend({
 	
 	draw: function() {
 
-		// Draw the other half of the mouth
-		// if (this.visible) {
-		// 	this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 20, 2, 64, 32 );
-		// }
+		// Draw the overflow for various frames
+		if (this.visible) {
+			var tile = null;
+			if (this.currentAnim.tile == 5) {
+				tile = 9;
+			}
+
+			if (tile != null) {
+				this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 32 - this.offset.y, tile, 64, 32 );
+			}
+		}
 
 		this.parent();
 	},
