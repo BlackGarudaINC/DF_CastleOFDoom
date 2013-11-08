@@ -72,7 +72,7 @@ EntitySerpentking = EntityBoss.extend({
 
 		// Configure the movement patterns for the body
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, speed: {x: 10, y: 10} });
+			this.childNode.configure({ lowRange: {x: -4, y: -12}, highRange: {x: 12, y: 12}, maxVel: {x: 10, y: 10} });
 		}
 
 		this.idleAttack();
@@ -267,6 +267,8 @@ EntitySerpentking = EntityBoss.extend({
 	deathCallback: function() {
 		this.vel.x = 0;
 		this.vel.y = 0;
+		this.accel.x = 0;
+		this.accel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
 

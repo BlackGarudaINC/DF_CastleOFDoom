@@ -18,11 +18,11 @@ EntityEnemychain = EntityEnemypart.extend({
 	lowRange: {x:0, y:0}, 	// Offsets from the parent where it's allowed to be
 	highRange: {x: 0, y:0},
 	speedDamping: 1,	// Each part of the chain can have slightly less speed than the parent.  This is a multiplier.
-	speed: {x: 0, y:0}, // the speed to move in each direction
 	configured: false,	// False until it becomes initially configured
 	rotates: false,		// Rotates based on its velocity
 	angle: 0,			// Current rotation angle 
 	targetAngle: 0,		// Target rotation angle to move towards
+	accel: {x: 0, y: 0},
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -68,7 +68,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	// Required settings:
 	// lowRange: The minimum x, y offset from the parent
 	// highRange: The maximum x, y offset from the parent
-	// speed: The x and y speed
+	// maxVel: How fast it can move in each direction
 	configure: function( settings ) {
 
 		// Set the ranges
@@ -76,8 +76,8 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.highRange = settings.highRange;
 
 		// Set the speed and apply the damping
-		this.speed.x = settings.speed.x * this.speedDamping;
-		this.speed.y = settings.speed.y * this.speedDamping;
+		this.maxVel.x = settings.maxVel.x * this.speedDamping;
+		this.maxVel.y = settings.maxVel.y * this.speedDamping;
 
 		// Configure the rest of the chain
 		if (this.childNode != null) {
@@ -93,16 +93,16 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.configured = true;
 	},
 
-	// Only reconfigure the x,y speed
-	configureSpeed: function( speed ) {
+	// Only reconfigure the x,y max velocity
+	configureSpeed: function( maxVel) {
 
 		// Set the speed and apply the damping
-		this.speed.x = speed.x * this.speedDamping;
-		this.speed.y = speed.y * this.speedDamping;
+		this.maxVel.x = maxVel.x * this.speedDamping;
+		this.maxVel.y = maxVel.y * this.speedDamping;
 
 		// Configure the rest of the chain
 		if (this.childNode != null) {
-			this.childNode.configureSpeed(speed);
+			this.childNode.configureSpeed(maxVel);
 		}
 
 		// Reset all the "behind" variables
@@ -143,6 +143,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		// the x velocity.
 		if (this.highRange.x == this.lowRange.x && this.vel.x != 0 && this.pos.x > target.x + this.highRange.x - 4 && this.pos.x < target.x + this.highRange.x + 4) {
 			this.vel.x = 0;
+			this.accel.x = 0;
 			this.pos.x = target.x + this.highRange.x;
 			this.behindLeft = false;
 			this.behindRight = false;
@@ -153,7 +154,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		// all of the proper variables are already set here.
 		if (!this.behindLeft) {
 			if (target.x + this.lowRange.x > this.pos.x + 0.5) {
-				this.vel.x = this.speed.x;
+				this.accel.x = this.maxVel.x * 20;
 				this.behindLeft = true;
 				this.behindRight = false;
 				this.setTargetAngle();
@@ -162,7 +163,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		// Now we do the same check but to the right.
 		if (!this.behindRight) {
 			if (target.x + this.highRange.x < this.pos.x - 0.5) {
-				this.vel.x = -this.speed.x;
+				this.accel.x = -this.maxVel.x * 20;
 				this.behindRight = true;
 				this.behindLeft = false;
 				this.setTargetAngle();
@@ -173,13 +174,14 @@ EntityEnemychain = EntityEnemypart.extend({
 		// Now check the y pos in the same way we checked X.
 		if (this.highRange.y == this.lowRange.y && this.vel.y != 0 && this.pos.y > target.y + this.highRange.y - 4 && this.pos.y < target.y + this.highRange.y + 4) {
 			this.vel.y = 0;
+			this.accel.y = 0;
 			this.pos.y = target.y + this.highRange.y;
 			this.behindAbove = false;
 			this.behindBelow = false;
 		} 
 		if (!this.behindAbove) {
 			if (target.y + this.lowRange.y > this.pos.y + 0.5) {
-				this.vel.y = this.speed.y;
+				this.accel.y = this.maxVel.y * 20;
 				this.behindAbove = true;
 				this.behindBelow = false;
 				this.setTargetAngle();
@@ -187,7 +189,7 @@ EntityEnemychain = EntityEnemypart.extend({
 		}
 		if (!this.behindBelow) {
 			if (target.y + this.highRange.y < this.pos.y - 0.5) {
-				this.vel.y = -this.speed.y;
+				this.accel.y = -this.maxVel.y * 20;
 				this.behindBelow = true;
 				this.behindAbove = false;
 				this.setTargetAngle();
@@ -197,11 +199,11 @@ EntityEnemychain = EntityEnemypart.extend({
 		// Set the rotation, if applicable
 		if (this.rotates && !this.dead) {
 			if (this.angle < this.targetAngle) {
-				this.angle += 0.1;
+				this.angle += 0.01;
 				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
 			}
 			if (this.angle > this.targetAngle) {
-				this.angle -= 0.1;
+				this.angle -= 0.01;
 				if (this.angle < this.targetAngle) {this.angle = this.targetAngle;}
 			}
 			this.currentAnim.angle = this.angle;
