@@ -66,7 +66,7 @@ MyGame = ig.Game.extend({
 		health: 6,
 		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing
 		stamina: 60,
-		gold: 20,
+		gold: 50,
 		energized: false, // Whether or not you're currently energized
 
 		// Learned moves from books, in the order that they're learned
@@ -115,6 +115,7 @@ MyGame = ig.Game.extend({
 
 	paused: false, // Whether or not the game is currently paused
 	cutsceneRunning: false, // Whether or not a cutscene is currently happening
+	shopping: false, // Whether or not you're in a shop
 
 	fadeOut: false,	// If the screen is fading out to black
 	fadeIn: false,	// If the screen is fading back in

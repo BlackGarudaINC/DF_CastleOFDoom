@@ -1007,8 +1007,8 @@ EntityPlayer = EntityBase.extend({
 	// Collect the throwing weapon with the given ID
 	changeThrowingWeapon: function( weaponID ) {
 
-		// If you're currently holding a weapon, drop it
-		if (ig.game.playerState.throwWeapon) {
+		// If you're currently holding a weapon, drop it (unless you just bought your new item)
+		if (ig.game.playerState.throwWeapon && !ig.game.shopping) {
 			this.dropWeapon(this.getThrowingItem());
 		}
 
@@ -1019,7 +1019,7 @@ EntityPlayer = EntityBase.extend({
 	changeMeleeWeapon: function( weaponID ) {
 
 		// If you're currently holding a weapon, drop it
-		if (ig.game.playerState.meleeWeapon) {
+		if (ig.game.playerState.meleeWeapon && !ig.game.shopping) {
 			this.dropWeapon(this.getMeleeItem());
 		}
 

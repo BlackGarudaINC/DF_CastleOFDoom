@@ -15,6 +15,9 @@ EntityIgor = EntityNpc.extend({
 	animSheet: new ig.AnimationSheet( 'media/sprites/Igor_Sprites.png', 32, 32 ),
 	shopImage: new ig.Image( 'media/sprites/ShopUI.png' ),
 	curserImage: new ig.Image( 'media/sprites/ShopCurser.png' ),
+	goldHud: new ig.Image( 'media/sprites/GoldSack_HUD.png' ),
+	itemHud: new ig.Image( 'media/sprites/Items01_HUD.png' ),
+	itemHud2: new ig.Image( 'media/sprites/Items02_HUD.png' ),
 
 	storePurchase: new ig.Sound( 'media/sounds/Store/Purchase.*' ),
 
@@ -133,10 +136,9 @@ EntityIgor = EntityNpc.extend({
 
 			// Buy the item
 			ig.game.playerState.gold -= this.cost[item];
-			this.dialogState = 4;
-			this.stopShopping();
-			var xoffset = (this.flip ? -20 : 40);
-			ig.game.spawnEntity( this.item[item], this.pos.x + xoffset, this.pos.y - 10, {} );
+			this.choice = 0;
+			this.buyMessage = "Thanks. Want anything else?";
+			ig.game.spawnEntity( this.item[item], ig.game.player.pos.x, ig.game.player.pos.y, {} );
 		}
 	},
 
@@ -145,6 +147,7 @@ EntityIgor = EntityNpc.extend({
 		this.dialogState = 3;
 		this.choice = 0; // Default to buying nothing to prevent accidental buys
 		this.buyMessage = "What are you buying?";
+		ig.game.shopping = true;
 
 		// Create the various items for sale in "store mode"
 		var xoffset = 0;
@@ -162,6 +165,7 @@ EntityIgor = EntityNpc.extend({
 	// Tear down the store
 	stopShopping: function() {
 		// Destroy all store items
+		ig.game.shopping = false;
 		var items = ig.game.getEntitiesByType(EntityItem);
 		for (var i in items) {
 			if (!isNaN(i)) {
@@ -222,12 +226,19 @@ EntityIgor = EntityNpc.extend({
 				this.getFont(0).draw("Yes", ig.system.width/2 - 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
 				this.getFont(1).draw("No", ig.system.width/2 + 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
 			} else if (this.dialogState == 3) { // shop
+
+				// Background
 				this.shopImage.drawTile( 0, 0, 0, 320, 240 );
 
 				ig.game.whiteFont.draw(this.buyMessage, 10, 18, ig.Font.ALIGN.LEFT);
 
 				this.getFont(0).draw("Leave Shop", 10, 45, ig.Font.ALIGN.LEFT);
 
+				// Draw your gold
+				this.goldHud.drawTile( 196, 42, 0, 16, 20 );
+				ig.game.whiteFont.draw( ig.game.playerState.gold, 216, 45, ig.Font.ALIGN.LEFT);
+
+				// Draw the cost for every item
 				var xoffset = 0;
 				var yoffset = 114;
 				for (var i=1; i<=this.shopSize; i++) {
@@ -236,6 +247,57 @@ EntityIgor = EntityNpc.extend({
 					if (i == 3) {
 						xoffset = 0;
 						yoffset += 60;
+					}
+				}
+
+				// Draw your current inventory
+				if (ig.game.playerState.meleeWeapon == null && ig.game.playerState.throwWeapon == null) {
+					ig.game.whiteFont.draw( "No Items", 216, 114, ig.Font.ALIGN.LEFT );
+				} else {
+
+					// Draw your melee weapon
+					if (ig.game.playerState.meleeWeapon != null) {
+						var frame = 0;
+						switch(ig.game.playerState.meleeWeapon) {
+						case 1: // Club
+							frame = 0;
+							break;
+						case 2: // Pitchfork
+							frame = 3;
+							break;
+						case 3: // Ball and Chain
+							frame = 4;
+							break;
+						case 4: // Scythe
+							frame = 2;
+							break;
+						case 5: // Hammer
+							frame = 1;
+							break;
+						}
+
+						this.itemHud2.drawTile( 236, 90, frame, 24, 24 );
+					}
+
+					// Draw your throwing weapon
+					if (ig.game.playerState.throwWeapon != null) {
+						var frame = 0;
+						switch(ig.game.playerState.throwWeapon) {
+						case 1: // Hatchet
+							frame = 2;
+							break;
+						case 2: // Stone
+							frame = 0;
+							break;
+						case 3: // Acid
+							frame = 1;
+							break;
+						case 4: // Bomb
+							frame = 3;
+							break;
+						}
+
+						this.itemHud.drawTile( 240, 150, frame, 16, 24 );
 					}
 				}
 
