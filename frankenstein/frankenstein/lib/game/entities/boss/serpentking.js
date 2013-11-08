@@ -119,7 +119,8 @@ EntitySerpentking = EntityBoss.extend({
 
 		this.tongue();
 
-		this.speed = 40;
+		this.maxVel.x = 40;
+		this.maxVel.y = 40;
 
 		// Configure for the idle attack
 		if (this.childNode) {
@@ -130,9 +131,9 @@ EntitySerpentking = EntityBoss.extend({
 		this.yReverseTimer = new ig.Timer(1);
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
-		this.vel.y = -this.speed;
-		this.vel.x = this.speed;
-		this.actionsRemaining = 8;
+		this.vel.x = this.maxVel.x;
+		this.vel.y = -this.maxVel.y;
+		this.actionsRemaining = 80;
 	},
 
 	// Bite quickly towards the player a bunch of times
@@ -204,13 +205,13 @@ EntitySerpentking = EntityBoss.extend({
 			if (this.state == 1) {
 				this.xReverseTimer.set(1.5);
 			}
-			this.vel.x = -this.vel.x;
+			this.accel.x = -this.vel.x*3;
 		}
 		if (this.yReverseTimer != null && this.yReverseTimer.delta() > 0) {
 			if (this.state == 1) {
 				this.yReverseTimer.set(3);
 			}
-			this.vel.y = -this.vel.y;
+			this.accel.y = -this.vel.y*3;
 		}
 
 		// Check if it's time to attack again
