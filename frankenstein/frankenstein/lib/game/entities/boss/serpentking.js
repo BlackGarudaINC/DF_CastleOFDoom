@@ -45,7 +45,6 @@ EntitySerpentking = EntityBoss.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
-		// There's not really any major animations, just overflow drawing
 		this.addAnim( 'idle', 1, [0] );
 		this.addAnim( 'death', 2, [0, 0], true );
 
@@ -105,7 +104,7 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 			// Shoot acid
 			if (this.state == 1) {
-				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+10, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
+				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+12, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
 			}
 			this.attackTimer.set(1);
 		}
@@ -125,9 +124,9 @@ EntitySerpentking = EntityBoss.extend({
 	draw: function() {
 
 		// Draw the other half of the mouth
-		if (this.visible) {
-			this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 20, 2, 64, 32 );
-		}
+		// if (this.visible) {
+		// 	this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 20, 2, 64, 32 );
+		// }
 
 		this.parent();
 	},

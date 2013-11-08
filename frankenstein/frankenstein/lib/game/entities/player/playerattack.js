@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.player.playerattack'
 )
 .requires(
-	'game.entities.base'
+	'game.entities.base',
+	'game.entities.enemy.enemyprojectile'
 )
 .defines(function(){
 
@@ -62,7 +63,10 @@ EntityPlayerattack = EntityBase.extend({
 	// This function is called when this entity overlaps anonther entity of the
 	// checkAgainst group. I.e. for this entity, all entities in the B group.
 	check: function( other ) {
-		this.dealDamage(other);
+		// It doesn't count when you hit an enemy projectile
+		if (!(other instanceof EntityEnemyprojectile)) {
+			this.dealDamage(other);
+		}
 		this.parent();
 	}	
 });

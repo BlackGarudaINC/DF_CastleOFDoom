@@ -20,14 +20,17 @@ EntityEnemyprojectile = EntityEnemy.extend({
 	edgeReverse: false,
 	levelReverse: false, 
 	dropsItems: false, 
+	instantDeath: true, // don't flash out
 	
 	handleMovementTrace: function( res ) {
-		this.parent( res );
 		
 		// Get destroyed when hitting a wall
-		if( res.collision.y || res.collision.x ) {
+		if( !this.dead &&  (res.collision.y || res.collision.x )) {
 			this.die();
 		}
+
+		this.parent( res );
+		
 	},
 
 	myUpdate: function() {
