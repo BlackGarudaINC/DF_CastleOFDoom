@@ -120,8 +120,8 @@ EntitySerpentking = EntityBoss.extend({
 			this.targetPos.x = this.idlePos.x;
 			this.targetPos.y = this.idlePos.y;
 		} else if (this.nextState == 3) {
-			this.targetPos.x = this.idlePos.x + 10;
-			this.targetPos.y = this.idlePos.y + 40;
+			this.targetPos.x = this.idlePos.x - 10;
+			this.targetPos.y = this.idlePos.y;
 		}
 
 		// Set the acceleration to move towards the target
@@ -330,12 +330,12 @@ EntitySerpentking = EntityBoss.extend({
 			// Check if you made it to the target position
 			if (this.pos.x > this.targetPos.x - 4 && this.pos.x < this.targetPos.x + 4) {
 				this.accel.x = 0;
-				this.vel.x *= 0.9;
+				this.vel.x = 0;
 				this.foundX = true;
 			}
 			if (this.pos.y > this.targetPos.y - 4 && this.pos.y < this.targetPos.y + 4) {
 				this.accel.y = 0;
-				this.vel.y *= 0.9;
+				this.vel.y = 0;
 				this.foundY = true;
 			}
 
