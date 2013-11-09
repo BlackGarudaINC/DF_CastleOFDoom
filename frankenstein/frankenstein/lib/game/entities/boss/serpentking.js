@@ -78,6 +78,8 @@ EntitySerpentking = EntityBoss.extend({
 	startBattle: function() {
 		this.parent();
 
+		if (this.alreadyDead) {return;}
+
 		// Configure the movement patterns for the body
 		if (this.childNode) {
 			this.childNode.configure({ lowRange: {x: -4, y: -6}, highRange: {x: 8, y: 6}, maxVel: {x: 10, y: 10} });
