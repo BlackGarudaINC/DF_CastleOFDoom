@@ -82,8 +82,6 @@ EntitySerpentking = EntityBoss.extend({
 		}
 
 		this.idleAttack();
-		this.vel.x = this.maxVel.x;
-		this.vel.y = -this.maxVel.y;
 	},
 
 	// Stick out the tongue once
@@ -146,6 +144,8 @@ EntitySerpentking = EntityBoss.extend({
 		this.yReverseTimer = new ig.Timer(1);
 		this.attackTimer = new ig.Timer(2);
 		this.state = 1;
+		this.vel.x = this.maxVel.x;
+		this.vel.y = -this.maxVel.y;
 		this.xPositive = true;
 		this.yPositive = false;
 		this.actionsRemaining = 8;
