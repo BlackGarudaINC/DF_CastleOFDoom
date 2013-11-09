@@ -61,7 +61,7 @@ MyGame = ig.Game.extend({
 	// Player vars that are global across levels
 	playerState: {
 		meleeWeapon: 4,
-		throwWeapon: 1,
+		throwWeapon: 3,
 		maxHealth: 6,
 		health: 6,
 		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing

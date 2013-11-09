@@ -116,6 +116,8 @@ EntitySerpentking = EntityBoss.extend({
 		this.nextState = nextAttack;
 		this.foundX = false;
 		this.foundY = false;
+		this.xReverseTimer = null;
+		this.yReverseTimer = null;
 
 		// Locations where each attack takes place
 		if (this.nextState == 1) {
@@ -252,7 +254,7 @@ EntitySerpentking = EntityBoss.extend({
 				if (this.currentAnim == this.anims.idle) {
 					this.currentAnim = this.anims.spew.rewind();
 				}
-				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+20, this.pos.y+26, {vel: {x: -70 + Math.random()*-200, y: -50 + Math.random()*-150}} );
+				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+20, this.pos.y+26, {vel: {x: -100 + Math.random()*-200, y: -50 + Math.random()*-150}} );
 				this.actionsRemaining -= 1;
 				if (this.actionsRemaining <= 0) {
 					this.attackTimer = null;
