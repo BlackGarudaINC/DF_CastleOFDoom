@@ -176,8 +176,6 @@ EntitySerpentking = EntityBoss.extend({
 	// Bite towards the player
 	bite: function() {
 		this.currentAnim = this.anims.bite.rewind();
-		this.vel.x = 0;
-		this.vel.y = 0;
 		this.accel.x = -this.maxVel.x * this.accelFactor;
 		this.accel.y = -this.maxVel.x + Math.random()*this.maxVel.x*2;
 		this.maxVel.y = Math.abs(this.accel.y);
@@ -202,8 +200,6 @@ EntitySerpentking = EntityBoss.extend({
 
 		// If biting, reverse once the animation is complete
 		if (this.currentAnim == this.anims.bite && this.currentAnim.loopCount > 0) {
-			this.vel.x = 0;
-			this.vel.y = 0;
 			this.accel.x = -this.accel.x;
 			this.accel.y = -this.accel.y;
 			this.currentAnim = this.anims.idle;
@@ -341,6 +337,8 @@ EntitySerpentking = EntityBoss.extend({
 
 			// If you've reached your destination, go to the next state
 			if (this.foundX && this.foundY) {
+				this.foundX = false;
+				this.foundY = false;
 				if (this.nextState == 1) {
 					this.idleAttack();
 				} else if (this.nextState == 3) {
@@ -353,14 +351,14 @@ EntitySerpentking = EntityBoss.extend({
 		// and if so, notify the first child so that it can transition smoothly
 		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
 			this.xPositive = !this.xPositive;
-			if (this.childNode != null) {
-				this.childNode.xFlip();
+			if (this.childNode != null && !this.foundX) {
+				this.childNode.xFlip(this.xPositive);
 			}
 		}
 		if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
 			this.yPositive = !this.yPositive;
-			if (this.childNode != null) {
-				this.childNode.yFlip();
+			if (this.childNode != null && !this.foundY) {
+				this.childNode.yFlip(this.yPositive);
 			}
 		}
 

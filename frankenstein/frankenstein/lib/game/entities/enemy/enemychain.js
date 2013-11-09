@@ -115,7 +115,12 @@ EntityEnemychain = EntityEnemypart.extend({
 			this.childNode.configureSpeed(maxVel);
 		}
 
-		// Reset all the "behind" variables
+		this.resetBehinds();
+		
+	},
+
+	// Set all the "behind" variables to false
+	resetBehinds: function() {
 		this.behindLeft = false;
 		this.behindRight = false;
 		this.behindAbove = false;
@@ -139,11 +144,13 @@ EntityEnemychain = EntityEnemypart.extend({
 	},
 
 	// Optionally, your parent can inform you when they flipped over, so that you can start reversing too
-	xFlip: function() {
-		this.accel.x = this.maxVel.x * (this.xPositive ? -this.accelFactor : this.accelFactor);
+	xFlip: function(direction) {
+		this.accel.x = this.maxVel.x * (direction ? this.accelFactor : -this.accelFactor);
+		this.resetBehinds();
 	},
-	yFlip: function() {
-		this.accel.y = -this.maxVel.y * (this.yPositive ? -this.accelFactor : this.accelFactor);
+	yFlip: function(direction) {
+		this.accel.y = -this.maxVel.y * (direction ? this.accelFactor : -this.accelFactor);
+		this.resetBehinds();
 	},
 
 	myUpdate: function() {
@@ -159,13 +166,13 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
 			this.xPositive = !this.xPositive;
 			if (this.childNode != null) {
-				this.childNode.xFlip();
+				this.childNode.xFlip(this.xPositive);
 			}
 		}
 		if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
 			this.yPositive = !this.yPositive;
 			if (this.childNode != null) {
-				this.childNode.yFlip();
+				this.childNode.yFlip(this.yPositive);
 			}
 		}
 
