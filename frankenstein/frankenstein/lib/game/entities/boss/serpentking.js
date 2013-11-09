@@ -59,7 +59,9 @@ EntitySerpentking = EntityBoss.extend({
 		this.parent( x, y, settings );
 		
 		this.addAnim( 'idle', 1, [0] );
-		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid
+		this.addAnim( 'shoot', 0.1, [4, 5, 4], true); // shooting acid one at a time
+		this.addAnim( 'spew', 0.1, [4, 5], true);  // keep mouth open for continuous acid shots
+		this.addAnim( 'close', 0.1, [5, 4], true);    // close mouth (go to idle right after)
 		this.addAnim( 'bite', 0.1, [0, 4, 5, 8, 8, 8, 8, 5, 4, 0], true); 
 		this.addAnim( 'death', 4, [10], true );
 
@@ -148,7 +150,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.vel.y = -this.maxVel.y;
 		this.xPositive = true;
 		this.yPositive = false;
-		this.actionsRemaining = 8;
+		this.actionsRemaining = ((this.phase+1)*30) + Math.random()*80;
 	},
 
 	// Bite quickly towards the player a bunch of times
@@ -168,7 +170,7 @@ EntitySerpentking = EntityBoss.extend({
 		this.xReverseTimer = null;
 		this.yReverseTimer = null;
 		this.state = 3;
-		this.actionsRemaining = 8;
+		this.actionsRemaining = ((this.phase+1)*2) + Math.random()*3;
 
 		this.accel.x = 40;
 		this.accel.y = -10;
@@ -198,6 +200,11 @@ EntitySerpentking = EntityBoss.extend({
 	handleAnimations: function() {
 
 		if (this.currentAnim == this.anims.shoot && this.currentAnim.loopCount > 0) {
+			this.currentAnim = this.anims.idle;
+		}
+
+		// Go to idle after closing mouth
+		if (this.currentAnim == this.anims.close && this.currentAnim.loopCount > 0) {
 			this.currentAnim = this.anims.idle;
 		}
 
@@ -239,16 +246,32 @@ EntitySerpentking = EntityBoss.extend({
 
 			// Shoot acid
 			if (this.state == 1) {
-				this.currentAnim = this.anims.shoot.rewind();
-				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+12, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
+
+				if (this.currentAnim == this.anims.idle) {
+					this.currentAnim = this.anims.spew.rewind();
+				}
+				ig.game.spawnEntity( EntitySerpentacid, this.pos.x+20, this.pos.y+26, {vel: {x: -70 + Math.random()*-200, y: -50 + Math.random()*-150}} );
 				this.actionsRemaining -= 1;
 				if (this.actionsRemaining <= 0) {
 					this.attackTimer = null;
+					this.currentAnim = this.anims.close.rewind();
 					this.idleTimer = new ig.Timer(4);
 					this.tongueTimer = new ig.Timer(1);
 				} else {
-					this.attackTimer.set(1);
+					this.attackTimer.set(0.03 + Math.random()*0.04);
 				}
+
+				// This next block shoots acid one at a time.
+				// this.currentAnim = this.anims.shoot.rewind();
+				// ig.game.spawnEntity( EntitySerpentacid, this.pos.x+10, this.pos.y+12, {vel: {x: -50 + Math.random()*-200, y: -50 + Math.random()*-150}} );
+				// this.actionsRemaining -= 1;
+				// if (this.actionsRemaining <= 0) {
+				// 	this.attackTimer = null;
+				// 	this.idleTimer = new ig.Timer(4);
+				// 	this.tongueTimer = new ig.Timer(1);
+				// } else {
+				// 	this.attackTimer.set(1);
+				// }
 			}
 
 			// Start biting

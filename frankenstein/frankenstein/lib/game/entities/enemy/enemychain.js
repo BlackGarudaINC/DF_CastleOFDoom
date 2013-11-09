@@ -26,6 +26,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	accel: {x: 0, y: 0},
 	accelFactor: 3,		// For gradual turns, multiply the max velocity by this for the acceleration
 	smoothAccel: true,	// Use acceleration rather than instantly turning on a dime
+	knockback: false,
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
