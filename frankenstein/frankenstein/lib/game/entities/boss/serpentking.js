@@ -160,6 +160,8 @@ EntitySerpentking = EntityBoss.extend({
 
 		if (this.childNode) {
 			this.childNode.configureSpeed({x: 15, y: 10});
+			// Don't use smooth following so that it can keep up easier when biting
+			this.childNode.toggleSmoothAccel();
 		}
 
 		this.attackTimer = new ig.Timer(1);
@@ -176,10 +178,11 @@ EntitySerpentking = EntityBoss.extend({
 	// Bite towards the player
 	bite: function() {
 		this.currentAnim = this.anims.bite.rewind();
-		this.accel.x = -this.maxVel.x * this.accelFactor;
-		this.accel.y = -this.maxVel.x + Math.random()*this.maxVel.x*2;
-		this.maxVel.y = Math.abs(this.accel.y);
-		this.accel.y *= this.accelFactor;
+		this.accel.x = 0;
+		this.accel.y = 0;
+		this.vel.x = -this.maxVel.x;
+		this.vel.y = -20 + Math.random()*150;
+		this.maxVel.y = Math.abs(this.vel.y);
 		this.actionsRemaining -= 1;
 
 		// Re-configure the rest of the parts to the new random speed
@@ -200,8 +203,8 @@ EntitySerpentking = EntityBoss.extend({
 
 		// If biting, reverse once the animation is complete
 		if (this.currentAnim == this.anims.bite && this.currentAnim.loopCount > 0) {
-			this.accel.x = -this.accel.x;
-			this.accel.y = -this.accel.y;
+			this.vel.x = -this.vel.x;
+			this.vel.y = -this.vel.y;
 			this.currentAnim = this.anims.idle;
 			this.attackTimer = new ig.Timer(1);
 		}
@@ -252,6 +255,9 @@ EntitySerpentking = EntityBoss.extend({
 			if (this.state == 3) {
 				this.attackTimer = null;
 				if (this.actionsRemaining <= 0) {
+					if (this.childNode != null) {
+						this.childNode.toggleSmoothAccel();
+					}
 					this.newAttack(1);
 				} else {
 					this.bite();
@@ -288,7 +294,8 @@ EntitySerpentking = EntityBoss.extend({
 		this.accel.y = 0;
 		this.gravityFactor = ig.game.gravity;
 		this.ignoreCollisions = false;
-		this.maxVel.y = 400;
+		this.maxVel.x = 0;
+		this.maxVel.y = 300;
 
 		this.parent();
 	},

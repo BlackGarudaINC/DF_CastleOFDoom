@@ -25,6 +25,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	angleTimer: null,	// Timer to when it recalculates the target angle, to save on arctan calls
 	accel: {x: 0, y: 0},
 	accelFactor: 3,		// For gradual turns, multiply the max velocity by this for the acceleration
+	smoothAccel: true,	// Use acceleration rather than instantly turning on a dime
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -153,6 +154,14 @@ EntityEnemychain = EntityEnemypart.extend({
 		this.resetBehinds();
 	},
 
+	// Turn on/off the smooth acceleration feature
+	toggleSmoothAccel: function() {
+		this.smoothAccel = !this.smoothAccel;
+		if (this.childNode != null) {
+			this.childNode.toggleSmoothAccel();
+		}
+	},
+
 	myUpdate: function() {
 
 		this.parent();
@@ -207,6 +216,9 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (!this.behindLeft) {
 			if (target.x + this.lowRange.x > this.pos.x + 0.5) {
 				this.accel.x = this.maxVel.x * 20;
+				if (!this.smoothAccel) {
+					this.vel.x = this.maxVel.x;
+				}
 				this.behindLeft = true;
 				this.behindRight = false;
 			}
@@ -215,6 +227,9 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (!this.behindRight) {
 			if (target.x + this.highRange.x < this.pos.x - 0.5) {
 				this.accel.x = -this.maxVel.x * 20;
+				if (!this.smoothAccel) {
+					this.vel.x = -this.maxVel.x;
+				}
 				this.behindRight = true;
 				this.behindLeft = false;
 			}
@@ -231,6 +246,9 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (!this.behindAbove) {
 			if (target.y + this.lowRange.y > this.pos.y + 0.5) {
 				this.accel.y = this.maxVel.y * 20;
+				if (!this.smoothAccel) {
+					this.vel.y = this.maxVel.y;
+				}
 				this.behindAbove = true;
 				this.behindBelow = false;
 			} 
@@ -238,6 +256,9 @@ EntityEnemychain = EntityEnemypart.extend({
 		if (!this.behindBelow) {
 			if (target.y + this.highRange.y < this.pos.y - 0.5) {
 				this.accel.y = -this.maxVel.y * 20;
+				if (!this.smoothAccel) {
+					this.vel.y = -this.maxVel.y;
+				}
 				this.behindBelow = true;
 				this.behindAbove = false;
 			}
