@@ -68,6 +68,7 @@ MyGame = ig.Game.extend({
 		stamina: 50,
 		gold: 50,
 		energized: false, // Whether or not you're currently energized
+		hasKey: false,
 
 		// Learned moves from books, in the order that they're learned
 		run: false,

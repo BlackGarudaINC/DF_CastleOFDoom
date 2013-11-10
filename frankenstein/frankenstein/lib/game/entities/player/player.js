@@ -773,6 +773,11 @@ EntityPlayer = EntityBase.extend({
 		// Draw the gold
 		this.goldHud.drawTile( ig.system.width-112, ig.system.height - 22, 0, 16, 20 );
 		ig.game.whiteFont.draw( ig.game.playerState.gold, ig.system.width-94, ig.system.height - 16, ig.Font.ALIGN.LEFT);
+
+		// If you have a key, draw it
+		if (ig.game.playerState.hasKey) {
+			this.itemHud.drawTile( ig.system.width-66, ig.system.height - 26, 8, 16, 24 );
+		}
 	},
 
 	// Draw the electricity behind the player 
