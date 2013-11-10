@@ -26,7 +26,7 @@ EntityStaminaitem = EntityItem.extend({
 
 	// Give the player the weapon
 	collected: function( other ) {
-		ig.game.playerState.maxStamina += 16;
+		ig.game.playerState.maxStamina += 5;
 		this.parent();
 	}
 });

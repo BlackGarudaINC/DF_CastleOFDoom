@@ -64,8 +64,8 @@ MyGame = ig.Game.extend({
 		throwWeapon: 3,
 		maxHealth: 6,
 		health: 6,
-		maxStamina: 60, // Keep as a multiple of 16 plus 12 for drawing
-		stamina: 60,
+		maxStamina: 50,  // Don't go above 100
+		stamina: 50,
 		gold: 50,
 		energized: false, // Whether or not you're currently energized
 

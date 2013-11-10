@@ -44,6 +44,7 @@ EntityPlayer = EntityBase.extend({
 	itemHud: new ig.Image( 'media/sprites/Items01_HUD.png' ),
 	itemHud2: new ig.Image( 'media/sprites/Items02_HUD.png' ),
 	goldHud: new ig.Image( 'media/sprites/GoldSack_HUD.png' ),
+	staminaHud: new ig.Image( 'media/sprites/Stamina_HUD.png' ),
 	
 	sfxHurt1: new ig.Sound( 'media/sounds/Player/PlayerGetHit01.*' ),
 	sfxJump: new ig.Sound( 'media/sounds/jump.*' ),
@@ -688,38 +689,41 @@ EntityPlayer = EntityBase.extend({
 
 		var i;
 
-		// Stamina Bar
-		for (i=0; i<Math.floor(ig.game.playerState.maxStamina/16); i++) {
-			this.heartHud.drawTile( i*16, ig.system.height - 18, 3, 16 );
-		}
-		this.heartHud.drawTile( i*16, ig.system.height - 18, 4, 16 );
+		// Old background
+		// for (i=0; i<Math.floor(ig.game.playerState.maxStamina/16); i++) {
+		// 	this.heartHud.drawTile( i*16, ig.system.height - 18, 3, 16 );
+		// }
+		// this.heartHud.drawTile( i*16, ig.system.height - 18, 4, 16 );
 
-		// Stamina
-		ig.system.context.fillStyle = "rgb(154,101,10)";
+		// Stamina background
+		ig.system.context.fillStyle = "rgb(30,30,30)";
 		ig.system.context.beginPath();
 		ig.system.context.rect(
 		                0, 
-		                (ig.system.height - 16) * ig.system.scale, 
-		                ig.game.playerState.stamina * ig.system.scale, 
-		                12 * ig.system.scale
+		                (ig.system.height - 24) * ig.system.scale, 
+		                ig.game.playerState.maxStamina * ig.system.scale, 
+		                5 * ig.system.scale
 		            );
 		ig.system.context.closePath();
 		ig.system.context.fill();
 
+		// Actual stamina
+		this.staminaHud.drawTile( 0, ig.system.height - 24, 0, ig.game.playerState.stamina, 5 );
+
 		// Hearts
 		var halfHealth = Math.floor(ig.game.playerState.health / 2);
 		for (i=0; i<halfHealth; i++) {
-			this.heartHud.drawTile( i*16, ig.system.height - 18, 0, 16 );
+			this.heartHud.drawTile( i*14, ig.system.height - 18, 0, 16 );
 		}
 
 		if (ig.game.playerState.health % 2 == 1) {
-			this.heartHud.drawTile( i*16, ig.system.height - 18, 1, 16 );
+			this.heartHud.drawTile( i*14, ig.system.height - 18, 1, 16 );
 			i++;
 		}
 
 		var maxHearts = Math.floor(ig.game.playerState.maxHealth / 2);
 		for (; i<maxHearts; i++) {
-			this.heartHud.drawTile( i*16, ig.system.height - 18, 2, 16 );
+			this.heartHud.drawTile( i*14, ig.system.height - 18, 2, 16 );
 		}
 	},
 
