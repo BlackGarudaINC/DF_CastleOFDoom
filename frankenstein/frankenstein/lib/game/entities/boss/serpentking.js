@@ -16,6 +16,8 @@ EntitySerpentking = EntityBoss.extend({
 	maxVel: {x: 600, y: 600},
 
 	edgeReverse: false, 
+	levelReverse: false,
+	wallReverse: false,
 	knockback: false,    // If they bounce back from damage
 	speed: 40,
 	damageFlash: true,
@@ -28,6 +30,7 @@ EntitySerpentking = EntityBoss.extend({
 	yReverseTimer: null,	// countdown to when it reverses y velocity
 	idleTimer: null,		// countdown used for in between, idle time
 	tongueTimer: null,		// countdown for pre-defined tongue action
+	flip: false,
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
@@ -91,6 +94,11 @@ EntitySerpentking = EntityBoss.extend({
 	// Stick out the tongue once
 	tongue: function() {
 		ig.game.spawnEntity( EntitySerpenttongue, 40, 40, {master: this} );
+	},
+
+	flipOver: function() {
+		this.flip = !this.flip;
+		this.offset.x = (this.flip ? -22 : 12);
 	},
 
 	// Move to a new attack
@@ -218,6 +226,7 @@ EntitySerpentking = EntityBoss.extend({
 			this.vel.y = -this.vel.y;
 			this.currentAnim = this.anims.idle;
 			this.attackTimer = new ig.Timer(1);
+			this.flipOver();
 		}
 
 		this.parent();
@@ -259,7 +268,7 @@ EntitySerpentking = EntityBoss.extend({
 				if (this.actionsRemaining <= 0) {
 					this.attackTimer = null;
 					this.currentAnim = this.anims.close.rewind();
-					this.idleTimer = new ig.Timer(4);
+					this.idleTimer = new ig.Timer(3);
 					this.tongueTimer = new ig.Timer(1);
 				} else {
 					this.attackTimer.set(0.03 + Math.random()*0.04);
@@ -278,9 +287,12 @@ EntitySerpentking = EntityBoss.extend({
 				// }
 			}
 
-			// Start biting
+			// Bite
 			if (this.state == 3) {
 				this.attackTimer = null;
+				if (this.flip) {
+					this.flipOver();
+				}
 				if (this.actionsRemaining <= 0) {
 					if (this.childNode != null) {
 						this.childNode.toggleSmoothAccel();
@@ -396,6 +408,7 @@ EntitySerpentking = EntityBoss.extend({
 			}
 		}
 
+		this.currentAnim.flip.x = this.flip;
 		
 	}
 });
