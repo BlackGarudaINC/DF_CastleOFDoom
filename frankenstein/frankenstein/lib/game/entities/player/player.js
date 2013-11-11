@@ -298,43 +298,22 @@ EntityPlayer = EntityBase.extend({
 
 	// Use the proper melee attack
 	meleeAttack: function() {
-		var attackTime = 0.3;
-		var width = 8;
-		var damage = 1;
-		var bounceback = 1;
-		var delay = 0.1;
 
 		switch(ig.game.playerState.meleeWeapon) {
 		case 1: // Club
 			this.currentAnim = this.anims.club.rewind();
-			width = 10;
-			damage = 1.2;
 			break;
 		case 2: // Pitchfork
 			this.currentAnim = this.anims.pitchfork.rewind();
-			width = 18;
-			damage = 1.0;
-			bounceback = 0.5;
-			delay = 0;
 			break;
 		case 3: // Ball and chain
 			this.currentAnim = this.anims.ballandchain.rewind();
-			width = 32;
-			damage = 1.4;
-			bounceback = 2.0;
-			attackTime = 0.5;
-			delay = 0.3;
 			break;
 		case 4: // Scythe
 			this.currentAnim = this.anims.scythe.rewind();
-			width = 20;
-			damage = 1.8;
 			break;
 		case 5: // Hammer
 			this.currentAnim = this.anims.hammer.rewind();
-			width = 14;
-			damage = 1.5
-			bounceback = 1.5
 			break;
 		default: // No weapon
 			if (Math.random() < 0.5) {
@@ -346,7 +325,7 @@ EntityPlayer = EntityBase.extend({
 			break;
 		}
 
-		ig.game.spawnEntity( EntityMeleeattack, this.pos.x, this.pos.y, {damage: damage, attackTime: attackTime, flip: this.flip, width: width, bounceback: bounceback, delay: delay} );
+		ig.game.spawnEntity( EntityMeleeattack, this.pos.x, this.pos.y, {weapon: ig.game.playerState.meleeWeapon, flip: this.flip} );
 	},
 
 	// Check every active timer
