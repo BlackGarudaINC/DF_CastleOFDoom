@@ -18,6 +18,8 @@ EntityBase = ig.Entity.extend({
 	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
 	originalSize: {x:0, y:0},
 	originalOffset: {x:0, y:0},
+	tileHorizontally: false,	// Whether or not to repeat the current image for the entire height/width
+	tileVertically: false,
 
 	firstLoop: true,
 
@@ -111,6 +113,21 @@ EntityBase = ig.Entity.extend({
 			            );
 			ig.system.context.closePath();
 			ig.system.context.fill();
+		}
+
+		if (this.tileHorizontally) {
+			if (this.size.x > this.animSheet.width) {
+				var remaining = this.size.x - this.animSheet.width;
+				var offset = this.animSheet.width;
+				while (remaining > 0) {
+					this.currentAnim.draw(
+						this.pos.x - this.offset.x - ig.game._rscreen.x + offset,
+						this.pos.y - this.offset.y - ig.game._rscreen.y
+					);
+					remaining -= this.animSheet.width;
+					offset += this.animSheet.width;
+				}
+			}
 		}
 
 		if (this.visible) {
