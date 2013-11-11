@@ -22,7 +22,8 @@ wm.config = {
 			'lib/game/entities/item/*.js',
 			'lib/game/entities/npc/*.js',
 			'lib/game/entities/npc/actors/*.js',
-			'lib/game/entities/level/*.js'
+			'lib/game/entities/level/*.js',
+			'lib/game/entities/trap/*.js'
 		],
 		
 		// The default path for the level file selection box
