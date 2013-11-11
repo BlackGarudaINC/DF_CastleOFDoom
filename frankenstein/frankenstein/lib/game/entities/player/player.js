@@ -216,12 +216,12 @@ EntityPlayer = EntityBase.extend({
 			var accel = this.standing ? this.accelGround : this.accelAir;
 			if( ig.input.state('left') && (!this.attacking() || !this.standing) ) {
 				if (!this.runLeft) { this.running = false; }
-				this.vel.x = -this.speed * (this.running ? 2 : 1);
+				this.vel.x = -this.speed * (this.running ? 2.5 : 1);
 				this.flip = true;
 			}
 			else if( ig.input.state('right') && (!this.attacking() || !this.standing) ) {
 				if (this.runLeft) { this.running = false; }
-				this.vel.x = this.speed * (this.running ? 2 : 1);
+				this.vel.x = this.speed * (this.running ? 2.5 : 1);
 				this.flip = false;
 			}
 			else {
