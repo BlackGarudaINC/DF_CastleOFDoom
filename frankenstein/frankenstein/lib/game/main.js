@@ -8,6 +8,7 @@ ig.module(
 	'plugins.camera',
 	'plugins.touch-button',
 	'plugins.impact-splash-loader',
+	'plugins.gamepad.gamepad',
 	
 	'game.entities.player.player',
 
@@ -266,6 +267,10 @@ MyGame = ig.Game.extend({
 	},
 	
 	update: function() {		
+		// Load gamepad state, if not active then set to 0
+		var pads = Gamepad.getStates();
+	    if (pads[0] == undefined) pads[0] = 0;
+
 		// Update all entities and BackgroundMaps
 		this.parent();
 
@@ -292,6 +297,9 @@ MyGame = ig.Game.extend({
 		// the screen on the player directly, like this:
 		// this.screen.x = this.player.pos.x - ig.system.width/2;
 		// this.screen.y = this.player.pos.y - ig.system.height/2;
+
+		// To make sure that gamepad.js can set it's variables properly
+		pads[0] = undefined;
 	},
 
 	// Pause / unpause the game
