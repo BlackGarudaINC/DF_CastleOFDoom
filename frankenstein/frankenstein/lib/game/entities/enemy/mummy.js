@@ -17,8 +17,8 @@ EntityMummy = EntitySkeleton.extend({
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Mummy.png' , 32, 32 ),
 
-	health: 10,
-	speed: 26,
+	health: 8,
+	speed: 15,
 	damage: 3,
 	knockback: false,
 	edgeReverse: false,
@@ -28,7 +28,7 @@ EntityMummy = EntitySkeleton.extend({
 		this.parent( x, y, settings );
 
 		this.addAnim( 'idle', 0.1, [0, 1] );
-		this.addAnim( 'walk', 0.1, [0, 2, 0, 3] );
+		this.addAnim( 'walk', 0.1, [0, 0, 2, 2, 0, 0, 3, 3] );
 		this.addAnim( 'pain', 0.3, [6] );
 		this.addAnim( 'attack', 0.1, [0, 4, 5] );
 
