@@ -61,17 +61,17 @@ MyGame = ig.Game.extend({
 	// Player vars that are global across levels
 	playerState: {
 		meleeWeapon: 4,
-		throwWeapon: 3,
-		maxHealth: 6,
-		health: 6,
-		maxStamina: 50,  // Don't go above 100
+		throwWeapon: 1,
+		maxHealth: 12,
+		health: 12,
+		maxStamina: 80,  // Don't go above 100
 		stamina: 50,
 		gold: 50,
 		energized: false, // Whether or not you're currently energized
 		hasKey: false,
 
 		// Learned moves from books, in the order that they're learned
-		run: false,
+		run: true,
 		doubleJump: true,
 		groundPound: true,
 		energize: true,

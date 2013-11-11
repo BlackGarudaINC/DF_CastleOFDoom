@@ -15,7 +15,7 @@ EntitySerpentbody = EntityEnemychain.extend({
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 32, 32 ),
 
 	damageMaster: true,
-	damageMultiplier: 0.3,	// Damage to the body does a lot less damage than head damage
+	damageMultiplier: 0.5,	// Damage to the body does a lot less damage than head damage
 	invincible: true,		// You can't destroy the individual body segments
 	killWhenDead: false,
 	rotates: true,

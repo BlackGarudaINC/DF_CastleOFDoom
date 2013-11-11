@@ -37,7 +37,7 @@ EntitySerpentking = EntityBoss.extend({
 	
 	chainOrigin: {x: 22, y:0 }, // Offset the body chain a little back
 
-	health: 5,
+	health: 60,
 	// debugDraw: true,
 
 	// Different attack states:
@@ -89,8 +89,8 @@ EntitySerpentking = EntityBoss.extend({
 			this.childNode.configure({ lowRange: {x: -4, y: -6}, highRange: {x: 8, y: 6}, maxVel: {x: 10, y: 10} });
 		}
 
-		// this.idleAttack();
-		this.newAttack(4);
+		this.idleAttack();
+		// this.newAttack(4);
 	},
 
 	// Stick out the tongue once
@@ -180,7 +180,7 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.childNode) {
 			this.childNode.configureSpeed({x: 15, y: 10});
 			// Don't use smooth following so that it can keep up easier when biting
-			this.childNode.toggleSmoothAccel();
+			this.childNode.toggleSmoothAccel(false, false);
 		}
 
 		this.attackTimer = new ig.Timer(1);
@@ -203,8 +203,10 @@ EntitySerpentking = EntityBoss.extend({
 
 		if (this.childNode) {
 			this.childNode.configureSpeed(this.maxVel);
-			this.childNode.toggleSmoothAccel();
+			this.childNode.toggleSmoothAccel(false, false);
 		}
+
+		this.actionsRemaining = this.phase + Math.random()*3;
 
 		this.setupSpeedAttack();
 		
@@ -239,6 +241,33 @@ EntitySerpentking = EntityBoss.extend({
 		// Re-configure the rest of the parts to the new random speed
 		if (this.childNode) {
 			this.childNode.configureSpeed(this.maxVel);
+		}
+	},
+
+	// Figure out the next attack, based on the phase of battle
+	prepareNextAttack: function() {
+		var rand = Math.random();
+
+		if (this.phase == 0) {
+			if (this.state == 1) {
+				this.newAttack(3);
+			} else {
+				this.newAttack(1);
+			}
+		} else if (this.phase == 1) {
+			if (rand < 0.5) {
+				this.newAttack(3);
+			} else {
+				this.newAttack(1);
+			}
+		} else if (this.phase >= 2) {
+			if (rand < 0.5) {
+				this.newAttack(4);
+			} else if (rand < 0.8) {
+				this.newAttack(1)
+			} else {
+				this.newAttack(3)
+			}
 		}
 	},
 
@@ -334,9 +363,9 @@ EntitySerpentking = EntityBoss.extend({
 				}
 				if (this.actionsRemaining <= 0) {
 					if (this.childNode != null) {
-						this.childNode.toggleSmoothAccel();
+						this.childNode.toggleSmoothAccel(true, true);
 					}
-					this.newAttack(1);
+					this.prepareNextAttack();
 				} else {
 					this.bite();
 				}	
@@ -353,11 +382,11 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.idleTimer != null && this.idleTimer.delta() > 0) {
 			if (this.state == 1) {
 				this.idleTimer = null;
-				this.newAttack(4);
+				this.prepareNextAttack();
 			}
 			if (this.state == 3) {
 				this.idleTimer = null;
-				this.newAttack(1);
+				this.prepareNextAttack();
 			}
 		}
 
@@ -437,7 +466,15 @@ EntitySerpentking = EntityBoss.extend({
 			// Check if you're far enough offscreen to flip over and attack again
 			if (this.flip && this.pos.x > ig.game.levelWidth + 150) {
 				this.flipOver();
-				this.setupSpeedAttack();
+				this.actionsRemaining -= 1;
+				if (this.actionsRemaining <= 0) {
+					if (this.childNode != null) {
+						this.childNode.toggleSmoothAccel(true, true);
+					}
+					this.prepareNextAttack();
+				} else {
+					this.setupSpeedAttack();
+				}
 			} else if (!this.flip && this.pos.x < -200) {
 				this.flipOver();
 				this.setupSpeedAttack();
