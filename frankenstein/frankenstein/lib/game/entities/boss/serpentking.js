@@ -206,7 +206,7 @@ EntitySerpentking = EntityBoss.extend({
 			this.childNode.toggleSmoothAccel(false, false);
 		}
 
-		this.actionsRemaining = this.phase + Math.random()*3;
+		this.actionsRemaining = this.phase;
 
 		this.setupSpeedAttack();
 		
