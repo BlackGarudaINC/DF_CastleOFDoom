@@ -15,7 +15,8 @@ EntityParticle = EntityBase.extend({
 	collides: ig.Entity.COLLIDES.NEVER,
 
 	removeTimer: null, // countdown to when it goes away
-	
+	removeAfterAnimation: false, // remove it as soon as the animation completes
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
@@ -25,6 +26,13 @@ EntityParticle = EntityBase.extend({
 
 		// Remove it after 3 seconds
 		this.removeTimer = new ig.Timer(3);
+	},
+
+	handleAnimations: function() {
+		if (this.removeAfterAnimation && this.currentAnim.loopCount > 0) {
+			this.kill();
+		}
+		this.parent();
 	},
 
 	handleTimers: function() {

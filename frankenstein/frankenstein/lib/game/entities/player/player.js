@@ -7,6 +7,7 @@ ig.module(
 	'game.entities.player.playerattack',
 	'game.entities.player.meleeattack',
 	'game.entities.player.groundpound',
+	'game.entities.player.dust',
 	'game.entities.item.clubitem',
 	'game.entities.item.pitchforkitem',
 	'game.entities.item.ballandchainitem',
@@ -78,6 +79,7 @@ EntityPlayer = EntityBase.extend({
 	running: false,			// Whether or not you're actually running at the moment
 	poundTimer: null,		// Timer once you hit the ground after a pound before you can move again
 	slideTimer: null,		// Timer for how long a slide lasts
+	dustTimer: null,		// Dust kicked up from sliding
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
@@ -296,6 +298,7 @@ EntityPlayer = EntityBase.extend({
 	slide: function() {
 		this.slideAnimation();
 		this.slideTimer = new ig.Timer(0.3);
+		this.dustTimer = new ig.Timer(0.01);
 		this.size.y = 14;
 		this.offset.y = 18;
 		this.pos.y += 12;
@@ -399,6 +402,16 @@ EntityPlayer = EntityBase.extend({
 				this.size.y = this.originalSize.y;
 				this.offset.y = this.originalOffset.y;
 				this.pos.y -= 12;
+			}
+		}
+
+		// Kick up dust while sliding
+		if (this.dustTimer != null && this.dustTimer.delta() > 0) {
+			if (this.slideTimer == null) { // If done sliding
+				this.dustTimer = null;
+			} else {
+				this.dustTimer.set(0.05);
+				ig.game.spawnEntity( EntityDust, this.pos.x - (this.flip ? 0 : 16), this.pos.y-4, {} );
 			}
 		}
 	},
