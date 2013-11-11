@@ -26,8 +26,12 @@ EntitySarcophagus = EntityCoffin.extend({
 	},
 
 	draw: function(){
-		this.sarcophagusCover.drawTile( this.pos.x - this.offset.x, this.pos.y - 22, 15, 32, 32 );
-		this.sarcophagusCover.drawTile( this.pos.x - this.offset.x, this.pos.y - 22, 14, 32, 32 );
+		
+		if(this.visible){
+			this.sarcophagusCover.drawTile( this.pos.x - this.offset.x, this.pos.y - 22, 14, 32, 32 );	
+		}
+		
+		this.parent();
 	},
 
 	spawnSkeleton: function(){
