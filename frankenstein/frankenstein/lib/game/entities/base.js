@@ -15,7 +15,6 @@ EntityBase = ig.Entity.extend({
 	instantDeath: false, 	// Flash before disappearing by default (if true, you disappear on death without flashing)
 	ignorePhysics: false,	// True if the object just floats there
 	ignoreCollisions: false,// True if we want to go through solid walls
-	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
 	originalSize: {x:0, y:0},
 	originalOffset: {x:0, y:0},
 	tileImage: false,		// Whether or not to repeat the current image for the entire height/width
@@ -25,7 +24,6 @@ EntityBase = ig.Entity.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.originalGravity = this.gravityFactor;
 		this.originalSize.x = this.size.x;
 		this.originalSize.y = this.size.y;
 		this.originalOffset.x = this.offset.x;

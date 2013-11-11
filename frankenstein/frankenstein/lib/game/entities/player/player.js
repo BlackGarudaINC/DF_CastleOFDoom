@@ -62,8 +62,6 @@ EntityPlayer = EntityBase.extend({
 	// These are our own properties. They are not defined in the base
 	// ig.Entity class. We just use them internally for the Player
 	flip: false,
-	accelGround: 600,
-	accelAir: 600,
 	jump: 500,	
 	speed: 64,
 	groundPoundSpeed: 500,
@@ -170,6 +168,11 @@ EntityPlayer = EntityBase.extend({
 			this.pos = spawn.pos;
 		}
 
+		// Check if we are underwater
+		if (ig.game.playerState.underWater) {
+			this.enterWater();
+		}
+
 		// Check which side of the room you're on to determine your initial flip
 		if (this.pos.x > 100) {
 			this.flip = true;
@@ -213,7 +216,6 @@ EntityPlayer = EntityBase.extend({
 		if (!this.pounding() && !this.inSlideAnimation()) {
 
 			// Handle user input; move left or right
-			var accel = this.standing ? this.accelGround : this.accelAir;
 			if( ig.input.state('left') && (!this.attacking() || !this.standing) ) {
 				if (!this.runLeft) { this.running = false; }
 				this.vel.x = -this.speed * (this.running ? 2.5 : 1);
@@ -225,7 +227,6 @@ EntityPlayer = EntityBase.extend({
 				this.flip = false;
 			}
 			else {
-				// this.accel.x = 0;
 				this.vel.x = 0;
 				this.running = false;
 			}
@@ -279,6 +280,16 @@ EntityPlayer = EntityBase.extend({
 				ig.game.spawnEntity( entity, this.pos.x, this.pos.y, {flip:this.flip} );
 			}
 		}
+	},
+
+	// Sets up everything for an underwater adventure
+	enterWater: function() {
+		ig.game.playerState.underWater = true;
+		this.speed -= 20;
+	},
+	leaveWater: function() {
+		ig.game.playerState.underWater = false;
+		this.speed += 20;
 	},
 
 	// Slide across the ground
@@ -451,7 +462,7 @@ EntityPlayer = EntityBase.extend({
 
 		// Make sure gravity is always on unless ground pounding
 		if (!this.pounding() || this.currentAnim.loopCount > 0) {
-			this.gravityFactor = this.originalGravity;
+			this.gravityFactor = (ig.game.playerState.underWater ? 0.8 : 1);
 		}
 		
 		this.currentAnim.flip.x = this.flip;
