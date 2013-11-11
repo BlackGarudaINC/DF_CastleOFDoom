@@ -21,6 +21,7 @@ EntitySarcophagus = EntityCoffin.extend({
 		this.parent( x, y, settings );
 
 		this.addAnim( 'idle', 0.1, [15] );
+		this.addAnim( 'open', 0.1, [15] );
 		this.currentAnim = this.anims.idle;
 
 	},
