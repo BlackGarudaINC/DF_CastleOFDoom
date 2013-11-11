@@ -18,8 +18,7 @@ EntityBase = ig.Entity.extend({
 	originalGravity: 0,		// Save the initial gravity setting, in case you have to turn it off temporarily
 	originalSize: {x:0, y:0},
 	originalOffset: {x:0, y:0},
-	tileHorizontally: false,	// Whether or not to repeat the current image for the entire height/width
-	tileVertically: false,
+	tileImage: false,		// Whether or not to repeat the current image for the entire height/width
 
 	firstLoop: true,
 
@@ -115,23 +114,39 @@ EntityBase = ig.Entity.extend({
 			ig.system.context.fill();
 		}
 
-		if (this.tileHorizontally) {
-			if (this.size.x > this.animSheet.width) {
-				var remaining = this.size.x - this.animSheet.width;
-				var offset = this.animSheet.width;
+		if (this.tileImage && this.visible) {
+			if (this.size.y > this.animSheet.height) {
+				var remaining = this.size.y;
+				var offset = 0;
 				while (remaining > 0) {
-					this.currentAnim.draw(
-						this.pos.x - this.offset.x - ig.game._rscreen.x + offset,
-						this.pos.y - this.offset.y - ig.game._rscreen.y
-					);
-					remaining -= this.animSheet.width;
-					offset += this.animSheet.width;
+					this.drawHorizontalTiles(offset);
+					remaining -= this.animSheet.height;
+					offset += this.animSheet.height;
 				}
+			} else {
+				this.drawHorizontalTiles(0);
 			}
+			
 		}
 
 		if (this.visible) {
 			this.parent();
+		}
+	},
+
+	// Draw a row of horizontal tiles
+	drawHorizontalTiles: function( yoffset ) {
+		if (this.size.x > this.animSheet.width) {
+			var remaining = this.size.x;
+			var offset = 0;
+			while (remaining > 0) {
+				this.currentAnim.draw(
+					this.pos.x - this.offset.x - ig.game._rscreen.x + offset,
+					this.pos.y - this.offset.y - ig.game._rscreen.y + yoffset
+				);
+				remaining -= this.animSheet.width;
+				offset += this.animSheet.width;
+			}
 		}
 	},
 

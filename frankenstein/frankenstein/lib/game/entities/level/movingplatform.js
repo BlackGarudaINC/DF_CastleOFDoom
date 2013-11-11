@@ -23,7 +23,7 @@ EntityMovingplatform = EntityBase.extend({
 	speed: 20,
 	stopTimer: null,
 
-	tileHorizontally: true,
+	tileImage: true,
 
 	// The ranges for these are -1, 0, and 1, meaning negative, none, or positive movement for this platform.
 	// By default, there is no movement, and you specify the directions in weltmeister
