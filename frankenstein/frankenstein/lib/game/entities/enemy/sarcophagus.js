@@ -34,6 +34,22 @@ EntitySarcophagus = EntityCoffin.extend({
 		ig.game.spawnEntity( EntityMummy, this.pos.x, this.pos.y - 20 );
 	},
 
+	handleTimers: function() {
+		
+		// Check if it's time to attack again
+		if (this.awake && this.shakeTimer.delta() > 0 && this.currentAnim != this.anims.open) {
+			if (this.shakeCounter < 10) {
+				this.vel.y = -40;
+				this.shakeTimer.set(0.1);
+				this.shakeCounter += 1;
+			} else {
+				this.currentAnim = this.anims.open.rewind();
+			}
+		}
+
+		this.parent();
+	},
+
 	createParticles: function(){
 
 		// Generate stone debris as particles
