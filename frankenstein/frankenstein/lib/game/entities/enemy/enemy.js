@@ -42,11 +42,14 @@ EntityEnemy = EntityBase.extend({
 
 	dealsDamage: true,		// Determines whether the enemy deals damage to the player
 	drawHealthBar: true, 	// Draw a health bar above if damaged
+	healthBarWidth: 20,		// Width of health bar that gets drawn
 
 	childNode: null,		// first node in an enemy chain, if there is one
 	enemyParts: [],			// array of the various parts of this enemy, if it has any
 	flashParts: false,		// If true, all enemy parts will flash when hit
 	chainOrigin: {x: 0, y:0 }, // If this enemy has a chain, this is the offset from the position where the chain will originate
+
+	healthHud: new ig.Image( 'media/sprites/EnemyHP_HUD.png' ),
 
 	sfxReceiveHit: new ig.Sound( 'media/sounds/Enemies/EnemyGetHit.*' ),
 	
@@ -131,31 +134,24 @@ EntityEnemy = EntityBase.extend({
 		// Draw a health bar above damaged (but not dead) enemies
 		if (this.drawHealthBar) {
 
-			// Taken from http://impactjs.com/forums/help/how-to-check-if-enemy-is-taking-damage
 			if (this.health > 0 && this.health < this.startHealth){
-				// ramme om health bar
+
+				var offset = (this.healthBarWidth - this.size.x) / 2; 
+
+				// background
 				ig.system.context.fillStyle = "rgb(0,0,0)";
 				ig.system.context.beginPath();
 				ig.system.context.rect(
-				                (this.pos.x - ig.game.screen.x) * ig.system.scale, 
+				                (this.pos.x - ig.game.screen.x - offset) * ig.system.scale, 
 				                (this.pos.y - ig.game.screen.y - 8) * ig.system.scale, 
-				                this.size.x * ig.system.scale, 
-				                4 * ig.system.scale
+				                this.healthBarWidth * ig.system.scale, 
+				                3 * ig.system.scale
 				            );
 				ig.system.context.closePath();
 				ig.system.context.fill();
 
 				// health bar
-				ig.system.context.fillStyle = "rgb(255,0,0)";
-				ig.system.context.beginPath();
-				ig.system.context.rect(
-				                (this.pos.x - ig.game.screen.x + 1) * ig.system.scale, 
-				                (this.pos.y - ig.game.screen.y - 7) * ig.system.scale, 
-				                ((this.size.x - 2) * (this.health / this.startHealth)) * ig.system.scale, 
-				                2 * ig.system.scale
-				            );
-				ig.system.context.closePath();
-				ig.system.context.fill();
+				this.healthHud.drawTile( this.pos.x - ig.game.screen.x - offset, this.pos.y - ig.game.screen.y - 8, 0, this.healthBarWidth * (this.health / this.startHealth), 3 );
 			}
 		}
 
