@@ -37,7 +37,7 @@ EntitySerpentking = EntityBoss.extend({
 	
 	chainOrigin: {x: 22, y:0 }, // Offset the body chain a little back
 
-	health: 60,
+	health: 55,
 	// debugDraw: true,
 
 	// Different attack states:
@@ -206,7 +206,7 @@ EntitySerpentking = EntityBoss.extend({
 			this.childNode.toggleSmoothAccel(false, false);
 		}
 
-		this.actionsRemaining = this.phase + Math.random()*3;
+		this.actionsRemaining = this.phase;
 
 		this.setupSpeedAttack();
 		
@@ -260,10 +260,16 @@ EntitySerpentking = EntityBoss.extend({
 			} else {
 				this.newAttack(1);
 			}
-		} else if (this.phase >= 2) {
-			if (rand < 0.5) {
+		} else if (this.phase == 2) {
+			if (this.state != 4) {
 				this.newAttack(4);
-			} else if (rand < 0.8) {
+			} else {
+				this.newAttack(1);
+			}
+		} else if (this.phase >= 3) {
+			if (rand < 0.4) {
+				this.newAttack(4);
+			} else if (rand < 0.7) {
 				this.newAttack(1)
 			} else {
 				this.newAttack(3)
@@ -464,7 +470,7 @@ EntitySerpentking = EntityBoss.extend({
 		} else if (this.state == 4) {
 
 			// Check if you're far enough offscreen to flip over and attack again
-			if (this.flip && this.pos.x > ig.game.levelWidth + 150) {
+			if (this.flip && this.pos.x > ig.game.levelWidth + 200) {
 				this.flipOver();
 				this.actionsRemaining -= 1;
 				if (this.actionsRemaining <= 0) {
@@ -475,7 +481,7 @@ EntitySerpentking = EntityBoss.extend({
 				} else {
 					this.setupSpeedAttack();
 				}
-			} else if (!this.flip && this.pos.x < -200) {
+			} else if (!this.flip && this.pos.x < -250) {
 				this.flipOver();
 				this.setupSpeedAttack();
 			}
