@@ -24,7 +24,7 @@ EntityMovingplatform = EntityBase.extend({
 	stopTimer: null,
 
 	// The ranges for these are -1, 0, and 1, meaning negative, none, or positive movement for this platform.
-	// By default, start by moving in the positive X direction (these can be changed in weltmeister)
+	// By default, there is no movement, and you specify the directions in weltmeister
 	xMove: 0,	
 	yMove: 0,
 
