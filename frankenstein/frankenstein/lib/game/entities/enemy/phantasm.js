@@ -12,6 +12,8 @@ EntityPhantasm = EntityEnemy.extend({
 	offset: {x: 6, y: 8},
 	maxVel: {x: 100, y: 100},
 
+	collides: ig.Entity.COLLIDES.NEVER,
+
 	attackTimer: null, // countdown to when it moves (attacks) or stands still
 
 	damageFlash: true, // flash when damaged
