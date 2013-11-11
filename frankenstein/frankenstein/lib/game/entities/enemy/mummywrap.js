@@ -20,11 +20,26 @@ EntityMummywrap = EntityBone.extend({
 		// Mummy Wraps
 		this.addAnim( 'one', 0.3, [12] );
 		this.addAnim( 'two', 0.3, [13] );
+
+		// Skull
 		this.addAnim( 'three', 0.3, [9] );
 
 		// Sarcophagus Pieces
 		this.addAnim( 'four', 0.3, [10] );
 		this.addAnim( 'five', 0.3, [11] );
+
+		// Use the settings to determine which type to use
+		if (settings.image == 1) {
+			this.currentAnim = this.anims.one;
+		} else if (settings.image == 2) {
+			this.currentAnim = this.anims.two;
+		} else if (settings.image == 3) {
+			this.currentAnim = this.anims.three;
+		} else if (settings.image == 4) {
+			this.currentAnim = this.anims.four;
+		} else {
+			this.currentAnim = this.anims.five;
+		}
 
 	}
 
