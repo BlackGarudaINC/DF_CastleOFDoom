@@ -45,6 +45,7 @@ EntitySerpentking = EntityBoss.extend({
 	// 1: Idle / shoot acid
 	// 2: Move to a new position
 	// 3: Bite quickly
+	// 4: Move quickly across screen from off-screen
 	state: 0,
 	nextState: 0,	// When in state 2 (move to a new position), this is the state it's moving to
 	targetPos: {x:0, y:0}, // In state 2, this is where it's trying to get to
@@ -88,7 +89,8 @@ EntitySerpentking = EntityBoss.extend({
 			this.childNode.configure({ lowRange: {x: -4, y: -6}, highRange: {x: 8, y: 6}, maxVel: {x: 10, y: 10} });
 		}
 
-		this.idleAttack();
+		// this.idleAttack();
+		this.newAttack(4);
 	},
 
 	// Stick out the tongue once
@@ -133,6 +135,9 @@ EntitySerpentking = EntityBoss.extend({
 			this.targetPos.y = this.idlePos.y;
 		} else if (this.nextState == 3) {
 			this.targetPos.x = this.idlePos.x - 10;
+			this.targetPos.y = this.idlePos.y;
+		} else if (this.nextState == 4) {
+			this.targetPos.x = 360;
 			this.targetPos.y = this.idlePos.y;
 		}
 
@@ -186,6 +191,38 @@ EntitySerpentking = EntityBoss.extend({
 
 		this.accel.x = 40;
 		this.accel.y = -10;
+	},
+
+	// Go offscreen and then speed across the screen at the player
+	speedAttack: function() {
+
+		this.state = 4;
+
+		this.maxVel.x = 180;
+		this.maxVel.y = 100;
+
+		if (this.childNode) {
+			this.childNode.configureSpeed(this.maxVel);
+			this.childNode.toggleSmoothAccel();
+		}
+
+		this.setupSpeedAttack();
+		
+	},
+
+	// Configure the actual speed attack
+	setupSpeedAttack: function() {
+
+		// Position it midway through the room in the Y-direction
+		this.pos.y = ig.game.levelHeight / 2;
+
+		this.yReverseTimer = new ig.Timer(0.5);
+		this.vel.x = 0;
+		this.vel.y = 0;
+		this.xPositive = this.flip;
+		this.accel.x = this.maxVel.x * (this.flip ? this.accelFactor : -this.accelFactor);
+		this.yPositive = (Math.random() < 0.5);
+		this.accel.y = this.maxVel.y * (this.yPositive ? this.accelFactor : -this.accelFactor);
 	},
 
 
@@ -250,6 +287,8 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.yReverseTimer != null && this.yReverseTimer.delta() > 0) {
 			if (this.state == 1) {
 				this.yReverseTimer.set(3);
+			} else if (this.state == 4) {
+				this.yReverseTimer.set(1);
 			}
 			this.accel.y = -this.vel.y*this.accelFactor;
 		}
@@ -314,7 +353,7 @@ EntitySerpentking = EntityBoss.extend({
 		if (this.idleTimer != null && this.idleTimer.delta() > 0) {
 			if (this.state == 1) {
 				this.idleTimer = null;
-				this.newAttack(3);
+				this.newAttack(4);
 			}
 			if (this.state == 3) {
 				this.idleTimer = null;
@@ -389,7 +428,19 @@ EntitySerpentking = EntityBoss.extend({
 					this.idleAttack();
 				} else if (this.nextState == 3) {
 					this.biteAttack();
+				} else if (this.nextState == 4) {
+					this.speedAttack();
 				}
+			}
+		} else if (this.state == 4) {
+
+			// Check if you're far enough offscreen to flip over and attack again
+			if (this.flip && this.pos.x > ig.game.levelWidth + 150) {
+				this.flipOver();
+				this.setupSpeedAttack();
+			} else if (!this.flip && this.pos.x < -200) {
+				this.flipOver();
+				this.setupSpeedAttack();
 			}
 		}
 
