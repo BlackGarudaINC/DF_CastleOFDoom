@@ -167,7 +167,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel( LevelTowerstart );
+		this.loadLevel( LevelTest );
 
 		// Reset the silver chests
 		this.resetSilverChests();
