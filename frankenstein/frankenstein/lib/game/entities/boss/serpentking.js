@@ -34,6 +34,7 @@ EntitySerpentking = EntityBoss.extend({
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SerpentKing.png', 64, 32 ),
 	myImage: new ig.Image( 'media/sprites/SerpentKing.png' ),
+	flashImage: new ig.Image( 'media/sprites/SerpentKing.png#ffffff' ),
 	
 	chainOrigin: {x: 22, y:0 }, // Offset the body chain a little back
 
@@ -424,8 +425,13 @@ EntitySerpentking = EntityBoss.extend({
 				tile = 12;
 			}
 
+			var image = this.myImage;
+			if (this.flashTimer != null) {
+				image = this.flashImage;
+			}
+
 			if (tile != null) {
-				this.myImage.drawTile( this.pos.x - this.offset.x, this.pos.y + 32 - this.offset.y, tile, 64, 32 );
+				image.drawTile( this.pos.x - this.offset.x, this.pos.y + 32 - this.offset.y, tile, 64, 32 );
 			}
 		}
 

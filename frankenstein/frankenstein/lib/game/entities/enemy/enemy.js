@@ -62,7 +62,7 @@ EntityEnemy = EntityBase.extend({
 
 		// If they flash when damage, make the red version
 		if (this.damageFlash) {
-			this.redAnimSheet = new ig.AnimationSheet( this.animSheet.image.path + '#ff0000', this.animSheet.width, this.animSheet.height );
+			this.redAnimSheet = new ig.AnimationSheet( this.animSheet.image.path + '#ffffff', this.animSheet.width, this.animSheet.height );
 		}
 
 		this.parent( x, y, settings );
@@ -83,18 +83,12 @@ EntityEnemy = EntityBase.extend({
 	handleTimers: function() {
 
 		// Check if it's time to toggle visibility
-		if (this.tempInvincible && this.damageFlash && this.flashTimer.delta() > 0) {
-			if (this.isRed) {
-				if (this.redAnim != null) {
-					this.redAnim.sheet = this.animSheet;
-					this.redAnim = null;
-				}
-			} else {
-				this.currentAnim.sheet = this.redAnimSheet;
-				this.redAnim = this.currentAnim;
+		if (this.damageFlash && this.flashTimer != null && this.flashTimer.delta() > 0) {
+			if (this.redAnim != null) {
+				this.redAnim.sheet = this.animSheet;
+				this.redAnim = null;
 			}
-			this.isRed = !this.isRed;
-			this.flashTimer.set(0.1);
+			this.flashTimer = null;
 		}
 
 		// Check if you're done being temporarily invincible
@@ -104,12 +98,6 @@ EntityEnemy = EntityBase.extend({
 			// if they are in pain still, go back to the default animation
 			if (this.currentAnim == this.anims.pain) {
 				this.currentAnim = this.defaultAnimation();
-			}
-
-			// Make the animation no longer red
-			if (this.redAnim != null) {
-				this.redAnim.sheet = this.animSheet;
-				this.redAnim = null;
 			}
 			
 		}
@@ -248,15 +236,16 @@ EntityEnemy = EntityBase.extend({
 		if (this.currentAnim != this.anims.death) {
 			if (this.tempInvincibleTimer === null) {
 				this.tempInvincibleTimer = new ig.Timer(0.2);
-				if (this.damageFlash) {
-					this.flashTimer = new ig.Timer(0.1);
-				}
 			} else {
 				this.tempInvincibleTimer.set(0.2);
-				if (this.damageFlash) {
-					this.flashTimer.set(0.1);
-				}
 			}
+
+			if (this.damageFlash) {
+				this.flashTimer = new ig.Timer(0.1);
+				this.currentAnim.sheet = this.redAnimSheet;
+				this.redAnim = this.currentAnim;
+			}
+
 			this.tempInvincible = true;
 
 			// Switch to the pain animation if one exists

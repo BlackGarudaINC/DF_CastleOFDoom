@@ -9,6 +9,7 @@ ig.Image.inject({
     onload: function( event ) {
         this.parent( event );
                 
+        // Multiply
         var hashIndex = this.path.indexOf("#");
         if (hashIndex !== -1) {
                 
@@ -24,23 +25,36 @@ ig.Image.inject({
                 var dRA = parseInt(this.path.substr(hashIndex + 1, 2), 16) / 255;
                 var dGA = parseInt(this.path.substr(hashIndex + 3, 2), 16) / 255;
                 var dBA = parseInt(this.path.substr(hashIndex + 5, 2), 16) / 255;
+
+                // Special case - flash bright
+                if (dRA == 1 && dGA == 1 && dBA == 1) {
+
+                    for (var px = 0; px < len; px += 4) {
+                            src[px  ] = 255;
+                            src[px+1] = 255;
+                            src[px+2] = 255;
+                    }
+
+                } else {
                 
-                for (var px = 0; px < len; px += 4) {
-                        sA  = src[px+3] / 255;
-                        dA2 = (sA + dA - sA * dA);
-                        sRA = src[px  ] / 255 * sA;
-                        sGA = src[px+1] / 255 * sA;
-                        sBA = src[px+2] / 255 * sA;
-                        
-                        demultiply = 255 / dA2;
-                        
-                        src[px  ] = (sRA*dRA + dRA*(1-sA)) * demultiply;
-                        src[px+1] = (sGA*dGA + dGA*(1-sA)) * demultiply;
-                        src[px+2] = (sBA*dBA + dBA*(1-sA)) * demultiply;
+                    for (var px = 0; px < len; px += 4) {
+                            sA  = src[px+3] / 255;
+                            dA2 = (sA + dA - sA * dA);
+                            sRA = src[px  ] / 255 * sA;
+                            sGA = src[px+1] / 255 * sA;
+                            sBA = src[px+2] / 255 * sA;
+                            
+                            demultiply = 255 / dA2;
+                            
+                            src[px  ] = (sRA*dRA + dRA*(1-sA)) * demultiply;
+                            src[px+1] = (sGA*dGA + dGA*(1-sA)) * demultiply;
+                            src[px+2] = (sBA*dBA + dBA*(1-sA)) * demultiply;
+                    }
                 }
                 
                 ctx.putImageData(imgData, 0, 0);
         }
+
     },
         
         convertToCanvas: function () {
