@@ -16,6 +16,7 @@ ig.module(
 	'game.levels.test',
 	'game.levels.test2',
 	'game.levels.testsave',
+	'game.levels.testwater',
 	'game.levels.testbosssmall',
 	'game.levels.testboss',
 	'game.levels.testsnake'

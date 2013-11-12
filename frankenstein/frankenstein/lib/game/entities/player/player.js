@@ -286,12 +286,16 @@ EntityPlayer = EntityBase.extend({
 
 	// Sets up everything for an underwater adventure
 	enterWater: function() {
-		ig.game.playerState.underWater = true;
-		this.speed -= 20;
+		if (!ig.game.playerState.underWater) {
+			ig.game.playerState.underWater = true;
+			this.speed -= 30;
+		}
 	},
 	leaveWater: function() {
-		ig.game.playerState.underWater = false;
-		this.speed += 20;
+		if (ig.game.playerState.underWater) {
+			ig.game.playerState.underWater = false;
+			this.speed += 30;
+		}
 	},
 
 	// Slide across the ground
@@ -476,6 +480,11 @@ EntityPlayer = EntityBase.extend({
 		// Make sure gravity is always on unless ground pounding
 		if (!this.pounding() || this.currentAnim.loopCount > 0) {
 			this.gravityFactor = (ig.game.playerState.underWater ? 0.8 : 1);
+		}
+
+		// Cap the max downward velocity if underwater
+		if (ig.game.playerState.underWater && this.vel.y > 100 && !this.pounding()) {
+			this.vel.y = 100;
 		}
 		
 		this.currentAnim.flip.x = this.flip;

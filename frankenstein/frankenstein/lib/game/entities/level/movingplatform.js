@@ -8,6 +8,8 @@ ig.module(
 	
 EntityMovingplatform = EntityBase.extend({
 
+	_wmScalable: true, // ONLY SCALE IN THE X DIRECTION! LEAVE Y AT 8!
+
 	type: ig.Entity.TYPE.NONE, 
 	checkAgainst: ig.Entity.TYPE.NONE,
 	collides: ig.Entity.COLLIDES.FIXED,
