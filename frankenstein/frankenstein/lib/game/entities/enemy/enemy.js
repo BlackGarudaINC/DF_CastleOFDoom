@@ -13,6 +13,10 @@ EntityEnemy = EntityBase.extend({
 	type: ig.Entity.TYPE.B, // Evil enemy group
 	checkAgainst: ig.Entity.TYPE.A, // Check against friendly
 	collides: ig.Entity.COLLIDES.PASSIVE,
+
+	redAnimSheet: null,		// Red (damage) version of the images
+	isRed: false,			// When flashing red from damage
+	redAnim: null,		// Which animation was turned red, so you can turn it back
 	
 	health: 1,
 	startHealth: 1,
@@ -56,6 +60,11 @@ EntityEnemy = EntityBase.extend({
 	init: function( x, y, settings ) {
 		this.startHealth = this.health;
 
+		// If they flash when damage, make the red version
+		if (this.damageFlash) {
+			this.redAnimSheet = new ig.AnimationSheet( this.animSheet.image.path + '#ffffff', this.animSheet.width, this.animSheet.height );
+		}
+
 		this.parent( x, y, settings );
 		
 	},
@@ -74,9 +83,12 @@ EntityEnemy = EntityBase.extend({
 	handleTimers: function() {
 
 		// Check if it's time to toggle visibility
-		if (this.tempInvincible && this.damageFlash && this.flashTimer.delta() > 0) {
-			this.visible = !this.visible;
-			this.flashTimer.set(0.1);
+		if (this.damageFlash && this.flashTimer != null && this.flashTimer.delta() > 0) {
+			if (this.redAnim != null) {
+				this.redAnim.sheet = this.animSheet;
+				this.redAnim = null;
+			}
+			this.flashTimer = null;
 		}
 
 		// Check if you're done being temporarily invincible
@@ -87,7 +99,7 @@ EntityEnemy = EntityBase.extend({
 			if (this.currentAnim == this.anims.pain) {
 				this.currentAnim = this.defaultAnimation();
 			}
-			this.visible = true;
+			
 		}
 
 		this.parent();
@@ -224,15 +236,16 @@ EntityEnemy = EntityBase.extend({
 		if (this.currentAnim != this.anims.death) {
 			if (this.tempInvincibleTimer === null) {
 				this.tempInvincibleTimer = new ig.Timer(0.2);
-				if (this.damageFlash) {
-					this.flashTimer = new ig.Timer(0.1);
-				}
 			} else {
 				this.tempInvincibleTimer.set(0.2);
-				if (this.damageFlash) {
-					this.flashTimer.set(0.1);
-				}
 			}
+
+			if (this.damageFlash) {
+				this.flashTimer = new ig.Timer(0.1);
+				this.currentAnim.sheet = this.redAnimSheet;
+				this.redAnim = this.currentAnim;
+			}
+
 			this.tempInvincible = true;
 
 			// Switch to the pain animation if one exists
