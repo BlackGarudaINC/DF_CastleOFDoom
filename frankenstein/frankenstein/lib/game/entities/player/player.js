@@ -79,6 +79,7 @@ EntityPlayer = EntityBase.extend({
 	runLeft: false,			// This ensures that you hit over twice in the same direction
 	running: false,			// Whether or not you're actually running at the moment
 	poundTimer: null,		// Timer once you hit the ground after a pound before you can move again
+	isPounding: false,		// Whether or not you're currently ground pounding
 	slideTimer: null,		// Timer for how long a slide lasts
 	dustTimer: null,		// Dust kicked up from sliding
 	bubbleTimer: null,		// Bubbles from being underwater
@@ -457,6 +458,7 @@ EntityPlayer = EntityBase.extend({
 					this.vel.y = this.groundPoundSpeed;
 					// The first time the player starts moving, spawn the ground pound attack
 					if (this.gravityFactor == 0) {
+						this.isPounding = true;
 						ig.game.spawnEntity( EntityGroundpound, this.pos.x, this.pos.y, {} );
 					}
 				} else {
@@ -465,6 +467,7 @@ EntityPlayer = EntityBase.extend({
 			} else if (this.poundTimer == null) {
 				// Once we hit the ground, set the timer before you can move again
 				this.poundTimer = new ig.Timer(0.5);
+				this.isPounding = false;
 			}
 		}
 		else if (this.inSlideAnimation()) {
@@ -1081,7 +1084,7 @@ EntityPlayer = EntityBase.extend({
 
 
 	receiveDamage: function( amount, from ) {
-		if( this.inPainAnimation() || this.currentAnim == this.anims.death || this.tempInvincible || this.pounding()) {
+		if( this.inPainAnimation() || this.currentAnim == this.anims.death || this.tempInvincible || this.isPounding) {
 			// Already in pain, dead, or invincible? Do nothing.
 			return;
 		}
