@@ -11,7 +11,7 @@ EntityItem = EntityBase.extend({
 	
 	type: ig.Entity.TYPE.NONE,
 	checkAgainst: ig.Entity.TYPE.A, // Check against friendly
-	collides: ig.Entity.COLLIDES.NEVER,
+	collides: ig.Entity.COLLIDES.PASSIVE,
 
 	zIndex: 10,
 
@@ -21,6 +21,7 @@ EntityItem = EntityBase.extend({
 	justDropped: false,		// True right after dropped
 	disappearTimer: null,	// Timer until the item flashes out and goes away
 	inStore: false,			// If an item is in a store, it has different properties
+	chestName: "",			// If this comes from a treasure chest, you can optionally pass its name in
 
 	isWeapon: false,		// Check on whether the item is a weapon.
 	goldItem: false,		// Special items from gold chests
@@ -58,6 +59,7 @@ EntityItem = EntityBase.extend({
 				this.pos.y += 4;
 			}
 			this.zIndex = 120;
+			this.collides = ig.Entity.COLLIDES.NEVER;
 		}
 	},
 
@@ -102,7 +104,7 @@ EntityItem = EntityBase.extend({
 
 		// If this is a special gold item, mark the gold chest for this room as opened as soon as it's collected
 		if (this.goldItem) {
-			ig.game.treasure.goldOpen.push(ig.game.currentLevelName);
+			ig.game.treasure.goldOpen.push(this.chestName);
 		}
 
 		this.kill();

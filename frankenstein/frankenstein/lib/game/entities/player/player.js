@@ -248,10 +248,10 @@ EntityPlayer = EntityBase.extend({
 
 			// Swim jump
 			else if (ig.game.playerState.underWater && ig.input.pressed('jump')) {
-				this.vel.y = -this.jump;
+				this.vel.y = -240;
 				this.usedDoubleJump = false;
-			}
-
+			}	
+			
 			// double jump
 			else if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
 				this.usedDoubleJump = true;

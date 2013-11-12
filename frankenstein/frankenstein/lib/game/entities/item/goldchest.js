@@ -16,6 +16,7 @@ EntityGoldchest = EntityTreasure.extend({
 	_wmIgnore: false,
 
 	item: "",
+	name: "",
 
 	// Specify "item" in Weltmeister.  For example, "heartcontaineritem" would be "item": "Heartcontainer" in Weltmeister 
 	init: function( x, y, settings ) {
@@ -26,20 +27,24 @@ EntityGoldchest = EntityTreasure.extend({
 		this.currentAnim = this.anims.idle;
 
 		if (ig.system.running) {
-			// Check if this chest was already opened
-			if (ig.game.treasure.goldOpen.indexOf(ig.game.currentLevelName) != -1) {
-				this.opened = true;
-				this.currentAnim = this.anims.open;
-			}
 
 			// Get the proper entity name for this item
 			this.item = 'Entity' + this.item + 'item';
+
+			// Figure out the name
+			this.name = ig.game.currentLevelName + this.item;
+
+			// Check if this chest was already opened
+			if (ig.game.treasure.goldOpen.indexOf(this.name) != -1) {
+				this.opened = true;
+				this.currentAnim = this.anims.open;
+			}
 		}
 	},
 
 	// Spawn the item set in weltmeister
 	spawnItem: function() {
-		ig.game.spawnEntity( this.item, this.pos.x + 10, this.pos.y, {dropped: true, direction: 0} );
+		ig.game.spawnEntity( this.item, this.pos.x + 10, this.pos.y, {dropped: true, direction: 0, chestName: this.name} );
 	},
 
 	open: function() {
