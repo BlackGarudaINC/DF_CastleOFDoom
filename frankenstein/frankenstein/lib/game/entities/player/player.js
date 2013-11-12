@@ -246,8 +246,14 @@ EntityPlayer = EntityBase.extend({
 				}
 			}
 
+			// Swim jump
+			else if (ig.game.playerState.underWater && ig.input.pressed('jump')) {
+				this.vel.y = -this.jump;
+				this.usedDoubleJump = false;
+			}
+
 			// double jump
-			if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
+			else if (ig.input.pressed('jump') && !this.standing && ig.game.playerState.doubleJump && !this.usedDoubleJump) {
 				this.usedDoubleJump = true;
 				this.vel.y = -this.jump;
 				this.flipAnimation();
