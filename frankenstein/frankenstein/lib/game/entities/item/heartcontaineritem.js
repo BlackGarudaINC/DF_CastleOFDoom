@@ -16,6 +16,8 @@ EntityHeartcontaineritem = EntityItem.extend({
 	offset: {x: 2, y: 6},
 	animSheet: new ig.AnimationSheet( 'media/sprites/Items01_HUD.png', 16, 24 ),
 
+	containerCollected: new ig.Sound( 'media/sounds/Items/Weapon.*' ),
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
@@ -27,6 +29,8 @@ EntityHeartcontaineritem = EntityItem.extend({
 	collected: function( other ) {
 		ig.game.playerState.maxHealth += 2;
 		ig.game.playerState.health = ig.game.playerState.maxHealth;
+		this.containerCollected.play();
+
 		this.parent();
 	}
 });
