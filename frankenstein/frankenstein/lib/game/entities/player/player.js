@@ -8,6 +8,7 @@ ig.module(
 	'game.entities.player.meleeattack',
 	'game.entities.player.groundpound',
 	'game.entities.player.dust',
+	'game.entities.player.bubble',
 	'game.entities.item.clubitem',
 	'game.entities.item.pitchforkitem',
 	'game.entities.item.ballandchainitem',
@@ -80,6 +81,7 @@ EntityPlayer = EntityBase.extend({
 	poundTimer: null,		// Timer once you hit the ground after a pound before you can move again
 	slideTimer: null,		// Timer for how long a slide lasts
 	dustTimer: null,		// Dust kicked up from sliding
+	bubbleTimer: null,		// Bubbles from being underwater
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
@@ -295,12 +297,14 @@ EntityPlayer = EntityBase.extend({
 		if (!ig.game.playerState.underWater) {
 			ig.game.playerState.underWater = true;
 			this.speed -= 30;
+			this.bubbleTimer = new ig.Timer(0.5);
 		}
 	},
 	leaveWater: function() {
 		if (ig.game.playerState.underWater) {
 			ig.game.playerState.underWater = false;
 			this.speed += 30;
+			this.bubbleTimer = null;
 		}
 	},
 
@@ -423,6 +427,12 @@ EntityPlayer = EntityBase.extend({
 				this.dustTimer.set(0.05);
 				ig.game.spawnEntity( EntityDust, this.pos.x - (this.flip ? 0 : 16), this.pos.y-4, {} );
 			}
+		}
+
+		// Air bubbles while underwater
+		if (this.bubbleTimer != null && this.bubbleTimer.delta() > 0) {
+			this.bubbleTimer.reset();
+			ig.game.spawnEntity( EntityBubble, this.pos.x+ (this.flip ? 0 : 10), this.pos.y, {} );
 		}
 	},
 
