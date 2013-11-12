@@ -18,6 +18,7 @@ EntityIgor = EntityNpc.extend({
 	goldHud: new ig.Image( 'media/sprites/GoldSack_HUD.png' ),
 	itemHud: new ig.Image( 'media/sprites/Items01_HUD.png' ),
 	itemHud2: new ig.Image( 'media/sprites/Items02_HUD.png' ),
+	backgroundImage: new ig.Image( 'media/sprites/IgorHUD.png' ),
 
 	storePurchase: new ig.Sound( 'media/sounds/Store/Purchase.*' ),
 
@@ -213,14 +214,20 @@ EntityIgor = EntityNpc.extend({
 
 			// Draw the dialog depending on the current dialog state
 			if (this.dialogState == 0) {
+
+				// Background
+				this.backgroundImage.drawTile( 20, 72, 0, 280, 111 );
+
 				ig.game.whiteFont.draw("What do you want?", ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
 
 				this.getFont(0).draw("Save", ig.system.width/2 - 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
 				this.getFont(1).draw("Shop", ig.system.width/2 + 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
 				this.getFont(2).draw("Nothing", ig.system.width/2, ig.system.height/2 + 40, ig.Font.ALIGN.CENTER);
 			} else if (this.dialogState == 1) {
+				this.backgroundImage.drawTile( 20, 72, 0, 280, 111 );
 				ig.game.whiteFont.draw(this.goodbyeDialog(), ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
 			} else if (this.dialogState == 2) {
+				this.backgroundImage.drawTile( 20, 72, 0, 280, 111 );
 				ig.game.whiteFont.draw("Done. Want to buy something?", ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
 
 				this.getFont(0).draw("Yes", ig.system.width/2 - 60, ig.system.height/2, ig.Font.ALIGN.CENTER);
@@ -310,6 +317,7 @@ EntityIgor = EntityNpc.extend({
 
 				
 			} else if (this.dialogState == 4) {
+				this.backgroundImage.drawTile( 20, 72, 0, 280, 111 );
 				ig.game.whiteFont.draw("Enjoy...whatever this is.", ig.system.width/2, ig.system.height/2-40, ig.Font.ALIGN.CENTER);
 			}
 
