@@ -20,7 +20,8 @@ ig.module(
 	'game.levels.testwater',
 	'game.levels.testbosssmall',
 	'game.levels.testboss',
-	'game.levels.testsnake'
+	'game.levels.testsnake',
+	'game.levels.towerstart'
 )
 .defines(function(){
 	
@@ -156,7 +157,7 @@ MyGame = ig.Game.extend({
 		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
 		ig.music.add( 'media/music/Map.*', 'Map' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
-		ig.music.play();
+		//ig.music.play();
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();
