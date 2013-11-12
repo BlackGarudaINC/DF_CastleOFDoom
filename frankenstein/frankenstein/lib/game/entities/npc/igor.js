@@ -175,6 +175,14 @@ EntityIgor = EntityNpc.extend({
 		}
 	},
 
+	leave: function() {
+		if (ig.game.shopping) {
+			this.stopShopping();
+		}
+
+		this.parent();
+	},
+
 	// Handle interaction with the player
 	interact: function() {
 		this.parent();
