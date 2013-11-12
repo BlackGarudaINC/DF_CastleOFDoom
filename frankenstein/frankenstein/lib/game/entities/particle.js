@@ -38,7 +38,7 @@ EntityParticle = EntityBase.extend({
 	handleTimers: function() {
 
 		// Check if it's time remove the particle
-		if (this.removeTimer.delta() > 0) {
+		if (this.removeTimer != null && this.removeTimer.delta() > 0) {
 			this.flashKill();
 		}
 
