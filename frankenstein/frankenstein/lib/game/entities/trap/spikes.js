@@ -18,10 +18,12 @@ EntitySpikes = EntityTrap.extend({
 
 	gravityFactor: 0,
 
+	tile: 0,
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'idle', 1, [0] );
+		this.addAnim( 'idle', 1, [this.tile] );
 
 		if(this.flip){
 			this.currentAnim.flip.y = true;

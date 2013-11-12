@@ -14,18 +14,22 @@ EntityKeyitem = EntityItem.extend({
 
 	size: {x: 10, y: 16},
 	offset: {x: 2, y: 4},
-	animSheet: new ig.AnimationSheet( 'media/sprites/Items01_HUD.png', 16, 24 ),
+	animSheet: new ig.AnimationSheet( 'media/sprites/ItemObjetcs01.png', 8, 8 ),
+
+	keyCollected: new ig.Sound( 'media/sounds/Items/Weapon.*' ),
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
-		this.addAnim( 'idle', 0.1, [12] );
+		this.addAnim( 'idle', 0.1, [3] );
 		this.currentAnim = this.anims.idle;
 	},
 
 	// Give the player the key
 	collected: function( other ) {
 		ig.game.playerState.hasKey = true;
+		this.keyCollected.play();
+
 		this.parent();
 	}
 });

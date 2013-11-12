@@ -23,10 +23,12 @@ EntityFallingspikes = EntityTrap.extend({
 	gravityFactor: 0,	// 0 means no gravity, 1 means regular level gravity
 	falling: false,		// Whether or not it's currently falling
 
+	tile: 0,			// Allows the designer to specify in Weltmeister which color spike to use.
+
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'idle', 1, [0] );
+		this.addAnim( 'idle', 1, [this.tile] );
 
 		this.currentAnim.flip.y = true;
 
