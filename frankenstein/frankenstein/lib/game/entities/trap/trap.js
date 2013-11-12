@@ -1,5 +1,5 @@
 ig.module(
-	'game.entities.enemy.trap'
+	'game.entities.trap.trap'
 )
 .requires(
 	'game.entities.enemy.enemy',
