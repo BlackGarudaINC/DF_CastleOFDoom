@@ -9,7 +9,7 @@ ig.module(
 
 EntityBombexplode = EntityPlayerattack.extend({
 
-	size: {x: 16, y: 16},
+	size: {x: 64, y: 64},
 	offset: {x: 0, y: 0},
 	maxVel: {x: 0, y: 0},
 
@@ -17,13 +17,14 @@ EntityBombexplode = EntityPlayerattack.extend({
 
 	damage: 2,
 	bounceback: 3,
+	zIndex: -5,
 		
-	animSheet: new ig.AnimationSheet( 'media/sprites/Bomb_WeaponThrow.png', 16, 16 ),	
+	animSheet: new ig.AnimationSheet( 'media/sprites/BombBlast.png', 64, 64 ),	
 	
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'explode', 0.1, [3, 4, 5, 6, 7, 8], true );
+		this.addAnim( 'explode', 0.1, [0, 1], true );
 		this.currentAnim = this.anims.explode.rewind();
 	},
 

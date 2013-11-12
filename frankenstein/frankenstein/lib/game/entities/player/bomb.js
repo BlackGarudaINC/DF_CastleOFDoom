@@ -16,6 +16,7 @@ EntityBomb = EntityPlayerattack.extend({
 
 	damage: 0.1,
 	bounceback: 0.6,
+	explodeTimer: null,
 		
 	animSheet: new ig.AnimationSheet( 'media/sprites/Bomb_WeaponThrow.png', 16, 16 ),	
 	
@@ -23,10 +24,11 @@ EntityBomb = EntityPlayerattack.extend({
 		this.parent( x, y, settings );
 
 		this.addAnim( 'lit', 0.15, [1, 2] );
+		this.addAnim( 'explode', 0.1, [3, 4, 5, 6, 7, 8], true );
 		this.currentAnim = this.anims.lit.rewind();
 
 		// Light the fuse...
-		this.killTimer = new ig.Timer(2.5);
+		this.explodeTimer = new ig.Timer(2.5);
 
 		this.friction.x = 200;
 		
@@ -34,11 +36,21 @@ EntityBomb = EntityPlayerattack.extend({
 		this.vel.y = -150;
 	},
 
-	// Break apart into particles
-	kill: function() {
-		ig.game.spawnEntity( EntityBombexplode, this.pos.x, this.pos.y );
+	handleTimers: function() {
+		if (this.explodeTimer != null && this.explodeTimer.delta() > 0) {
+			this.explodeTimer = null;
+			this.currentAnim = this.anims.explode.rewind();
+			ig.game.spawnEntity( EntityBombexplode, this.pos.x - 24, this.pos.y - 24 );
+		}
+	},
+
+	handleAnimations: function() {
+		if (this.currentAnim == this.anims.explode && this.currentAnim.loopCount > 0) {
+			this.kill();
+		}
 		this.parent();
 	},
+
 
 	// Override the check so that it doesn't get removed when it hits an enemy
 	// and it only hurts if it's moving
