@@ -25,6 +25,13 @@ EntityHatchet = EntityPlayerattack.extend({
 		
 		this.currentAnim = this.anims.throwing.rewind();
 	},
+
+	myUpdate: function() {
+		if (this.vel.x < 8 && this.vel.x > -8) {
+			this.kill();
+		}
+		this.parent();
+	},
 		
 	handleMovementTrace: function( res ) {
 		this.parent( res );

@@ -14,6 +14,7 @@ EntityBombexplode = EntityPlayerattack.extend({
 	maxVel: {x: 0, y: 0},
 
 	checkAgainst: ig.Entity.TYPE.BOTH, // the player can get hurt in the explosion too
+	collides: ig.Entity.COLLIDES.NONE,
 
 	damage: 2,
 	bounceback: 3,

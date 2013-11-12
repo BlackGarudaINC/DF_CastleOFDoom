@@ -17,7 +17,7 @@ EntityPlayerattack = EntityBase.extend({
 	
 	type: ig.Entity.TYPE.NONE,
 	checkAgainst: ig.Entity.TYPE.B, // Check Against B - our evil enemy group
-	collides: ig.Entity.COLLIDES.NONE,
+	collides: ig.Entity.COLLIDES.PASSIVE,
 		
 	animSheet: new ig.AnimationSheet( 'media/sprites/PlayerAttack.png', 24, 32 ),
 

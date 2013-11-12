@@ -9,6 +9,8 @@ ig.module(
 
 EntityMeleeattack = EntityPlayerattack.extend({
 
+	collides: ig.Entity.COLLIDES.NONE,
+
 	animSheet: new ig.AnimationSheet( 'media/sprites/TheCreature01.png', 32, 32 ),
 
 	size: {x: 32, y: 28},
