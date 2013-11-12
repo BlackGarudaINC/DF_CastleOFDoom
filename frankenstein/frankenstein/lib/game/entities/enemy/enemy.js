@@ -13,6 +13,10 @@ EntityEnemy = EntityBase.extend({
 	type: ig.Entity.TYPE.B, // Evil enemy group
 	checkAgainst: ig.Entity.TYPE.A, // Check against friendly
 	collides: ig.Entity.COLLIDES.PASSIVE,
+
+	redAnimSheet: null,		// Red (damage) version of the images
+	isRed: false,			// When flashing red from damage
+	redAnim: null,		// Which animation was turned red, so you can turn it back
 	
 	health: 1,
 	startHealth: 1,
@@ -56,6 +60,11 @@ EntityEnemy = EntityBase.extend({
 	init: function( x, y, settings ) {
 		this.startHealth = this.health;
 
+		// If they flash when damage, make the red version
+		if (this.damageFlash) {
+			this.redAnimSheet = new ig.AnimationSheet( this.animSheet.image.path + '#ff0000', this.animSheet.width, this.animSheet.height );
+		}
+
 		this.parent( x, y, settings );
 		
 	},
@@ -75,7 +84,16 @@ EntityEnemy = EntityBase.extend({
 
 		// Check if it's time to toggle visibility
 		if (this.tempInvincible && this.damageFlash && this.flashTimer.delta() > 0) {
-			this.visible = !this.visible;
+			if (this.isRed) {
+				if (this.redAnim != null) {
+					this.redAnim.sheet = this.animSheet;
+					this.redAnim = null;
+				}
+			} else {
+				this.currentAnim.sheet = this.redAnimSheet;
+				this.redAnim = this.currentAnim;
+			}
+			this.isRed = !this.isRed;
 			this.flashTimer.set(0.1);
 		}
 
@@ -87,7 +105,13 @@ EntityEnemy = EntityBase.extend({
 			if (this.currentAnim == this.anims.pain) {
 				this.currentAnim = this.defaultAnimation();
 			}
-			this.visible = true;
+
+			// Make the animation no longer red
+			if (this.redAnim != null) {
+				this.redAnim.sheet = this.animSheet;
+				this.redAnim = null;
+			}
+			
 		}
 
 		this.parent();

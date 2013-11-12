@@ -8,6 +8,7 @@ ig.module(
 	'plugins.camera',
 	'plugins.touch-button',
 	'plugins.impact-splash-loader',
+	'plugins.imageblender',
 	'plugins.gamepad.gamepad',
 	
 	'game.entities.player.player',
