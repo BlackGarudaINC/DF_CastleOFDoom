@@ -31,7 +31,7 @@ EntityChandelier = EntityBase.extend({
 		// If this was spawned from itself as the falling part
 		if (this.falling) {
 			this.currentAnim = this.anims.falling;
-			this.gravityFactor = ig.game.gravity;
+			this.gravityFactor = 1;
 			this.offset.y = 8;
 		}
 	},
