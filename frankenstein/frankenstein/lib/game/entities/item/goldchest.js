@@ -26,19 +26,19 @@ EntityGoldchest = EntityTreasure.extend({
 		this.addAnim( 'open', 0.1, [3] );
 		this.currentAnim = this.anims.idle;
 
-		if (ig.system.running) {
+	},
 
-			// Get the proper entity name for this item
-			this.item = 'Entity' + this.item + 'item';
+	startUpdate: function() {
+		// Get the proper entity name for this item
+		this.item = 'Entity' + this.item + 'item';
 
-			// Figure out the name
-			this.name = ig.game.currentLevelName + this.item;
+		// Figure out the name
+		this.name = ig.game.currentLevelName + this.item;
 
-			// Check if this chest was already opened
-			if (ig.game.treasure.goldOpen.indexOf(this.name) != -1) {
-				this.opened = true;
-				this.currentAnim = this.anims.open;
-			}
+		// Check if this chest was already opened
+		if (ig.game.treasure.goldOpen.indexOf(this.name) != -1) {
+			this.opened = true;
+			this.currentAnim = this.anims.open;
 		}
 	},
 
