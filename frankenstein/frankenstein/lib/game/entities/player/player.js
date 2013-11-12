@@ -472,12 +472,12 @@ EntityPlayer = EntityBase.extend({
 			this.vel.x = (this.flip ? -this.slideSpeed : this.slideSpeed);
 		}
 		else if( this.vel.y < 0 && !this.standing ) {
-			if (!this.jumping || this.inFlipAnimation()) { this.jumpAnimation(); }
+			if (!this.jumping || this.inFlipAnimation() || this.attacking()) { this.jumpAnimation(); }
 			this.jumping = true;
 			this.falling = false;
 		}
 		else if( this.vel.y > 0 && !this.standing) {
-			if (!this.falling || this.inFlipAnimation()) { this.fallAnimation(); }
+			if (!this.falling || this.inFlipAnimation() || this.attacking()) { this.fallAnimation(); }
 			this.jumping = false;
 			this.falling = true;
 		}
