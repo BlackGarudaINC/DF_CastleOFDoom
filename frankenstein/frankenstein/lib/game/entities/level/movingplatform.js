@@ -24,6 +24,7 @@ EntityMovingplatform = EntityBase.extend({
 
 	speed: 20,
 	stopTimer: null,
+	active: true,		// in weltmeister, you can start it as inactive and make a trigger activate it.
 
 	tileImage: true,
 
@@ -49,7 +50,9 @@ EntityMovingplatform = EntityBase.extend({
 
 		this.addAnim( 'idle', 1, [this.tile] );
 
-		this.startMoving();
+		if (this.active) {
+			this.startMoving();
+		}
 	},
 
 	startMoving: function() {
@@ -86,35 +89,13 @@ EntityMovingplatform = EntityBase.extend({
 		this.parent();
 	},
 
-
-	// If falling, check for crashing into the floor
-	handleMovementTrace: function( res ){
-
-		// When it hits the floor
-		// if( this.falling && res.collision.y ){
-		// 	this.currentAnim.stop = true;
-		// 	this.flashKill();
-		// 	this.falling = false;
-
-		// 	// Spawn some random candles
-		// 	ig.game.spawnEntity( EntityCandle, this.pos.x+14, this.pos.y-5, {} );
-		// 	if (Math.random() < 0.66) {
-		// 		ig.game.spawnEntity( EntityCandle, this.pos.x, this.pos.y-5, {} );
-		// 	}
-		// 	if (Math.random() < 0.66) {
-		// 		ig.game.spawnEntity( EntityCandle, this.pos.x+28, this.pos.y-5, {} );
-		// 	}
-		// }
-
-		this.parent( res );
-	},
-
-	// Check for the player bumping into it
-	check: function( other ) {
-		// if (this.currentAnim == this.anims.idle) {
-		// 	this.currentAnim = this.anims.moving.rewind();
-		// }
-	},
+	// Triggers can activate platforms that aren't initially active
+	triggeredBy: function( entity, trigger ) {
+		if (!this.active) {
+			this.active = true;
+			this.startMoving();
+		}
+	}
 	
 });
 

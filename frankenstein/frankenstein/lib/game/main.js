@@ -21,6 +21,7 @@ ig.module(
 	'game.levels.testbosssmall',
 	'game.levels.testboss',
 	'game.levels.testsnake',
+	'game.levels.testskeleton',
 	'game.levels.towerstart',
 	'game.levels.towermain',
 	'game.levels.towertop'
@@ -231,7 +232,8 @@ MyGame = ig.Game.extend({
 			playerState: this.playerState,
 			level: this.currentLevelName,
 			treasure: this.treasure,
-			oneTimeEvents: this.oneTimeEvents
+			oneTimeEvents: this.oneTimeEvents,
+			song: this.musicSong
 		};
 		return JSON.stringify(saveData);
 	},
@@ -251,6 +253,10 @@ MyGame = ig.Game.extend({
 		this.currentLevelName = parsedData.level;
 		this.treasure = parsedData.treasure;
 		this.oneTimeEvents = parsedData.oneTimeEvents;
+		this.musicSong = parsedData.song;
+
+		// Play the proper song for the room where you saved.
+		this.playSong();
 
 		// Load the level where the player saved
 		this.loadLevelDeferred( ig.global['Level' + this.currentLevelName] );
