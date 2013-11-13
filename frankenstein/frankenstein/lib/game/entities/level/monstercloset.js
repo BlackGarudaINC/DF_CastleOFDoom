@@ -13,7 +13,7 @@ EntityMonstercloset = EntityEnemy.extend({
 	size: {x: 16, y: 32},
 	offset: {x: 0, y: 0},
 
-	animSheet: new ig.AnimationSheet( 'media/sprites/ClosetDoors.png' ),
+	animSheet: new ig.AnimationSheet( 'media/sprites/ClosetDoors.png' )
 
 });
 
