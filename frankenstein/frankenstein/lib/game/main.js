@@ -21,6 +21,7 @@ ig.module(
 	'game.levels.testbosssmall',
 	'game.levels.testboss',
 	'game.levels.testsnake',
+	'game.levels.testskeleton',
 	'game.levels.towerstart',
 	'game.levels.towermain',
 	'game.levels.towertop'
