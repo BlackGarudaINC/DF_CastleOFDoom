@@ -120,9 +120,11 @@ MyGame = ig.Game.extend({
 	HALFPI: Math.PI / 2,
 	TWOPI: Math.PI * 2,
 
-	paused: false, // Whether or not the game is currently paused
+	paused: false, 			// Whether or not the game is currently paused
 	cutsceneRunning: false, // Whether or not a cutscene is currently happening
-	shopping: false, // Whether or not you're in a shop
+	shopping: false, 		// Whether or not you're in a shop
+	musicPlaying: false,	// Whether or not music is currently playing (or supposed to be playing)
+	musicEnabled: true,		// Whether or not music will ever play
 
 	fadeOut: false,	// If the screen is fading out to black
 	fadeIn: false,	// If the screen is fading back in
@@ -149,6 +151,7 @@ MyGame = ig.Game.extend({
 		ig.input.bind( ig.KEY.SHIFT, 'jump');
 		ig.input.bind( ig.KEY.ENTER, 'pause');
 		ig.input.bind( ig.KEY.ESC, 'escape');
+		ig.input.bind( ig.KEY.M, 'music');
 
 		// Load up the music
 		ig.music.volume = 0.5;
@@ -158,7 +161,10 @@ MyGame = ig.Game.extend({
 		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
 		ig.music.add( 'media/music/Map.*', 'Map' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
-		ig.music.play();
+		if (this.musicEnabled) {
+			ig.music.play();
+		}
+		this.musicPlaying = true;
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();
@@ -284,6 +290,11 @@ MyGame = ig.Game.extend({
 			this.togglePause();
 		}
 
+		// Check if the user toggled music playing
+		if (ig.input.pressed('music')) {
+			this.toggleMusic();
+		}
+
 		// If paused, check on arrow keys for changing pause menus
 		if (this.paused) {
 			if (ig.input.pressed('left')) {
@@ -307,11 +318,30 @@ MyGame = ig.Game.extend({
 		pads[0] = undefined;
 	},
 
+	// Turn the music on/off
+	toggleMusic: function() {
+		if (this.musicEnabled) {
+			ig.music.stop();
+		} else if (this.musicPlaying) {
+			ig.music.play();
+		}
+		this.musicEnabled = !this.musicEnabled;
+	},
+
 	// Pause / unpause the game
 	togglePause: function() {
 		this.paused = !this.paused;
 		this.pauseState = 2;
 		ig.Timer.timeScale = (this.paused == 0 ? 1 : 0);
+
+		if (this.musicEnabled) {
+			if (this.musicPlaying) {
+				ig.music.pause();
+			} else {
+				ig.music.play();
+			}
+		}
+		this.musicPlaying = !this.musicPlaying;
 	},
 
 	// Draw the pause screen
