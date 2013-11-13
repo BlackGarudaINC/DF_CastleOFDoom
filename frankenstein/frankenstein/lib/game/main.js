@@ -123,6 +123,8 @@ MyGame = ig.Game.extend({
 	paused: false, 			// Whether or not the game is currently paused
 	cutsceneRunning: false, // Whether or not a cutscene is currently happening
 	shopping: false, 		// Whether or not you're in a shop
+
+	musicSong: "",			// Name of the song that's supposed to be playing (sometimes it gets overridden by boss or cutscene music)
 	musicPlaying: false,	// Whether or not music is currently playing (or supposed to be playing)
 	musicEnabled: true,		// Whether or not music will ever play
 
@@ -165,6 +167,7 @@ MyGame = ig.Game.extend({
 			ig.music.play();
 		}
 		this.musicPlaying = true;
+		this.musicSong = 'Castle01';
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();
@@ -175,7 +178,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel( LevelTowerstart );
+		this.loadLevel( LevelTest );
 
 		// Reset the silver chests
 		this.resetSilverChests();
@@ -342,6 +345,18 @@ MyGame = ig.Game.extend({
 			}
 		}
 		this.musicPlaying = !this.musicPlaying;
+	},
+
+	// Play a song, but only if music is enabled
+	// If no song is passed in, play the stored song
+	playSong: function(song) {
+		if (song === undefined) {
+			song = this.musicSong;
+		}
+		ig.music.play(song);
+		if (!ig.game.musicEnabled) {
+			ig.music.stop();
+		}
 	},
 
 	// Draw the pause screen

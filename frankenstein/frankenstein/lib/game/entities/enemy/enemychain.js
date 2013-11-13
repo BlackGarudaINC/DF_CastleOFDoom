@@ -168,8 +168,8 @@ EntityEnemychain = EntityEnemypart.extend({
 
 		this.parent();
 
-		// Don't do anything if it hasn't been configured yet
-		if (!this.configured) {
+		// Don't do anything if it hasn't been configured yet or if it's already dead
+		if (!this.configured || this.dead) {
 			return;
 		}
 
@@ -270,7 +270,7 @@ EntityEnemychain = EntityEnemypart.extend({
 
 
 		// Set the rotation, if applicable
-		if (this.rotates && !this.dead) {
+		if (this.rotates) {
 			if (this.angle < this.targetAngle) {
 				this.angle += 0.01;
 				if (this.angle > this.targetAngle) {this.angle = this.targetAngle;}
