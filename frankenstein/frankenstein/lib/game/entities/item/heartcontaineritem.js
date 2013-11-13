@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.item.heartcontaineritem'
 )
 .requires(
-	'game.entities.item.item'
+	'game.entities.item.item',
+	'game.entities.fadetext'
 )
 .defines(function(){
 	
@@ -30,6 +31,9 @@ EntityHeartcontaineritem = EntityItem.extend({
 		ig.game.playerState.maxHealth += 2;
 		ig.game.playerState.health = ig.game.playerState.maxHealth;
 		this.containerCollected.play();
+
+		// Inform the player about what they got
+		ig.game.spawnEntity( EntityFadetext, this.pos.x + 10, this.pos.y, {text: "+Health"} );
 
 		this.parent();
 	}

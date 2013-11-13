@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.item.staminaitem'
 )
 .requires(
-	'game.entities.item.item'
+	'game.entities.item.item',
+	'game.entities.fadetext'
 )
 .defines(function(){
 	
@@ -27,6 +28,10 @@ EntityStaminaitem = EntityItem.extend({
 	// Give the player the weapon
 	collected: function( other ) {
 		ig.game.playerState.maxStamina += 5;
+
+		// Inform the player about the stamina
+		ig.game.spawnEntity( EntityFadetext, this.pos.x + 10, this.pos.y, {text: "+Stamina"} );
+
 		this.parent();
 	}
 });
