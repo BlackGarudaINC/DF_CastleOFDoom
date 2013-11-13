@@ -21,7 +21,8 @@ ig.module(
 	'game.levels.testbosssmall',
 	'game.levels.testboss',
 	'game.levels.testsnake',
-	'game.levels.towerstart'
+	'game.levels.towerstart',
+	'game.levels.towermain'
 )
 .defines(function(){
 	
@@ -64,7 +65,7 @@ MyGame = ig.Game.extend({
 	
 	// Player vars that are global across levels
 	playerState: {
-		meleeWeapon: 4,
+		meleeWeapon: 0,
 		throwWeapon: 3,
 		maxHealth: 12,
 		health: 12,
@@ -157,7 +158,7 @@ MyGame = ig.Game.extend({
 		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
 		ig.music.add( 'media/music/Map.*', 'Map' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
-		//ig.music.play();
+		ig.music.play();
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();
@@ -168,7 +169,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel( LevelTest );
+		this.loadLevel( LevelTowerstart );
 
 		// Reset the silver chests
 		this.resetSilverChests();
