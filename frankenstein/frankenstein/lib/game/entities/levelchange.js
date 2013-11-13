@@ -36,6 +36,7 @@ EntityLevelchange = EntityBase.extend({
 	active: true,	// certain doors inherit from this and aren't initially active
 	fadeTimer: null,
 	requireUp: true,	// Require the player to press "up" to go in
+	song: "",		// If the new room requires a new song
 
 	handleTimers: function() {
 
@@ -52,6 +53,12 @@ EntityLevelchange = EntityBase.extend({
 		});
 
 		ig.game.spawnLoc = this.spawn;
+
+		// Change the music, if a new song is specified
+		if (this.song != "" && ig.game.musicSong != this.song) {
+			ig.game.musicSong = this.song;
+			ig.game.playSong();
+		}
 		
 		ig.game.currentLevelName = levelName;
 		ig.game.loadLevelDeferred( ig.global['Level'+levelName] );
@@ -61,6 +68,9 @@ EntityLevelchange = EntityBase.extend({
 		if( this.level && this.active && this.fadeTimer == null && (ig.input.state('up') || !this.requireUp) ) {
 			this.fadeTimer = new ig.Timer(0.5);
 			ig.game.fadeOut = true;
+			if (this.song != "" && ig.game.musicSong != this.song) {
+				ig.music.fadeOut(0.4);
+			}
 		}
 	}
 });
