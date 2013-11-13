@@ -39,15 +39,19 @@ EntityCutscene = EntityBase.extend({
 	// Trigger the first event on the first update
 	startUpdate: function() {
 
+		this.parent();
+
 		// Make sure the cutscene hasn't already been played
 		if (ig.game.oneTimeEvents.cutscenes.indexOf(ig.game.currentLevelName) != -1) {
 			this.cancel();
 		} else {
 			this.triggerEvent();
 			ig.game.player.enableInput = false;
-		}
+
+			// TODO: replace this with the real cutscene song
+			ig.game.playSong('Map');
+		}		
 		
-		this.parent();
 	},
 
 	// If the cutscene was already played, cancel it for all the actors
@@ -92,6 +96,9 @@ EntityCutscene = EntityBase.extend({
 		ig.game.player.enableInput = true;
 		ig.game.cutsceneRunning = false;
 		this.kill();
+
+		// Start playing the normal song again
+		ig.game.playSong();
 	},
 
 	handleTimers: function() {

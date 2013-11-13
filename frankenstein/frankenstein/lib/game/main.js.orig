@@ -164,11 +164,15 @@ MyGame = ig.Game.extend({
 		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
 		ig.music.add( 'media/music/Map.*', 'Map' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
+<<<<<<< HEAD
+		//ig.music.play();
+=======
 		if (this.musicEnabled) {
 			ig.music.play();
 		}
 		this.musicPlaying = true;
 		this.musicSong = 'Castle01';
+>>>>>>> b11a21a22e7703811bab7189e4b5171b6b142ba3
 
 		// Put this back in to clear save data upfront for testing
 		// localStorage.clear();

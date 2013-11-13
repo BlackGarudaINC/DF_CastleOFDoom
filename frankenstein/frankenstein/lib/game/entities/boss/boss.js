@@ -44,9 +44,12 @@ EntityBoss = EntityEnemy.extend({
 
 	startUpdate: function() {
 
+		this.parent();
+
 		// If you're already dead, this is the time to kill yourself
 		if (this.alreadyDead) {
 			this.kill();
+			return;
 		}
 
 		// Check if you're in a cutscene or if you can just start battling
@@ -59,7 +62,8 @@ EntityBoss = EntityEnemy.extend({
 
 	// When the boss actually starts doing things (this could be delayed if there's a cutscene)
 	startBattle: function() {
-
+		// Start the boss battle music
+		ig.game.playSong('Boss01');
 	},
 
 
@@ -119,6 +123,12 @@ EntityBoss = EntityEnemy.extend({
 		this.parent();
 	},
 
+	die: function() {
+		this.parent();
+
+		// Fade out the boss battle music
+		ig.music.fadeOut(2);
+	},
 
 	
 	kill: function() {
@@ -138,6 +148,9 @@ EntityBoss = EntityEnemy.extend({
 
 			// Reset the silver treasure chests so you can find new spoils
 			ig.game.resetSilverChests();
+
+			// Play the normal song again
+			ig.game.playSong();
 		}
 
 		// Open all event doors in the room with a delayed open
