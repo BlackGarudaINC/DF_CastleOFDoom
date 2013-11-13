@@ -44,6 +44,8 @@ EntityBoss = EntityEnemy.extend({
 
 	startUpdate: function() {
 
+		this.parent();
+
 		// If you're already dead, this is the time to kill yourself
 		if (this.alreadyDead) {
 			this.kill();
