@@ -27,7 +27,7 @@ EntityMonstercloset = EntityEnemy.extend({
 	dropsItems: false,
 	dealsDamage: false,
 	drawHealthBar: false,
-	killWhenDead: true,
+	killWhenDead: false,
 
 	zIndex: -10,
 
@@ -97,11 +97,6 @@ EntityMonstercloset = EntityEnemy.extend({
 		this.parent();
 	},
 
-	die: function() {
-		this.dead = true;
-		this.health = 0;
-		this.currentAnim = this.anims.death.rewind();
-	}
 });
 
 });
