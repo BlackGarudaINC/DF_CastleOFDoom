@@ -16,6 +16,7 @@ EntityTreasure = EntityItem.extend({
 	animSheet: new ig.AnimationSheet( 'media/sprites/Chests.png', 16, 16 ),
 
 	opened: false, // Whether or not the chest has been opened
+	zIndex: -40,
 
 	// Do nothing since you can't collect the treasure chest itself
 	collected: function( other ) {},
