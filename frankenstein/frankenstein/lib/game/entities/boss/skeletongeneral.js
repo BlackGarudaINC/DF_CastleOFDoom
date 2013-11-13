@@ -22,7 +22,9 @@ EntitySkeletongeneral = EntityBoss.extend({
 
 	attackTimer: null, 	 // countdown to when it attacks
 	
-	animSheet: new ig.AnimationSheet( 'media/sprites/Freak.png', 64, 64 ),
+	animSheet: new ig.AnimationSheet( 'media/sprites/SkeletonGeneral.png', 64, 64 ),
+	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
+	flashImage: new ig.Image( 'media/sprites/SkeletonGeneral.png#ffffff' ),
 	
 	health: 3,
 	// debugDraw: true,
@@ -30,11 +32,9 @@ EntitySkeletongeneral = EntityBoss.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 		
-		this.addAnim( 'idle', 0.2, [0,1] );
-		this.addAnim( 'pain', 0.2, [2,3] );
-		this.addAnim( 'prepare', 0.2, [4,4,4,4] );
-		this.addAnim( 'death', 0.1, [0, 2, 3, 5, 12, 13, 14, 15, 6], true );
-		this.addAnim( 'attack', 0.025, [8, 9, 10, 11]);
+		// The main general is just the legs for the core animation, everything else is extra
+		this.addAnim( 'idle', 0.2, [4] );
+		this.addAnim( 'walk', 0.2, [4, 5, 4, 6] );
 
 	},
 
