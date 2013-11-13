@@ -1096,6 +1096,7 @@ EntityPlayer = EntityBase.extend({
 		if (ig.game.playerState.health <= 0) {
 			this.currentAnim = this.anims.death.rewind();
 			this.sfxDeath.play();
+			ig.music.fadeOut(1);
 		} else {
 			this.painAnimation();
 		}
