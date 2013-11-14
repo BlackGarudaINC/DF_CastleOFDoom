@@ -37,6 +37,8 @@ EntityMonstercloset = EntityEnemy.extend({
 	spawnTimer: null,
 	frequency: 1,
 	monster: 'Zombie',
+	minBossDefeated: 0,
+	maxBossDefeated: 0,
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/ClosetDoors.png', 16, 32 ),
 
@@ -46,6 +48,10 @@ EntityMonstercloset = EntityEnemy.extend({
 		this.addAnim( 'idle', 1, [this.doorType] );
 		this.addAnim( 'open', 0.1, [this.doorType, this.doorType + 1, this.doorType + 2, this.doorType + 2, this.doorType + 1, this.doorType], true );
 		this.addAnim( 'death', 1, [this.doorType + 3], true );
+
+		if( ig.game.oneTimeEvents.bosses.length < this.minBossDefeated || ig.game.oneTimeEvents.bosses.length > this.maxBossDefeated ){
+			this.kill();
+		}
 	},
 
 	startUpdate: function() {
