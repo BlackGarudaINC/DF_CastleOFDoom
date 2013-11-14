@@ -4,7 +4,8 @@ ig.module(
 .requires(
 	'impact.entity',
 	'game.entities.boss.boss',
-	'game.entities.boss.skeletonhead'
+	'game.entities.boss.skeletonhead',
+	'game.entities.boss.skeletonarm'
 )
 .defines(function(){
 	
@@ -21,7 +22,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 	damageFlash: true,
 
 	attackTimer: null, 	// countdown to when it attacks
-	armTimer: null,		// Change the frame for the arm
+	armTimer: null,		// Change the frame for the idle arm
 	armFrame: false,	// Alternates between the two arm frames
 	walkTimer: null,	// He starts / stops walking
 	walking: 0,			// Walking direction (0 is not walking)
@@ -34,6 +35,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 
 	// Body parts
 	head: null,
+	arm: null,	// attacking arm
 	
 	health: 5,
 	// debugDraw: true,
@@ -49,6 +51,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 
 			// Spawn the various body parts
 			ig.game.spawnEntity( EntitySkeletonhead, this.pos.x, this.pos.y, {master: this} );
+			ig.game.spawnEntity( EntitySkeletonarm, this.pos.x, this.pos.y, {master: this} );
 		}
 
 	},
@@ -69,20 +72,22 @@ EntitySkeletongeneral = EntityBoss.extend({
 	registerHead: function (head) {
 		this.head = head;
 	},
+	registerArm: function (arm) {
+		this.arm = arm;
+	},
 
 	handleTimers: function() {
 
 		// Check if it's time to attack again
 		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 
-			// // Get ready to attack
-			// if (this.currentAnim == this.anims.idle) {
-			// 	this.currentAnim = this.anims.prepare.rewind();
-			// 	this.attackTimer = null;
-			// 	this.showsPain = false;
-			// }
+			// He either attacks or laughs, and he's more likely to attack later in battle
+			if ( Math.random() < (this.phase+1)*0.2 ) {
+				this.arm.attack();
+			} else {
+				this.head.laugh();
+			}
 
-			this.head.laugh();
 			this.attackTimer.reset(); 
 			
 		}
@@ -110,15 +115,6 @@ EntitySkeletongeneral = EntityBoss.extend({
 		this.parent();
 	},
 
-	handleAnimations: function() {
-
-		// // Check if done preparing to attack
-		// if (this.currentAnim == this.anims.prepare && this.currentAnim.loopCount > 0) {
-		// 	this.currentAnim = this.anims.attack;
-		// }
-
-		this.parent();
-	},
 
 	// Depending on the battle phase, attacks end when you hit the wall
 	flipOver: function(direction) {
