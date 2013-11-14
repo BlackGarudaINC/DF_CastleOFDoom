@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.level.water'
 )
 .requires(
-	'game.entities.base'
+	'game.entities.base',
+	'game.entities.level.watersplash'
 )
 .defines(function(){
 	
@@ -31,8 +32,6 @@ EntityWater = EntityBase.extend({
 
 	},
 
-
-
 	// Check for the player entering or leaving the water
 	check: function( other ) {
 		if (other instanceof EntityPlayer) {
@@ -40,6 +39,15 @@ EntityWater = EntityBase.extend({
 				ig.game.player.leaveWater();
 			} else {
 				ig.game.player.enterWater();
+
+				for(i = 0; i < 10; i++){
+					var ranX = Math.floor((Math.random() * 10) + 1);
+					var ranY = Math.floor((Math.random() * 10) + 1);
+
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY );
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY );
+				}
+
 			}
 		}
 	},
