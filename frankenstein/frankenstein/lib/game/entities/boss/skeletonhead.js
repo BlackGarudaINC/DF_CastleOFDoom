@@ -31,6 +31,9 @@ EntitySkeletonhead = EntityEnemypart.extend({
 		this.addAnim( 'laugh', 0.1, [0, 1, 2, 1] );
 
 		this.zIndex = this.master.zIndex + 1;
+
+		// Let the body know that this is the head
+		this.master.registerHead(this);
 	},
 
 	defaultAnimation: function() {
@@ -45,6 +48,10 @@ EntitySkeletonhead = EntityEnemypart.extend({
 		}
 
 		this.parent();
+	},
+
+	laugh: function() {
+		this.currentAnim = this.anims.laugh.rewind();
 	},
 
 	myUpdate: function () {

@@ -20,11 +20,16 @@ EntitySkeletongeneral = EntityBoss.extend({
 	speed: 200,
 	damageFlash: true,
 
-	attackTimer: null, 	 // countdown to when it attacks
+	attackTimer: null, 	// countdown to when it attacks
+	armTimer: null,		// Change the frame for the arm
+	armFrame: false,	// Alternates between the two arm frames
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SkeletonGeneral.png', 64, 64 ),
 	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
 	flashImage: new ig.Image( 'media/sprites/SkeletonGeneral.png#ffffff' ),
+
+	// Body parts
+	head: null,
 	
 	health: 5,
 	// debugDraw: true,
@@ -48,25 +53,40 @@ EntitySkeletongeneral = EntityBoss.extend({
 		this.parent();
 
 		this.attackTimer = new ig.Timer(4);
+		this.armTimer = new ig.Timer(0.8);
 	},
 
 	defaultAnimation: function() {
 		return this.anims.idle;
 	},
 
+	// Allow body parts to register themselves as what they are
+	registerHead: function (head) {
+		this.head = head;
+	},
+
 	handleTimers: function() {
 
-		// // Check if it's time to attack again
-		// if (this.attackTimer != null && this.attackTimer.delta() > 0) {
+		// Check if it's time to attack again
+		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 
-		// 	// Get ready to attack
-		// 	if (this.currentAnim == this.anims.idle) {
-		// 		this.currentAnim = this.anims.prepare.rewind();
-		// 		this.attackTimer = null;
-		// 		this.showsPain = false;
-		// 	} 
+			// // Get ready to attack
+			// if (this.currentAnim == this.anims.idle) {
+			// 	this.currentAnim = this.anims.prepare.rewind();
+			// 	this.attackTimer = null;
+			// 	this.showsPain = false;
+			// }
+
+			this.head.laugh();
+			this.attackTimer.reset(); 
 			
-		// }
+		}
+
+		// Update the animation frame for the arm
+		if (this.armTimer != null && this.armTimer.delta() > 0) {
+			this.armFrame = !this.armFrame;
+			this.armTimer.reset();
+		}
 
 		this.parent();
 	},
@@ -108,7 +128,10 @@ EntitySkeletongeneral = EntityBoss.extend({
 			}
 
 			// Draw the torso
-			image.drawTile( this.pos.x - 2, this.pos.y, 15, 32, 64 );
+			image.drawTile( this.pos.x - 2 - ig.game.screen.x, this.pos.y - ig.game.screen.y, 15, 32, 64 );
+
+			// Draw the arm
+			image.drawTile( this.pos.x + 7 - ig.game.screen.x, this.pos.y + 12 - ig.game.screen.y, (this.armFrame ? 6 : 7), 32, 64);
 
 		}
 		
