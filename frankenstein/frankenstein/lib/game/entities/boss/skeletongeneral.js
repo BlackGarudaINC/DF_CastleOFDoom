@@ -3,30 +3,35 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'game.entities.boss.boss'
+	'game.entities.boss.boss',
+	'game.entities.boss.skeletonhead'
 )
 .defines(function(){
 	
 EntitySkeletongeneral = EntityBoss.extend({
-	size: {x: 28, y: 32},
-	offset: {x: 18, y: 32},
+	size: {x: 28, y: 92},
+	offset: {x: 18, y: -28},
 	maxVel: {x: 200, y: 600},
 	friction: {x: 150, y: 0},
 
 	edgeReverse: false,
 	killWhenDead: false, // Use death animation instead of killing right away
-	knockback: true,    // If they bounce back from damage
-	knockbackForce: 100, // How much force pushes them back
+	knockback: false,    // If they bounce back from damage
 	speed: 200,
 	damageFlash: true,
 
-	attackTimer: null, 	 // countdown to when it attacks
+	attackTimer: null, 	// countdown to when it attacks
+	armTimer: null,		// Change the frame for the arm
+	armFrame: false,	// Alternates between the two arm frames
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SkeletonGeneral.png', 64, 64 ),
 	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
 	flashImage: new ig.Image( 'media/sprites/SkeletonGeneral.png#ffffff' ),
+
+	// Body parts
+	head: null,
 	
-	health: 3,
+	health: 5,
 	// debugDraw: true,
 	
 	init: function( x, y, settings ) {
@@ -36,31 +41,52 @@ EntitySkeletongeneral = EntityBoss.extend({
 		this.addAnim( 'idle', 0.2, [4] );
 		this.addAnim( 'walk', 0.2, [4, 5, 4, 6] );
 
+		if (ig.system.running && !this.alreadyDead) {
+
+			// Spawn the various body parts
+			ig.game.spawnEntity( EntitySkeletonhead, this.pos.x, this.pos.y, {master: this} );
+		}
+
 	},
 
 	startBattle: function() {
 		this.parent();
 
 		this.attackTimer = new ig.Timer(4);
+		this.armTimer = new ig.Timer(0.8);
 	},
 
 	defaultAnimation: function() {
 		return this.anims.idle;
 	},
 
+	// Allow body parts to register themselves as what they are
+	registerHead: function (head) {
+		this.head = head;
+	},
+
 	handleTimers: function() {
 
-		// // Check if it's time to attack again
-		// if (this.attackTimer != null && this.attackTimer.delta() > 0) {
+		// Check if it's time to attack again
+		if (this.attackTimer != null && this.attackTimer.delta() > 0) {
 
-		// 	// Get ready to attack
-		// 	if (this.currentAnim == this.anims.idle) {
-		// 		this.currentAnim = this.anims.prepare.rewind();
-		// 		this.attackTimer = null;
-		// 		this.showsPain = false;
-		// 	} 
+			// // Get ready to attack
+			// if (this.currentAnim == this.anims.idle) {
+			// 	this.currentAnim = this.anims.prepare.rewind();
+			// 	this.attackTimer = null;
+			// 	this.showsPain = false;
+			// }
+
+			this.head.laugh();
+			this.attackTimer.reset(); 
 			
-		// }
+		}
+
+		// Update the animation frame for the arm
+		if (this.armTimer != null && this.armTimer.delta() > 0) {
+			this.armFrame = !this.armFrame;
+			this.armTimer.reset();
+		}
 
 		this.parent();
 	},
@@ -87,6 +113,27 @@ EntitySkeletongeneral = EntityBoss.extend({
 		
 
 		this.parent();
+		
+	},
+
+	draw: function() {
+
+		this.parent();
+
+		if (this.visible) {
+
+			var image = this.myImage;
+			if (this.flashTimer != null) {
+				image = this.flashImage;
+			}
+
+			// Draw the torso
+			image.drawTile( this.pos.x - 2 - ig.game.screen.x, this.pos.y - ig.game.screen.y, 15, 32, 64 );
+
+			// Draw the arm
+			image.drawTile( this.pos.x + 7 - ig.game.screen.x, this.pos.y + 12 - ig.game.screen.y, (this.armFrame ? 6 : 7), 32, 64);
+
+		}
 		
 	}
 });

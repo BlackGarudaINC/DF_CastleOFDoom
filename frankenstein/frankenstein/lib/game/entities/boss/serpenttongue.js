@@ -42,6 +42,7 @@ EntitySerpenttongue = EntityEnemypart.extend({
 	myUpdate: function () {
 		this.pos.x = this.master.pos.x + 10;
 		this.pos.y = this.master.pos.y + 16;
+		this.parent();
 	}
 	
 	
