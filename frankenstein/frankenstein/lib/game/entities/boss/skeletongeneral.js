@@ -17,12 +17,16 @@ EntitySkeletongeneral = EntityBoss.extend({
 	edgeReverse: false,
 	killWhenDead: false, // Use death animation instead of killing right away
 	knockback: false,    // If they bounce back from damage
-	speed: 200,
+	speed: 20,
 	damageFlash: true,
 
 	attackTimer: null, 	// countdown to when it attacks
 	armTimer: null,		// Change the frame for the arm
 	armFrame: false,	// Alternates between the two arm frames
+	walkTimer: null,	// He starts / stops walking
+	walking: 0,			// Walking direction (0 is not walking)
+
+	flip: false,		// False = facing left
 	
 	animSheet: new ig.AnimationSheet( 'media/sprites/SkeletonGeneral.png', 64, 64 ),
 	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
@@ -53,6 +57,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 		this.parent();
 
 		this.attackTimer = new ig.Timer(4);
+		this.walkTimer = new ig.Timer(2);
 		this.armTimer = new ig.Timer(0.8);
 	},
 
@@ -88,6 +93,20 @@ EntitySkeletongeneral = EntityBoss.extend({
 			this.armTimer.reset();
 		}
 
+		// Toggle walking / not walking
+		if (this.walkTimer != null && this.walkTimer.delta() > 0) {
+			this.flip = (ig.game.player.pos.x > this.pos.x);
+			if (this.walking == 0) {
+				this.walkTimer.set(8);
+				this.currentAnim = this.anims.walk;
+				this.walking = (this.flip ? 1 : -1);
+			} else {
+				this.walkTimer.set(6);
+				this.currentAnim = this.anims.idle;
+				this.walking = 0;
+			}
+		}
+
 		this.parent();
 	},
 
@@ -103,6 +122,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 
 	// Depending on the battle phase, attacks end when you hit the wall
 	flipOver: function(direction) {
+		this.walking = -this.walking;
 		
 		this.parent(direction);
 	},
@@ -110,7 +130,11 @@ EntitySkeletongeneral = EntityBoss.extend({
 	
 	myUpdate: function() {
 
-		
+		if (this.walking != 0) {
+			this.vel.x = this.speed * this.walking;
+		}
+
+		this.currentAnim.flip.x = this.flip;
 
 		this.parent();
 		
@@ -128,10 +152,10 @@ EntitySkeletongeneral = EntityBoss.extend({
 			}
 
 			// Draw the torso
-			image.drawTile( this.pos.x - 2 - ig.game.screen.x, this.pos.y - ig.game.screen.y, 15, 32, 64 );
+			image.drawTile( this.pos.x - 2 - ig.game.screen.x, this.pos.y - ig.game.screen.y, 15, 32, 64, this.flip );
 
 			// Draw the arm
-			image.drawTile( this.pos.x + 7 - ig.game.screen.x, this.pos.y + 12 - ig.game.screen.y, (this.armFrame ? 6 : 7), 32, 64);
+			image.drawTile( this.pos.x + (this.flip ? -9 : 7) - ig.game.screen.x, this.pos.y + 12 - ig.game.screen.y, (this.armFrame ? 6 : 7), 32, 64, this.flip);
 
 		}
 		
