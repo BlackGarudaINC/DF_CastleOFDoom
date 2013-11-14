@@ -234,6 +234,12 @@ EntityEnemy = EntityBase.extend({
 	showDamage: function() {
 		// Set temporary invincibility if not dead
 		if (this.currentAnim != this.anims.death) {
+			
+			// Switch to the pain animation if one exists
+			if (this.anims.pain && this.showsPain) {
+				this.currentAnim = this.anims.pain.rewind();
+			}
+
 			if (this.tempInvincibleTimer === null) {
 				this.tempInvincibleTimer = new ig.Timer(0.2);
 			} else {
@@ -247,11 +253,6 @@ EntityEnemy = EntityBase.extend({
 			}
 
 			this.tempInvincible = true;
-
-			// Switch to the pain animation if one exists
-			if (this.anims.pain && this.showsPain) {
-				this.currentAnim = this.anims.pain.rewind();
-			}
 		}
 
 		// Inform all the enemy parts that you've taken damage, if applicable

@@ -3,20 +3,20 @@ ig.module(
 )
 .requires(
 	'impact.entity',
-	'game.entities.boss.boss'
+	'game.entities.boss.boss',
+	'game.entities.boss.skeletonhead'
 )
 .defines(function(){
 	
 EntitySkeletongeneral = EntityBoss.extend({
-	size: {x: 28, y: 32},
-	offset: {x: 18, y: 32},
+	size: {x: 28, y: 92},
+	offset: {x: 18, y: -28},
 	maxVel: {x: 200, y: 600},
 	friction: {x: 150, y: 0},
 
 	edgeReverse: false,
 	killWhenDead: false, // Use death animation instead of killing right away
-	knockback: true,    // If they bounce back from damage
-	knockbackForce: 100, // How much force pushes them back
+	knockback: false,    // If they bounce back from damage
 	speed: 200,
 	damageFlash: true,
 
@@ -26,7 +26,7 @@ EntitySkeletongeneral = EntityBoss.extend({
 	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
 	flashImage: new ig.Image( 'media/sprites/SkeletonGeneral.png#ffffff' ),
 	
-	health: 3,
+	health: 5,
 	// debugDraw: true,
 	
 	init: function( x, y, settings ) {
@@ -35,6 +35,12 @@ EntitySkeletongeneral = EntityBoss.extend({
 		// The main general is just the legs for the core animation, everything else is extra
 		this.addAnim( 'idle', 0.2, [4] );
 		this.addAnim( 'walk', 0.2, [4, 5, 4, 6] );
+
+		if (ig.system.running && !this.alreadyDead) {
+
+			// Spawn the various body parts
+			ig.game.spawnEntity( EntitySkeletonhead, this.pos.x, this.pos.y, {master: this} );
+		}
 
 	},
 
@@ -87,6 +93,24 @@ EntitySkeletongeneral = EntityBoss.extend({
 		
 
 		this.parent();
+		
+	},
+
+	draw: function() {
+
+		this.parent();
+
+		if (this.visible) {
+
+			var image = this.myImage;
+			if (this.flashTimer != null) {
+				image = this.flashImage;
+			}
+
+			// Draw the torso
+			image.drawTile( this.pos.x - 2, this.pos.y, 15, 32, 64 );
+
+		}
 		
 	}
 });
