@@ -35,15 +35,21 @@ EntityWater = EntityBase.extend({
 	// Check for the player entering or leaving the water
 	check: function( other ) {
 		if (other instanceof EntityPlayer) {
+
+			var ranX = Math.floor((Math.random() * 10) + 1);
+			var ranY = Math.floor((Math.random() * 10) + 1);
+
 			if (this.pos.y > ig.game.player.pos.y + 10) {
 				ig.game.player.leaveWater();
+
+				for(i = 0; i < 10; i++){
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY, {gravityFactor: 1} );
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY, {gravityFactor: 1} );
+				}
 			} else {
 				ig.game.player.enterWater();
 
 				for(i = 0; i < 10; i++){
-					var ranX = Math.floor((Math.random() * 10) + 1);
-					var ranY = Math.floor((Math.random() * 10) + 1);
-
 					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY );
 					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY );
 				}

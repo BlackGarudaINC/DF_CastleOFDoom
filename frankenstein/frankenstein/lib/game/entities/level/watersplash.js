@@ -23,8 +23,8 @@ EntityWatersplash = EntityParticle.extend({
 
 		this.currentAnim = this.anims.idle.rewind();
 
-		this.vel.x = 0;
-		this.vel.y = 0;
+		this.vel.x = 10;
+		this.vel.y = 10;
 		
 	},
 	
