@@ -180,7 +180,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel( LevelTest );
+		this.loadLevel(ig.copy( LevelTest ));
 
 		// Reset the silver chests
 		this.resetSilverChests();
@@ -259,7 +259,7 @@ MyGame = ig.Game.extend({
 		this.playSong();
 
 		// Load the level where the player saved
-		this.loadLevelDeferred( ig.global['Level' + this.currentLevelName] );
+		this.loadLevelDeferred( ig.copy(ig.global['Level' + this.currentLevelName]) );
 	},
 	
 	setupCamera: function() {
@@ -284,7 +284,7 @@ MyGame = ig.Game.extend({
 	},
 
 	reloadLevel: function() {
-		this.loadLevelDeferred( this.currentLevel );
+		this.loadLevelDeferred( ig.copy(this.currentLevel) );
 	},
 	
 	update: function() {		

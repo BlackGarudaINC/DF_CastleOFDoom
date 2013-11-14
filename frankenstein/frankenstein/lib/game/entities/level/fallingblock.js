@@ -45,10 +45,9 @@ EntityFallingblock = EntityBase.extend({
 
 	// Get the tile underneath this, store it as this entity's tile, and delete the tile from the map
 	startUpdate: function() {
-		console.log(ig.game.getMapByName('main'));
-		this.tile = ig.game.getMapByName('main').getTile(this.pos.x, this.pos.y) - 1;
-		console.log(this.tile);
-		ig.game.getMapByName('main').setTile(this.pos.x, this.pos.y, 0);
+		var tiles = ig.game.getMapByName('main');
+		this.tile = tiles.getTile(this.pos.x, this.pos.y) - 1;
+		tiles.setTile(this.pos.x, this.pos.y, 0);
 
 		this.parent();
 	},
@@ -105,7 +104,7 @@ EntityFallingblock = EntityBase.extend({
 
 		// Draw the tile underneath the crack
 		if (this.tile != -1 && this.visible) {
-			this.myImage.drawTile( this.pos.x - ig.game.screen.x, this.pos.y - ig.game.screen.y, this.tile, 8, 8 );
+			this.myImage.drawTile( this.pos.x - ig.game.screen.x - this.offset.x, this.pos.y - ig.game.screen.y, this.tile, 8, 8 );
 		}
 
 		this.parent();

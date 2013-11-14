@@ -61,7 +61,7 @@ EntityLevelchange = EntityBase.extend({
 		}
 		
 		ig.game.currentLevelName = levelName;
-		ig.game.loadLevelDeferred( ig.global['Level'+levelName] );
+		ig.game.loadLevelDeferred( ig.copy(ig.global['Level'+levelName]) );
 	},
 	
 	check: function( other ) {
