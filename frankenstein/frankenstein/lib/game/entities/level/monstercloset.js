@@ -45,7 +45,7 @@ EntityMonstercloset = EntityEnemy.extend({
 
 		this.addAnim( 'idle', 1, [this.doorType] );
 		this.addAnim( 'open', 0.1, [this.doorType, this.doorType + 1, this.doorType + 2, this.doorType + 2, this.doorType + 1, this.doorType], true );
-		this.addAnim( 'death', 1, [this.doorType + 3] );
+		this.addAnim( 'death', 1, [this.doorType + 3], true );
 	},
 
 	startUpdate: function() {
@@ -96,6 +96,12 @@ EntityMonstercloset = EntityEnemy.extend({
 
 		this.parent();
 	},
+
+	die: function() {
+		this.parent();
+
+		this.spawnTimer.pause();
+	}
 
 });
 
