@@ -55,8 +55,10 @@ EntitySkeletonhead = EntityEnemypart.extend({
 	},
 
 	myUpdate: function () {
-		this.pos.x = this.master.pos.x - 4;
+		this.pos.x = this.master.pos.x + (this.master.flip ? 14 : -4);
 		this.pos.y = this.master.pos.y - 12;
+
+		this.currentAnim.flip.x = this.master.flip;
 
 		this.parent();
 	}
