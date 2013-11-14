@@ -49,8 +49,10 @@ EntityMonstercloset = EntityEnemy.extend({
 		this.addAnim( 'open', 0.1, [this.doorType, this.doorType + 1, this.doorType + 2, this.doorType + 2, this.doorType + 1, this.doorType], true );
 		this.addAnim( 'death', 1, [this.doorType + 3], true );
 
-		if( ig.game.oneTimeEvents.bosses.length < this.minBossDefeated || ig.game.oneTimeEvents.bosses.length > this.maxBossDefeated ){
-			this.kill();
+		if (ig.system.running) {
+			if( ig.game.oneTimeEvents.bosses.length < this.minBossDefeated || ig.game.oneTimeEvents.bosses.length > this.maxBossDefeated ){
+				this.kill();
+			}
 		}
 	},
 

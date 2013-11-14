@@ -8,8 +8,6 @@ ig.module(
 	
 EntityFallingblock = EntityBase.extend({
 
-	_wmScalable: true, // ONLY SCALE IN THE X DIRECTION! LEAVE Y AT 8!
-
 	type: ig.Entity.TYPE.NONE, 
 	checkAgainst: ig.Entity.TYPE.A, 	// check against the player
 	collides: ig.Entity.COLLIDES.FIXED,
@@ -31,9 +29,6 @@ EntityFallingblock = EntityBase.extend({
 
 	tile: -1,			// The index of the tile this is placed on top of in weltmeister
 
-	// This is the wait time once it gets to its destination
-	waitTime: 1,
-
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
@@ -50,14 +45,6 @@ EntityFallingblock = EntityBase.extend({
 		tiles.setTile(this.pos.x, this.pos.y, 0);
 
 		this.parent();
-	},
-
-	myUpdate: function() {
-
-
-
-		this.parent();
-
 	},
 
 	handleTimers: function() {
