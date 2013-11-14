@@ -38,7 +38,7 @@ EntityMonstercloset = EntityEnemy.extend({
 	frequency: 1,
 	monster: 'Zombie',
 	minBossDefeated: 0,
-	maxBossDefeated: 0,
+	maxBossDefeated: 99,
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/ClosetDoors.png', 16, 32 ),
 
