@@ -40,6 +40,8 @@ EntityMonstercloset = EntityEnemy.extend({
 	minBossDefeated: 0,
 	maxBossDefeated: 99,
 
+	maxSpawn: 10,
+
 	animSheet: new ig.AnimationSheet( 'media/sprites/ClosetDoors.png', 16, 32 ),
 
 	init: function( x, y, settings ) {
@@ -72,11 +74,16 @@ EntityMonstercloset = EntityEnemy.extend({
 
 	handleTimers: function() {
 		
-		// Check if it's time to attack again
+		// Check if it's time to spawn another monster
 		if (this.awake && this.spawnTimer.delta() > 0 && this.currentAnim != this.anims.open) {
-			this.currentAnim = this.anims.open.rewind();
 			
-			this.spawnTimer.reset();
+			if( ig.game.getEntitiesByType(this.monster).length < this.maxSpawn ){
+				this.currentAnim = this.anims.open.rewind();
+				this.spawnTimer.reset();
+			} else{
+				this.spawnTimer.pause();
+			}
+			
 		}
 
 		this.parent();
