@@ -20,6 +20,9 @@ EntityWater = EntityBase.extend({
 	size: {x: 64, y: 8},
 	offset: {x: 0, y: 0},
 	animSheet: new ig.AnimationSheet( 'media/sprites/WaterSurface.png', 8, 8 ),
+
+	sfxSplash: new ig.Sound( 'media/sounds/Environment/WaterSplash.*' ),
+
 	zIndex: -50,
 
 	tileImage: true,	// Repeat the image across the entire width
@@ -42,17 +45,31 @@ EntityWater = EntityBase.extend({
 			if (this.pos.y > ig.game.player.pos.y + 10) {
 				ig.game.player.leaveWater();
 
-				for(i = 0; i < 10; i++){
-					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY, {gravityFactor: 1} );
-					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY, {gravityFactor: 1} );
+				if( ig.game.player.inWater ) {
+
+					for(i = 0; i < 20; i++) {
+						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY, {gravityFactor: 1} );
+						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY, {gravityFactor: 1} );
+					}
+
+					this.sfxSplash.play();
+					ig.game.player.inWater = false;
 				}
 			} else {
 				ig.game.player.enterWater();
 
-				for(i = 0; i < 10; i++){
-					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY );
-					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY );
+
+				if( !ig.game.player.inWater ) {
+					
+					for(i = 0; i < 20; i++) {
+						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY );
+						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY );
+					}
+
+					this.sfxSplash.play();
+					ig.game.player.inWater = true;
 				}
+				
 
 			}
 		}

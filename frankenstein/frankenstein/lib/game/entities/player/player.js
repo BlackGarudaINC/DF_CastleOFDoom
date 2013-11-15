@@ -50,9 +50,15 @@ EntityPlayer = EntityBase.extend({
 	
 	sfxHurt1: new ig.Sound( 'media/sounds/Player/PlayerGetHit01.*' ),
 	sfxJump: new ig.Sound( 'media/sounds/jump.*' ),
+	sfxEnergize: new ig.Sound( 'media/sounds/Player/Energize.*' ),
 
 	// Attack Sounds
 	sfxPunch: new ig.Sound( 'media/sounds/Player/PlayerPunch.*' ),
+	sfxBallChain: new ig.Sound( 'media/sounds/Weapons/BallAndChainAttack.*' ),
+	sfxClub: new ig.Sound( 'media/sounds/Weapons/ClubAttack.*' ),
+	sfxHammer: new ig.Sound( 'media/sounds/Weapons/HammerAttack.*' ),
+	sfxPitchfork: new ig.Sound( 'media/sounds/Weapons/PitchforkAttack.*' ),
+	sfxScythe: new ig.Sound( 'media/sounds/Weapons/ScytheAttack.*' ),
 
 	sfxDeath: new ig.Sound( 'media/sounds/Player/PlayerGroan.*' ),
 
@@ -69,6 +75,7 @@ EntityPlayer = EntityBase.extend({
 	groundPoundSpeed: 500,
 	slideSpeed: 160,
 
+	inWater: false,		   // Checks if player is already in water
 	usedDoubleJump: false, // Whether or not the player used the second jump yet
 	tempInvincible: false, // You're invincible for a set time after getting hit
 	tempInvincibleTimer: null,
@@ -331,18 +338,23 @@ EntityPlayer = EntityBase.extend({
 		switch(ig.game.playerState.meleeWeapon) {
 		case 1: // Club
 			this.currentAnim = this.anims.club.rewind();
+			this.sfxClub.play();
 			break;
 		case 2: // Pitchfork
 			this.currentAnim = this.anims.pitchfork.rewind();
+			this.sfxPitchfork.play();
 			break;
 		case 3: // Ball and chain
 			this.currentAnim = this.anims.ballandchain.rewind();
+			this.sfxBallChain.play();
 			break;
 		case 4: // Scythe
 			this.currentAnim = this.anims.scythe.rewind();
+			this.sfxScythe.play();
 			break;
 		case 5: // Hammer
 			this.currentAnim = this.anims.hammer.rewind();
+			this.sfxHammer.play();
 			break;
 		default: // No weapon
 			if (Math.random() < 0.5) {
@@ -956,6 +968,7 @@ EntityPlayer = EntityBase.extend({
 		if (!ig.game.playerState.energized) {
 			ig.game.playerState.energized = true;
 			this.electricDrawTimer = new ig.Timer(0.05);
+			this.sfxEnergize.play();
 		}
 	},
 

@@ -24,7 +24,8 @@ ig.module(
 	'game.levels.testskeleton',
 	'game.levels.towerstart',
 	'game.levels.towermain',
-	'game.levels.towertop'
+	'game.levels.towertop',
+	'game.levels.gargoyletest'
 )
 .defines(function(){
 	
@@ -166,7 +167,7 @@ MyGame = ig.Game.extend({
 		ig.music.add( 'media/music/Map.*', 'Map' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
 		if (this.musicEnabled) {
-			ig.music.play();
+			//ig.music.play();
 		}
 		this.musicPlaying = true;
 		this.musicSong = 'Castle01';
