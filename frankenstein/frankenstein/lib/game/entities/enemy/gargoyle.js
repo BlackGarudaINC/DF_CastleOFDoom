@@ -30,7 +30,7 @@ EntityGargoyle = EntityEnemy.extend({
 	awake: false,
 	attackTimer: null,
 
-	position1: {x: this.pos.x, y: this.pos.y},
+	position1: {x: 0, y: 0},
 	position2: {x: 0, y: 0},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Gargoyle.png', 64, 64 ),
@@ -40,10 +40,12 @@ EntityGargoyle = EntityEnemy.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'idle', 0.1, [0,1] );
+		this.addAnim( 'idle', 0.3, [0,1] );
 		this.addAnim( 'fly', 0.1, [2,3] );
 		this.addAnim( 'attack', 1, [2] );
 		this.addAnim( 'death', 0.1, [4,5,6,7] );
+
+		this.position1 = {x: this.pos.x, y: this.pos.y};
 	},
 
 	handleTimers: function() {
@@ -52,7 +54,7 @@ EntityGargoyle = EntityEnemy.extend({
 		if (this.awake && this.currentAnim == this.anims.idle) {
 			
 			this.currentAnim = this.anims.fly;
-			this.vel.y = -40;
+			this.vel.y = -10;
 		}
 
 		this.parent();
