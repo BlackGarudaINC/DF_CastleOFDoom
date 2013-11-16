@@ -59,6 +59,11 @@ EntityBubble = EntityParticle.extend({
 			this.kill();
 		}
 
+		// If you're stuck on a ceiling, die
+		if (this.vel.y >= -0.01) {
+			this.kill();
+		}
+
 		this.parent();
 	}
 	
