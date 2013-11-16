@@ -19,12 +19,13 @@ EntityWatersplash = EntityParticle.extend({
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'idle', 0.1, [0], true );
+		this.addAnim( 'idle', 0.2, [0], true );
 
 		this.currentAnim = this.anims.idle.rewind();
 
-		this.vel.x = 10;
-		this.vel.y = 10;
+		// No x-velocity is required, but give it some initial y-velocity in the direction of gravity
+		this.vel.x = 0;
+		this.vel.y = 10 * this.gravityFactor;
 		
 	},
 	

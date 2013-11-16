@@ -39,38 +39,45 @@ EntityWater = EntityBase.extend({
 	check: function( other ) {
 		if (other instanceof EntityPlayer) {
 
-			var ranX = Math.floor((Math.random() * 10) + 1);
-			var ranY = Math.floor((Math.random() * 10) + 1);
+			// Used to check if we need to make a splash, and if so, which direction gravity is going.
+			// By using a variable and putting the splash logic at the end, we can prevent repeat logic.
+			var splash = 0;
 
 			if (this.pos.y > ig.game.player.pos.y + 10) {
-				ig.game.player.leaveWater();
-
-				if( ig.game.player.inWater ) {
-
-					for(i = 0; i < 20; i++) {
-						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY, {gravityFactor: 1} );
-						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY, {gravityFactor: 1} );
-					}
-
-					this.sfxSplash.play();
-					ig.game.player.inWater = false;
+				
+				// We can use the player's underwater property to see if we should make a splash
+				if( ig.game.playerState.underWater ) {
+					splash = 1;
+					ig.game.player.leaveWater();
 				}
+
 			} else {
-				ig.game.player.enterWater();
-
-
-				if( !ig.game.player.inWater ) {
-					
-					for(i = 0; i < 20; i++) {
-						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ranX, this.pos.y - ranY );
-						ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y - ranY );
-					}
-
-					this.sfxSplash.play();
-					ig.game.player.inWater = true;
+				
+				if( !ig.game.playerState.underWater ) {		
+					splash = -1;
+					ig.game.player.enterWater();
 				}
 				
+			}
 
+			// If we need to make a splash...
+			if (splash != 0) {
+
+				// Generate a bunch of random splash particles
+				for(var i = 0; i < 20; i++) {
+
+					// Get a random x and y offset each time through the loop.
+					// If this were outside the loop, the particles would all be on top of each other.
+					var ranX = Math.floor((Math.random() * 10) + 1);
+					var ranY = Math.floor((Math.random() * 10) + 1);
+
+					// Generate one particle to either side of the player in the x direction.
+					// Also give it an initial offset in the direction of gravity for this splash.
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x + ig.game.player.size.x + ranX, this.pos.y + ranY*splash, {gravityFactor: splash} );
+					ig.game.spawnEntity( EntityWatersplash, ig.game.player.pos.x - ranX, this.pos.y + ranY*splash, {gravityFactor: splash} );
+				}
+
+				this.sfxSplash.play();
 			}
 		}
 	},
