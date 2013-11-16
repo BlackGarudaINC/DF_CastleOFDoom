@@ -199,10 +199,16 @@ EntityEnemy = EntityBase.extend({
 			this.flipOver();
 		}
 	},
+
+	// This is for if you ever need to do anything else when dealing damage
+	giveDamageCallback: function() {
+
+	},
 	
 	check: function( other ) {
 		if (!this.dead && this.dealsDamage) {
 			other.receiveDamage( this.damage, this );
+			this.giveDamageCallback();
 		}
 	},
 

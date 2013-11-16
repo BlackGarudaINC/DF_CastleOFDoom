@@ -49,6 +49,12 @@ EntityCannonprojectile = EntityEnemyprojectile.extend({
 			this.offset.x = 1;
 			this.offset.y = 4;
 		}
+	},
+
+	// Die when it hits something
+	giveDamageCallback: function() {
+		this.parent();
+		this.kill();
 	}
 	
 });
