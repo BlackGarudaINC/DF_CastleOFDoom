@@ -27,6 +27,7 @@ EntityEnemychain = EntityEnemypart.extend({
 	accelFactor: 3,		// For gradual turns, multiply the max velocity by this for the acceleration
 	smoothAccel: {x: true, y: true},// Use acceleration rather than instantly turning on a dime on either axis
 	knockback: false,
+	informChildReverse: true,	// Whether or not you tell the child nodes when you reverse velocity
 
 	behindLeft: false,	// If this part of the chain is lagging behind in a specific direction,
 	behindRight: false, //   there's no reason to keep checking to keep showing that it's behind.
@@ -164,28 +165,10 @@ EntityEnemychain = EntityEnemypart.extend({
 		}
 	},
 
-	myUpdate: function() {
-
-		this.parent();
-
-		// Don't do anything if it hasn't been configured yet or if it's already dead
-		if (!this.configured || this.dead) {
-			return;
-		}
-
-		// Check if it reversed direction in the last frame, and if so, give the child a heads-up
-		if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
-			this.xPositive = !this.xPositive;
-			if (this.childNode != null) {
-				this.childNode.xFlip(this.xPositive);
-			}
-		}
-		if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
-			this.yPositive = !this.yPositive;
-			if (this.childNode != null) {
-				this.childNode.yFlip(this.yPositive);
-			}
-		}
+	// Actual logic for following the part of the chain in front of it.
+	// This part can be completely overridden.
+	// This default logic is very snake-like and keeps the parts always moving.
+	followLogic: function() {
 
 		// *************************************************************************************
 		// Check if you're out of range, and if so, move at the master's speed towards the range
@@ -265,9 +248,35 @@ EntityEnemychain = EntityEnemypart.extend({
 				this.behindAbove = false;
 			}
 		}
+	},
 
+	myUpdate: function() {
 
+		this.parent();
 
+		// Don't do anything if it hasn't been configured yet or if it's already dead
+		if (!this.configured || this.dead) {
+			return;
+		}
+
+		// Check if it reversed direction in the last frame, and if so, give the child a heads-up
+		if (this.informChildReverse) {
+			if (this.xPositive && this.vel.x < 0 || !this.xPositive && this.vel.x > 0) {
+				this.xPositive = !this.xPositive;
+				if (this.childNode != null) {
+					this.childNode.xFlip(this.xPositive);
+				}
+			}
+			if (this.yPositive && this.vel.y < 0 || !this.yPositive && this.vel.y > 0) {
+				this.yPositive = !this.yPositive;
+				if (this.childNode != null) {
+					this.childNode.yFlip(this.yPositive);
+				}
+			}
+		}
+
+		// Follow the parent in whatever way is configured for this particular chain
+		this.followLogic();
 
 		// Set the rotation, if applicable
 		if (this.rotates) {
