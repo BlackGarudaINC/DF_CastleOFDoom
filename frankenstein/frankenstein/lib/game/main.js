@@ -113,7 +113,8 @@ MyGame = ig.Game.extend({
 	// Permanent one-time events
 	oneTimeEvents: {
 		cutscenes: [],	// Room names of completed cutscenes
-		bosses: []		// Room names of defeated bosses
+		bosses: [],		// Room names of defeated bosses
+		unlockedDoors: [] // Doors that have been unlocked
 	},
 
 	// Default save slot

@@ -12,8 +12,8 @@ EntityKeyitem = EntityItem.extend({
 	_wmIgnore: true,
 	goldItem: true,
 
-	size: {x: 10, y: 16},
-	offset: {x: 2, y: 4},
+	size: {x: 8, y: 8},
+	offset: {x: 0, y: 0},
 	animSheet: new ig.AnimationSheet( 'media/sprites/ItemObjetcs01.png', 8, 8 ),
 
 	keyCollected: new ig.Sound( 'media/sounds/Items/Weapon.*' ),

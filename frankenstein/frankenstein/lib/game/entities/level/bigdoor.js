@@ -66,9 +66,14 @@ EntityBigdoor = EntityBase.extend({
 		}
 	},
 
+	// By default, doors are unlocked, but this can be overridden
+	unlocked: function() {
+		return true;
+	},
+
 	// When receiving damage from the player, we open the door
 	receiveDamage: function( amount, from ) {
-		if (!this.opened && this.currentAnim == this.anims.closed && from instanceof EntityMeleeattack) {
+		if (!this.opened && this.currentAnim == this.anims.closed && from instanceof EntityMeleeattack && this.unlocked()) {
 			this.currentAnim = this.anims.opening.rewind();
 			this.currentAnim.flip.x = this.flip;
 		}
