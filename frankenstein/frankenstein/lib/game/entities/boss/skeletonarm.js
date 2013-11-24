@@ -3,7 +3,7 @@ ig.module(
 )
 .requires(
 	'game.entities.enemy.enemypart',
-	'impact.entity'
+	'game.entities.boss.skeletonchain'
 )
 .defines(function(){
 	
@@ -36,6 +36,20 @@ EntitySkeletonarm = EntityEnemypart.extend({
 
 		// Let the body know that this is the arm
 		this.master.registerArm(this);
+
+		if (ig.system.running) {
+			// Spawn the chain parts
+			ig.game.spawnEntity( EntitySkeletonchain, this.pos.x, this.pos.y, {master: this, parentNode: this, numNodes: 9, nodeEntity: EntitySkeletonchain, initOffset: {x: 2, y: 2}} );
+		}
+	},
+
+	startUpdate: function() {
+		this.parent();
+
+		// Configure the chain
+		if (this.childNode) {
+			this.childNode.configure({ lowRange: {x: -2, y: -2}, highRange: {x: 2, y: 2}, maxVel: {x: 10, y: 10} });
+		}
 	},
 
 	defaultAnimation: function() {
