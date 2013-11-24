@@ -11,9 +11,10 @@ ig.module(
 EntitySkeletonarm = EntityEnemypart.extend({
 
 	size: {x: 16, y: 44},
-	offset: {x: 2, y: 4},
+	offset: {x: 4, y: 4},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/SkeletonGeneral.png', 32, 64 ),
+	myImage: new ig.Image( 'media/sprites/SkeletonGeneral.png' ),
 
 	damageMaster: true,
 	damageMultiplier: 1,
@@ -21,13 +22,15 @@ EntitySkeletonarm = EntityEnemypart.extend({
 	killWhenDead: true,
 	gravityFactor: 0,
 
+	chainOrigin: {x: 0, y: -16},	// Where the root of the chain starts from, relative to the arm's position
+
 	// debugDraw: true,
 
 	init: function( x, y, settings ) {
 		this.parent( x, y, settings );
 
-		this.addAnim( 'idle', 1, [3] );
-		this.addAnim( 'attack', 0.1, [3, 4, 5] );
+		this.addAnim( 'idle', 1, [5] );
+		this.addAnim( 'attack', 0.1, [5, 4, 3, 3, 3, 3, 3, 4] );
 
 		this.zIndex = this.master.zIndex - 1;
 
@@ -55,13 +58,33 @@ EntitySkeletonarm = EntityEnemypart.extend({
 	},
 
 	myUpdate: function () {
-		this.pos.x = this.master.pos.x + (this.master.flip ? 38 : -24);
+		this.flip = this.master.flip;
+
+		this.pos.x = this.master.pos.x + (this.flip ? 38 : -24);
 		this.pos.y = this.master.pos.y - 22;
 
-		this.currentAnim.flip.x = this.master.flip;
-		this.offset.x = (this.master.flip ? 14 : 2);
+		this.currentAnim.flip.x = this.flip;
+		this.offset.x = (this.flip ? 12 : 4);
+		this.chainOrigin.x = (this.flip ? -5 : 0);
+
+		// Change the chain origin's x-position if the arm is moving from an attack
+		if (this.currentAnim.tile == 4) {
+			this.chainOrigin.x += (this.flip ? 4 : -4);
+		} else if (this.currentAnim.tile == 3) {
+			this.chainOrigin.x += (this.flip ? 8 : -8);
+		}
 
 		this.parent();
+	},
+
+	draw: function () {
+		this.parent();
+
+		if (this.visible) {
+			// Draw the first chain of the mace
+			this.myImage.drawTile(this.pos.x + this.chainOrigin.x - ig.game.screen.x - 5, this.pos.y + this.chainOrigin.y - ig.game.screen.y - 8, 9, 32, 32);
+		}
+
 	}
 	
 	

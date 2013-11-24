@@ -81,7 +81,7 @@ MyGame = ig.Game.extend({
 
 		// Learned moves from books, in the order that they're learned
 		run: false,
-		doubleJump: false,
+		doubleJump: true,
 		groundPound: false,
 		energize: true,
 		slide: false,
