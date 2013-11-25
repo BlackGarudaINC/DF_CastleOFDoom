@@ -48,7 +48,7 @@ EntitySkeletonarm = EntityEnemypart.extend({
 
 		// Configure the chain
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -2, y: -2}, highRange: {x: 2, y: 2}, maxVel: {x: this.master.speed, y: 10} });
+			this.childNode.configure({ lowRange: {x: -4, y: -4}, highRange: {x: 4, y: 4}, maxVel: {x: this.master.speed, y: 0} });
 		}
 	},
 
