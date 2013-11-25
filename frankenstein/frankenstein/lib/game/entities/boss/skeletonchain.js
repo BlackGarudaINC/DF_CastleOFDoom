@@ -24,6 +24,8 @@ EntitySkeletonchain = EntityEnemychain.extend({
 	// gravityFactor: 1,
 
 	maceBall: false,		// The end of the chain is a mace ball
+	attacking: false,		// Whether or not it's currently attacking
+	reachedEnd: false,		// Whether it reached the end of the attack
 
 	debugDraw: false,
 
@@ -66,21 +68,43 @@ EntitySkeletonchain = EntityEnemychain.extend({
 		this.pos.y = target.y + this.highRange.y;
 
 		// Check if the master is attacking or idle
-		var attacking = (this.master.currentAnim == this.master.anims.attack);
+		if (this.master.currentAnim == this.master.anims.attack) {
+			if (!this.attacking) {
+				this.attacking = true;
+				this.reachedEnd = false;
+			}
+		} else {
+			this.attacking = false;
+		}
 
 		// Follow the target without using any kinds of physics if not currently attacking
-		if (!attacking) {
+		if (!this.attacking) {
 			this.vel.x = 0;
 			this.accel.x = 0;
 
 			// The x pos is the target plus the offset in the direction the master is facing
 			this.pos.x = target.x + (this.master.flip ? this.lowRange.x : this.highRange.x);
 
-
-
 		} else {
 
+			// Figure out how far to move in the direction
+			target.x += (this.master.flip ? this.highRange.x : this.lowRange.x);
 
+			// Swing in the direction it's facing
+			if (!this.reachedEnd) {
+				this.vel.x = (this.master.flip ? this.maxVel.x : -this.maxVel.x);
+			}
+
+			// See if it went too far
+			if ( (this.master.flip && this.pos.x > target.x) || (!this.master.flip && this.pos.x < target.x) ) {
+				this.reachedEnd = true;
+			} 
+
+			// If it reached the end, just stop it and put it in the target position
+			if (this.reachedEnd) {
+				this.vel.x = 0;
+				this.pos.x = target.x;
+			}
 
 		// 	// Check if the x pos is out of range
 		// 	// First, we check if there is supposed to be any movement in the X-direction.
