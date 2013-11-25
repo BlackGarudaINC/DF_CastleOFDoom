@@ -22,7 +22,7 @@ EntitySkeletonarm = EntityEnemypart.extend({
 	killWhenDead: true,
 	gravityFactor: 0,
 
-	chainOrigin: {x: 0, y: -16},	// Where the root of the chain starts from, relative to the arm's position
+	chainOrigin: {x: 6, y: -16},	// Where the root of the chain starts from, relative to the arm's position
 
 	// debugDraw: true,
 
@@ -48,7 +48,7 @@ EntitySkeletonarm = EntityEnemypart.extend({
 
 		// Configure the chain
 		if (this.childNode) {
-			this.childNode.configure({ lowRange: {x: -2, y: -2}, highRange: {x: 2, y: 2}, maxVel: {x: 10, y: 10} });
+			this.childNode.configure({ lowRange: {x: -2, y: -2}, highRange: {x: 2, y: 2}, maxVel: {x: this.master.speed, y: 10} });
 		}
 	},
 
@@ -79,7 +79,7 @@ EntitySkeletonarm = EntityEnemypart.extend({
 
 		this.currentAnim.flip.x = this.flip;
 		this.offset.x = (this.flip ? 12 : 4);
-		this.chainOrigin.x = (this.flip ? -5 : 0);
+		this.chainOrigin.x = (this.flip ? 1 : 6);
 
 		// Change the chain origin's x-position if the arm is moving from an attack
 		if (this.currentAnim.tile == 4) {
@@ -96,7 +96,7 @@ EntitySkeletonarm = EntityEnemypart.extend({
 
 		if (this.visible) {
 			// Draw the first chain of the mace
-			this.myImage.drawTile(this.pos.x + this.chainOrigin.x - ig.game.screen.x - 5, this.pos.y + this.chainOrigin.y - ig.game.screen.y - 8, 9, 32, 32);
+			this.myImage.drawTile(this.pos.x + this.chainOrigin.x - ig.game.screen.x - 11, this.pos.y + this.chainOrigin.y - ig.game.screen.y - 8, 9, 32, 32);
 		}
 
 	}

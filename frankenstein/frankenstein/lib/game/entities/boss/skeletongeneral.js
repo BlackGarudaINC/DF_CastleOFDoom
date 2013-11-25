@@ -12,7 +12,7 @@ ig.module(
 EntitySkeletongeneral = EntityBoss.extend({
 	size: {x: 28, y: 92},
 	offset: {x: 18, y: -28},
-	maxVel: {x: 200, y: 600},
+	maxVel: {x: 20, y: 0},
 	friction: {x: 150, y: 0},
 
 	edgeReverse: false,
