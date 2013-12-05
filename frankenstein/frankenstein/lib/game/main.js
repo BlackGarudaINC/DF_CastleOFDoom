@@ -164,8 +164,16 @@ MyGame = ig.Game.extend({
 		ig.music.loop = true;
 		ig.music.add( 'media/music/Castle01.*', 'Castle01' );
 		ig.music.add( 'media/music/Castle02.*', 'Castle02' );
+		ig.music.add( 'media/music/Castle03.*', 'Castle03' );
+		ig.music.add( 'media/music/Cave01.*', 'Cave01' );
+		ig.music.add( 'media/music/Cave02.*', 'Cave02' );
+		ig.music.add( 'media/music/Graveyard.*', 'Graveyard' );
 		ig.music.add( 'media/music/Laboratory01.*', 'Laboratory01' );
+		ig.music.add( 'media/music/LaboratoryAmbient.*', 'LaboratoryAmbient' );
+		ig.music.add( 'media/music/Love.*', 'Love' );
+		ig.music.add( 'media/music/Victory.*', 'Victory' );
 		ig.music.add( 'media/music/Map.*', 'Map' );
+		ig.music.add( 'media/music/Notebook.*', 'Notebook' );
 		ig.music.add( 'media/music/Boss01.*', 'Boss01' );
 		if (this.musicEnabled) {
 			//ig.music.play();
