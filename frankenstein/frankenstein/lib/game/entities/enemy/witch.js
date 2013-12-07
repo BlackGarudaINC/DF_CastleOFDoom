@@ -2,7 +2,8 @@ ig.module(
 	'game.entities.enemy.witch'
 )
 .requires(
-	'game.entities.enemy.enemy'
+	'game.entities.enemy.enemy',
+	'game.entities.enemy.witchprojectile'
 )
 .defines(function(){
 	
@@ -83,8 +84,8 @@ EntityWitch = EntityEnemy.extend({
 			if (Math.random() > 0.5) {
 				this.currentAnim = this.anims.attack;
 				this.defaultAnim = this.currentAnim;
-				this.shootTimer = new ig.Timer(2);
-				this.fireCount = 1;
+				this.shootTimer = new ig.Timer(1.5);
+				this.fireCount = 3;
 			} else {
 				this.newTarget();
 			}
@@ -95,6 +96,7 @@ EntityWitch = EntityEnemy.extend({
 			if (this.fireCount > 0) {
 				this.shootTimer.reset();
 				this.fireCount -= 1;
+				ig.game.spawnEntity( EntityWitchprojectile, this.pos.x + 5, this.pos.y+5 );
 			} else {
 				this.newTarget();
 				this.shootTimer = null;
