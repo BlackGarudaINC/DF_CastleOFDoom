@@ -13,7 +13,7 @@ EntityWolf = EntityEnemy.extend({
 	offset: {x: 2, y: 20},
 
 	health: 4,
-	speed: 26,
+	speed: 13,
 	damage: 1,
 	
 	knockback: false,
@@ -31,7 +31,7 @@ EntityWolf = EntityEnemy.extend({
 		this.parent( x, y, settings );
 		
 		this.addAnim( 'idle', 0.1, [3,4,3,5] );
-		this.addAnim( 'walk', 0.2, [0,1,0,2] );
+		this.addAnim( 'walk', 0.4, [0,1,0,2] );
 		this.addAnim( 'attack', 0.1, [0,3,6,7,7,7,7] );
 		this.addAnim( 'death', 0.1, [0,9,10,11,12], true );
 		this.addAnim( 'howl', 0.1, [3,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,3]);
@@ -86,7 +86,7 @@ EntityWolf = EntityEnemy.extend({
 		
 		if (this.distanceTo(ig.game.player) < 60) {
 			this.currentAnim = this.anims.attack.rewind();
-			this.speed = 40;
+			this.vel.x = this.vel.x * 1.1;
 		}
 
 		this.parent();
