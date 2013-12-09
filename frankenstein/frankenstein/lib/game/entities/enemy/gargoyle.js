@@ -91,7 +91,14 @@ EntityGargoyle = EntityEnemy.extend({
 	
 	setVelocity: function() {
 
-		this.vel.x = this.pos.x * this.speed;
+		//this.vel.x = this.pos.x * this.speed;
+
+		if(ig.game.player.pos.x < this.pos.x) {
+			this.flipOver();
+		} else {
+			
+		}
+
 	},
 
 	myUpdate: function() {
