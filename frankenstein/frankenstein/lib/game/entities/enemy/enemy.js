@@ -284,11 +284,6 @@ EntityEnemy = EntityBase.extend({
 		this.health -= amount;
 		this.sfxReceiveHit.play();
 
-		// Check if dead
-		if (this.health <= 0) {
-			this.die();
-		}
-
 		// knockback if enabled
 		if (this.knockback) {
 			if (direction === undefined) {
@@ -297,6 +292,11 @@ EntityEnemy = EntityBase.extend({
 			this.vel.x = direction ? -this.knockbackForce : this.knockbackForce;
 			this.vel.x *= bounceback;
 			this.vel.y = -100;
+		}
+
+		// Check if dead
+		if (this.health <= 0) {
+			this.die();
 		}
 
 		this.showDamage();
