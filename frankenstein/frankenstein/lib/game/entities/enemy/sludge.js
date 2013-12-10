@@ -41,7 +41,7 @@ EntitySludge = EntityEnemy.extend({
 		this.addAnim( 'toPuddle', 0.2, [4,3,2,1,0], true );
 		this.addAnim( 'idle', 0.1, [4,5] );
 		this.addAnim( 'walk', 0.1, [6,7,8,5] );
-		this.addAnim( 'death', 0.1, [4,5,8,9,10,11,12,13,14,15] );
+		this.addAnim( 'death', 0.1, [4,5,8,9,10,11,12,13,14,15], true );
 
 		this.currentAnim = this.anims.puddle.rewind();
 
