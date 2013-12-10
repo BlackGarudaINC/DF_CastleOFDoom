@@ -86,7 +86,7 @@ EntityWolf = EntityEnemy.extend({
 		this.currentAnim.flip.x = !this.flip;
 		
 		// Attack the player when near
-		if (!this.dead && this.currentAnim != this.anims.attack &&this.distanceTo(ig.game.player) < 60) {
+		if (!this.dead && this.currentAnim != this.anims.attack && this.distanceTo(ig.game.player) < 60) {
 			this.currentAnim = this.anims.attack.rewind();
 			this.vel.x = 0;
 			this.hasAttacked = false;
