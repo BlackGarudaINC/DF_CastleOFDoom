@@ -38,7 +38,7 @@ EntitySuitofarmor = EntityEnemy.extend({
 		
 		this.addAnim( 'walk', 0.25, [0,1,0,2] );
 		this.addAnim( 'death', 0.1, [0, 9, 10, 11, 12, 13, 14, 15], true );
-		this.addAnim( 'attack', 0.15, [0, 3, 4, 6, 6, 6, 6, 6, 4, 3, 0, 8], true);
+		this.addAnim( 'attack', 0.08, [0, 3, 3, 4, 4, 6, 6, 6, 6, 6, 6, 6, 4, 3, 0, 8], true);
 		
 	},
 
