@@ -78,18 +78,18 @@ EntitySludge = EntityEnemy.extend({
 			this.isPuddle = false;
 		}
 
+		if( !this.dead && this.currentAnim == this.anims.fromPuddle && !this.isPuddle && this.currentAnim.loopCount > 0 ) {
+			this.currentAnim = this.anims.walk;
+		}
+
 		this.parent();
 	},
 
 	update: function(){
-		
-		if( !this.dead && this.currentAnim == this.anims.fromPuddle && !this.isPuddle && this.currentAnim.loopCount > 0 ) {
-			
+
+		if (this.currentAnim == this.anims.walk) {
 			var xdir = this.flip ? 1 : -1;
 			this.vel.x = this.speed * xdir;
-			
-			this.currentAnim = this.anims.walk;
-
 		}
 
 		this.currentAnim.flip.x = !this.flip;
