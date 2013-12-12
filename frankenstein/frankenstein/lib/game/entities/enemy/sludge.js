@@ -28,8 +28,6 @@ EntitySludge = EntityEnemy.extend({
 	isPuddle: true,
 	activeTimer: null,
 
-	debugDraw: true,
-
 	animSheet: new ig.AnimationSheet( 'media/sprites/Sludge.png', 24, 24 ),
 
 	init: function( x, y, settings ){
@@ -57,6 +55,13 @@ EntitySludge = EntityEnemy.extend({
 			this.isPuddle = true;
 
 			this.vel.x = 0;
+			
+			// Alters the hitbox to be sized appropriately for Puddle form.
+			this.size.y = 4;
+			this.offset.y = 20;
+
+			// Counteracts the movement of the sprite when the hitbox is altered from walking to puddle.
+			this.pos.y = this.pos.y + 20;
 
 			this.activeTimer.reset();
 
@@ -76,6 +81,13 @@ EntitySludge = EntityEnemy.extend({
 			
 			this.currentAnim = this.anims.fromPuddle.rewind();
 			this.isPuddle = false;
+
+			// Alters the hitbox to be sized appropriately for Walking form.
+			this.size.y = 24;
+			this.offset.y = 0;
+			
+			// Counteracts the movement of the sprite when the hitbox is altered from puddle to walking.
+			this.pos.y = this.pos.y - 20;
 
 		}
 
