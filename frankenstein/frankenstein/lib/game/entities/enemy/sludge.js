@@ -16,7 +16,7 @@ EntitySludge = EntityEnemy.extend({
 	damage: 1,
 	speed: 20,
 
-	knockback: true,
+	knockback: false,
 	killWhenDead: false,
 
 	wallReverse: true,
@@ -39,8 +39,8 @@ EntitySludge = EntityEnemy.extend({
 		this.addAnim( 'puddleIdle', 0.3, [0,1] );
 		this.addAnim( 'fromPuddle', 0.2, [0,1,2,3,4], true );
 		this.addAnim( 'toPuddle', 0.2, [4,3,2,1,0], true );
-		this.addAnim( 'idle', 0.1, [4,5] );
-		this.addAnim( 'walk', 0.1, [6,7,8,5] );
+		this.addAnim( 'idle', 0.6, [4,5] );
+		this.addAnim( 'walk', 0.2, [6,7,8,5] );
 		this.addAnim( 'death', 0.1, [4,5,8,9,10,11,12,13,14,15], true );
 
 		this.currentAnim = this.anims.puddle.rewind();
@@ -72,14 +72,23 @@ EntitySludge = EntityEnemy.extend({
 	handleAnimations: function(){
 
 		// Transform from puddle to walking form if player is near
-		if(!this.dead && this.isPuddle && this.distanceTo(ig.game.player) < 70){
+		if( !this.dead && this.isPuddle && this.distanceTo(ig.game.player) < 70 ) {
 			
 			this.currentAnim = this.anims.fromPuddle.rewind();
 			this.isPuddle = false;
+
 		}
 
 		if( !this.dead && this.currentAnim == this.anims.fromPuddle && !this.isPuddle && this.currentAnim.loopCount > 0 ) {
+			
 			this.currentAnim = this.anims.walk;
+
+		}
+
+		if( this.currentAnim == this.anims.idle && this.currentAnim.loopCount > 1 ) {
+
+			this.currentAnim = this.anims.walk.rewind();
+
 		}
 
 		this.parent();
@@ -87,9 +96,12 @@ EntitySludge = EntityEnemy.extend({
 
 	update: function(){
 
-		if (this.currentAnim == this.anims.walk) {
+		if (this.currentAnim == this.anims.walk && this.currentAnim.tile == 8) {
 			var xdir = this.flip ? 1 : -1;
-			this.vel.x = this.speed * xdir;
+			//this.vel.x = this.speed * xdir;
+			this.pos.x = this.pos.x + 7 * xdir;
+			this.currentAnim = this.anims.idle.rewind();
+			
 		}
 
 		this.currentAnim.flip.x = !this.flip;
