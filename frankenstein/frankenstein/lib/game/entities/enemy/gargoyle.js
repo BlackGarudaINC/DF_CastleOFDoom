@@ -12,6 +12,8 @@ EntityGargoyle = EntityEnemy.extend({
 	health: 3,
 	speed: 50,
 
+	collides: ig.Entity.COLLIDES.NEVER,
+
 	size: {x: 27, y: 34},
 	offset: {x: 18, y: 30},
 	maxVel: {x: 200, y: 200},
@@ -20,20 +22,29 @@ EntityGargoyle = EntityEnemy.extend({
 	damageFlash: true,
 	killWhenDead: false,
 	showsPain: false,
-	//ignoreCollisions: true,
+	ignoreCollisions: true,
 
 	attackSpeed: 100,	// Attack speed
 	attackRange: 350,
 	gravityFactor: 0,
 
+	edgeReverse: false,
+	levelReverse: false,
+	wallReverse: false,
+
 	goldDropValue: 15,
 
-	awake: false,
+	awake: false,		// Awake and moving around
+
 	attackTimer: null,
 	attackSpeed: 100,
+	returnSpeed: 80,
 
 	position1: {x: 0, y: 0},
 	position2: {x: 0, y: 0},
+	target: {x: 0, y:0},
+
+	lastPos: 1,
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/Gargoyle.png', 64, 64 ),
 
@@ -43,39 +54,83 @@ EntityGargoyle = EntityEnemy.extend({
 		this.parent( x, y, settings );
 
 		this.addAnim( 'idle', 0.3, [0,1] );
+		this.addAnim( 'prepare', 0.3, [2,3] );
 		this.addAnim( 'fly', 0.1, [2,3] );
 		this.addAnim( 'attack', 1, [2] );
 		this.addAnim( 'death', 0.1, [4,5,6,7] );
 
-		this.position1 = {x: this.pos.x, y: this.pos.y};
-		this.position2 = {x: this.pos.x + 100, y: this.pos.y - 50}
+		// Define position 2 in weltmeister.
+		// If it's not defined, it will just return back to position 1.
+		this.position1.x = this.pos.x;
+		this.position1.y = this.pos.y;
+
+		this.becomeIdle();
+	},
+
+	// Return to an idle position
+	becomeIdle: function() {
+		this.currentAnim = this.anims.idle;
+		this.flip = (this.pos.x < ig.game.levelWidth / 2);
+		this.vel.x = 0;
+		this.vel.y = 0;
+		this.accel.x = 0;
+		this.accel.y = 0;
+		this.awake = false;
+		this.returning = false;
+	},
+
+	// Choose where to perch next
+	getNextTarget: function() {
+		if (this.lastPos == 1 && (this.position2.x != 0 || this.position2.y != 0)) {
+			this.lastPos = 2;
+			this.target = this.position2;
+		} else {
+			this.target = this.position1;
+		}
 	},
 
 	handleTimers: function() {
 		
-		// Check if it's time to attack again
-		if (this.awake && this.currentAnim == this.anims.idle) {
-			
-			this.currentAnim = this.anims.fly;
-			this.size = {x: 43, y: 28}
-			this.offset = {x: 9, y: 22};
-			
-			if( this.awake && this.attackTimer.delta() > 0 ) {
-				this.prepareAttack();
-				this.currentAnim = this.anims.attack;
+		// Check if it's time to start or end the attack
+		if (this.awake && this.attackTimer != null && this.attackTimer.delta() > 0) {
+
+			if (this.currentAnim == this.anims.prepare) {
+				this.attack();
+				this.attackTimer.set(3.5);
+			} else if (this.currentAnim == this.anims.attack) {
+				this.prepareReturn();
+				this.attackTimer = null;
 			}
+			
 		}
 
 		this.parent();
 	},
 
-	handleAnimations: function() {
+	// Start going back to a perched position
+	prepareReturn: function() {
+		this.getNextTarget();
 
-		this.parent();
+		var xdiff = this.target.x - this.pos.x;
+		var ydiff = this.target.y - this.pos.y;
+		var dist  = Math.sqrt(Math.pow(xdiff, 2) + Math.pow(ydiff, 2));
+
+		if (dist == 0) { dist = 0.0001; }
+
+		this.vel.x = (xdiff / dist) * this.returnSpeed;
+		this.vel.y = (ydiff / dist) * this.returnSpeed;
+
+		this.accel.x = 0;
+		this.accel.y = 0;
+
+		this.flip = (this.pos.x < this.target.x);
+
+		this.currentAnim = this.anims.fly;
 	},
 
+
 	// Calculate the vectors needed to move towards the player
-	prepareAttack: function() {
+	attack: function() {
 		var xdiff = ig.game.player.pos.x - this.pos.x;
 		var ydiff = ig.game.player.pos.y - this.pos.y;
 		var dist  = this.distanceTo(ig.game.player);
@@ -86,29 +141,29 @@ EntityGargoyle = EntityEnemy.extend({
 		this.vel.y = (ydiff / dist) * this.attackSpeed + 100;
 		this.accel.y = -100;
 
-		this.flip = (ig.game.player.pos.x > this.pos.x);
+		this.flip = (this.pos.x < ig.game.player.pos.x);
+
+		this.currentAnim = this.anims.attack;
 	},
 	
-	setVelocity: function() {
-
-		//this.vel.x = this.pos.x * this.speed;
-
-		if(ig.game.player.pos.x < this.pos.x) {
-			this.flipOver();
-		} else {
-			
-		}
-
-	},
 
 	myUpdate: function() {
 
-		// If not awake yet, check if close enough to start waking up
-		if (!this.awake && this.distanceTo(ig.game.player) < 100) {
+		// If not awake yet, check if close enough to start waking up and preparing to attack
+		if (!this.awake && this.distanceTo(ig.game.player) < 150) {
 			this.awake = true;
-			this.attackTimer = new ig.Timer(0.1);
-			this.setVelocity();
+			this.attackTimer = new ig.Timer(2);
+			this.accel.y = -10;
+			this.currentAnim = this.anims.prepare.rewind();
+			this.flip = (this.pos.x < ig.game.player.pos.x);
 		}
+
+		// If returning to a perch, check if you've almost made it
+		if (this.awake && this.currentAnim == this.anims.fly && this.pos.x > this.target.x - 4 && this.pos.x < this.target.x + 4 && this.pos.y < this.target.x + 4 && this.pos.y > this.target.y - 4) {
+			this.becomeIdle();
+		}
+
+		this.currentAnim.flip.x = !this.flip;
 
 		this.parent();
 	},

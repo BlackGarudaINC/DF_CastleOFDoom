@@ -106,7 +106,7 @@ EntitySludge = EntityEnemy.extend({
 		this.parent();
 	},
 
-	update: function(){
+	myUpdate: function(){
 
 		if (this.currentAnim == this.anims.walk && this.currentAnim.tile == 8) {
 			var xdir = this.flip ? 1 : -1;

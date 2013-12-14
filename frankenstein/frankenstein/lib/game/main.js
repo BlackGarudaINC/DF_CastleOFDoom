@@ -190,7 +190,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel(ig.copy( LevelTest ));
+		this.loadLevel(ig.copy( LevelGargoyletest ));
 
 		// Reset the silver chests
 		this.resetSilverChests();
