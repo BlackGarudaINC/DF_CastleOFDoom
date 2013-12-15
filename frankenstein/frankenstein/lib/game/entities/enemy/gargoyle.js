@@ -103,7 +103,7 @@ EntityGargoyle = EntityEnemy.extend({
 	handleTimers: function() {
 		
 		// Check if it's time to start or end the attack
-		if (this.awake && this.attackTimer != null && this.attackTimer.delta() > 0) {
+		if (!this.dead && this.awake && this.attackTimer != null && this.attackTimer.delta() > 0) {
 
 			if (this.currentAnim == this.anims.prepare) {
 				this.attack();
@@ -168,7 +168,7 @@ EntityGargoyle = EntityEnemy.extend({
 	myUpdate: function() {
 
 		// If not awake yet, check if close enough to start waking up and preparing to attack
-		if (!this.awake && this.idleTimer == null && this.distanceTo(ig.game.player) < 150) {
+		if (!this.dead && !this.awake && this.idleTimer == null && this.distanceTo(ig.game.player) < 150) {
 			this.awake = true;
 			this.attackTimer = new ig.Timer(2);
 			this.accel.y = -10;
@@ -178,7 +178,7 @@ EntityGargoyle = EntityEnemy.extend({
 		}
 
 		// If returning to a perch, check if you've almost made it
-		if (this.awake && this.currentAnim == this.anims.fly) {
+		if (!this.dead && this.awake && this.currentAnim == this.anims.fly) {
 			if (this.pos.x > this.target.x - 4 && this.pos.x < this.target.x + 4 && this.pos.y < this.target.y + 4 && this.pos.y > this.target.y - 4) { // Made it
 				this.offset.y += this.offsetChange;
 				this.pos.x = this.target.x;
