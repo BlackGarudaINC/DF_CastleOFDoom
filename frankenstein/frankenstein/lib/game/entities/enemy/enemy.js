@@ -29,6 +29,8 @@ EntityEnemy = EntityBase.extend({
 	killWhenDead: true, // automatically kill when health is 0 (if false, play death anim instead) 
 	dead: false,
 	showsPain: true,	// Use the pain animation when hit if it's available
+	waterEnemy: false,	// Whether or not it lives in the water
+	underWater: false,	// Whether or not an enemy is currently underwater
 
 	tempInvincible: false, // It's invincible for a short time after getting hit
 	tempInvincibleTimer: null,
@@ -200,6 +202,15 @@ EntityEnemy = EntityBase.extend({
 		}
 	},
 
+	collideWith: function( other, axis ) {
+		this.parent(other, axis);
+
+		// If you're using wall reverse, reverse on fixed collision objects as well
+		if (this.wallReverse && axis == 'x' && other.collides == ig.Entity.COLLIDES.FIXED) {
+			this.flipOver();
+		}
+	},
+
 	// This is for if you ever need to do anything else when dealing damage
 	giveDamageCallback: function() {
 
@@ -291,7 +302,9 @@ EntityEnemy = EntityBase.extend({
 			}
 			this.vel.x = direction ? -this.knockbackForce : this.knockbackForce;
 			this.vel.x *= bounceback;
-			this.vel.y = -100;
+			if (this.gravityFactor != 0) {
+				this.vel.y = -100;
+			}
 		}
 
 		// Check if dead

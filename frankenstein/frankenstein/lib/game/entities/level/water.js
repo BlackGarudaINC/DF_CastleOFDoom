@@ -3,7 +3,8 @@ ig.module(
 )
 .requires(
 	'game.entities.base',
-	'game.entities.level.watersplash'
+	'game.entities.level.watersplash',
+	'game.entities.enemy.enemy'
 )
 .defines(function(){
 	
@@ -11,7 +12,7 @@ EntityWater = EntityBase.extend({
 
 	_wmScalable: true, // ONLY SCALE IN THE X DIRECTION! LEAVE Y AT 8!
 
-	checkAgainst: ig.Entity.TYPE.A, // Check if the player enters the water
+	checkAgainst: ig.Entity.TYPE.BOTH, // Check if the player or water enemies enter the water
 	collides: ig.Entity.COLLIDES.NEVER,
 
 	gravityFactor: 0, // Just floats in place
@@ -36,6 +37,7 @@ EntityWater = EntityBase.extend({
 	},
 
 	// Check for the player entering or leaving the water
+	// Also check for water enemies
 	check: function( other ) {
 		if (other instanceof EntityPlayer) {
 
@@ -78,6 +80,17 @@ EntityWater = EntityBase.extend({
 				}
 
 				this.sfxSplash.play();
+			}
+		}
+
+		// Check for water enemies leaving the water
+		if (other instanceof EntityEnemy && other.waterEnemy) {
+			if (this.pos.y < other.pos.y) {
+				other.gravityFactor = 0;
+				other.underWater = true;
+			} else {
+				other.gravityFactor = 1;
+				other.underWater = false;
 			}
 		}
 	},
