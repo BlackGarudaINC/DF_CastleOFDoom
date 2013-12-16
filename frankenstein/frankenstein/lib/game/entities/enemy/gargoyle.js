@@ -16,7 +16,7 @@ EntityGargoyle = EntityEnemy.extend({
 
 	size: {x: 27, y: 34},
 	offset: {x: 18, y: 30},
-	maxVel: {x: 200, y: 200},
+	maxVel: {x: 200, y: 160},
 
 	offsetChange: 20,	// a different y-offset is used for flying vs. idle
 
@@ -176,6 +176,11 @@ EntityGargoyle = EntityEnemy.extend({
 			this.flip = (this.pos.x < ig.game.player.pos.x);
 			this.offset.y -= this.offsetChange;
 		}
+
+		// If it's attacking, check to make sure it doesn't go off the bottom
+		if (!this.dead && this.awake && this.currentAnim == this.anims.attack && this.pos.y > ig.game.levelHeight - 32 && this.vel.y > 0) {
+			this.vel.y -= ig.system.tick * 200;
+		} 
 
 		// If returning to a perch, check if you've almost made it
 		if (!this.dead && this.awake && this.currentAnim == this.anims.fly) {
