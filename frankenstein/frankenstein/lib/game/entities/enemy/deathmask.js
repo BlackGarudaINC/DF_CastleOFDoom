@@ -51,6 +51,10 @@ EntityDeathmask = EntityEnemy.extend({
 
 		this.origin.x = this.pos.x;
 		this.origin.y = this.pos.y;
+	},
+
+	startUpdate: function() {
+		this.parent();
 
 		// Generate copies of itself
 		if (!this.fake) {
