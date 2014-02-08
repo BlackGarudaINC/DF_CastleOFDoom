@@ -10,6 +10,8 @@ ig.module(
 // This includes no event callbacks, just sprite definitions and things like that.
 EntityFrankensteinactor = EntityCutsceneactor.extend({
 
+	_wmIgnore: false,
+
 	size: {x: 32, y: 32},
 
 	animSheet: new ig.AnimationSheet( 'media/sprites/DrFrank01.png', 32, 32 ),
@@ -26,8 +28,15 @@ EntityFrankensteinactor = EntityCutsceneactor.extend({
 		this.addAnim( 'talkpoint', 0.2, [10, 11] );
 	},
 
-	walkAway: function( flip ) {
-		this.flip = flip;
+	// Look at the player and talk and point
+	talkPoint: function() {
+		this.currentAnim = this.anims.talkpoint;
+		this.flip = (ig.game.player.pos.x > this.pos.x);
+	},
+
+	// Turn around and walk away
+	walkAway: function() {
+		this.flip = !this.flip;
 		this.currentAnim = this.anims.walk;
 	},
 
@@ -43,11 +52,6 @@ EntityFrankensteinactor = EntityCutsceneactor.extend({
 		// Check if he's off screen, and if so, kill him
 		if (this.pos.y > ig.game.levelHeight) {
 			this.kill();
-		}
-
-		// If talking, flip to look at the player
-		if (this.currentAnim == this.anims.talkpoint) {
-			this.flip = (ig.game.player.pos.x > this.pos.x);
 		}
 
 		// If walking, set the velocity

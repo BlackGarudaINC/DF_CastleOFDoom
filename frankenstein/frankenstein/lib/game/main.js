@@ -190,7 +190,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel(ig.copy( LevelGargoyletest ));
+		this.loadLevel(ig.copy( LevelTowertop ));
 
 		// Reset the silver chests
 		this.resetSilverChests();
@@ -370,10 +370,17 @@ MyGame = ig.Game.extend({
 		if (song === undefined) {
 			song = this.musicSong;
 		}
-		ig.music.play(song);
-		if (!ig.game.musicEnabled) {
-			ig.music.stop();
+		try {
+			// Sometimes, songs don't finish loading by the time they're played.
+			// In that case, it throws an exception, so we'll play the default song instead.
+			ig.music.play(song);
+			if (!ig.game.musicEnabled) {
+				ig.music.stop();
+			}
+		} catch (err) {
+			this.playSong();
 		}
+		
 	},
 
 	// Draw the pause screen

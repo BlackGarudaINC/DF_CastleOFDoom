@@ -15,13 +15,19 @@ EntityCutsceneactor = EntityBase.extend({
 	checkAgainst: ig.Entity.TYPE.NONE,
 	collides: ig.Entity.COLLIDES.NEVER,
 
+	actions: [], // Array of actions to execute at each cutscene event time
+
 	flip: true,
 
-	// All actors in cutscenes must extend this function.
-	// The main cutscene controller tells all actors that the given event has just triggered,
-	// so each actor can act accordingly
+	// Call the action that corresponds to this event.
+	// For example, in Weltmeister, you could do the following:
+	// action.1: walkAway
+	// Then, when cutscene event 1 fires, it will call this.walkAway() on this actor.
 	eventCallback: function( eventNum ) {
-
+		var method = this.actions[eventNum];
+		if (method != undefined && method != "") {
+			this[method]();
+		}
 	},
 
 	// All actors must also extend this function.
