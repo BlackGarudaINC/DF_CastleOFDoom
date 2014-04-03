@@ -93,7 +93,6 @@ EntityPlayer = EntityBase.extend({
 
 	staminaTimer: null,	// Refills your stamina by a percentage every x seconds
 
-	energized: false,		// True if the player is currently electrified
 	electricDrawTimer: null,// When to update the sprite being drawn for electricity
 	electricFrame: 0,		// Current frame to draw for electricity
 	numElectricFrames: 4,	// number of frames of electricity
@@ -306,6 +305,8 @@ EntityPlayer = EntityBase.extend({
 			ig.game.playerState.underWater = true;
 			this.speed -= 30;
 			this.bubbleTimer = new ig.Timer(0.5);
+			// lose electricity
+			ig.game.playerState.energized = false;
 		}
 	},
 	leaveWater: function() {

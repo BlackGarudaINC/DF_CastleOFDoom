@@ -85,7 +85,7 @@ MyGame = ig.Game.extend({
 		groundPound: false,
 		energize: true,
 		slide: false,
-		electricCharge: true
+		electricCharge: false
 	},
 
 	/* Weapon indexes:
@@ -114,7 +114,8 @@ MyGame = ig.Game.extend({
 	oneTimeEvents: {
 		cutscenes: [],	// Room names of completed cutscenes
 		bosses: [],		// Room names of defeated bosses
-		unlockedDoors: [] // Doors that have been unlocked
+		unlockedDoors: [], // Doors that have been unlocked
+		energized: []   // Things that become electrified
 	},
 
 	// Default save slot
@@ -190,7 +191,7 @@ MyGame = ig.Game.extend({
 		
 		// Load the first level
 		this.currentLevelName = 'Test';
-		this.loadLevel(ig.copy( LevelTowertop ));
+		this.loadLevel(ig.copy( LevelTest ));
 
 		// Reset the silver chests
 		this.resetSilverChests();
