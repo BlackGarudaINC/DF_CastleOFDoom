@@ -12,6 +12,7 @@ EntityElectricitem = EntityItem.extend({
 	offset: {x: 8, y:8},
 
 	energized: false, // Override in weltmeister if this should be energized from the start
+	target: null,	  // in weltmeister, set the target entity's name that this affects when it becomes energized
 	
 	// TODO: This is just placeholder for now
 	animSheet: new ig.AnimationSheet( 'media/sprites/TheCreature01.png', 32, 32 ),
@@ -42,12 +43,24 @@ EntityElectricitem = EntityItem.extend({
 
 	// Get energized from the player
 	activate: function() {
+		var first = false;
+
 		if (!this.energized && ig.game.oneTimeEvents.energized.indexOf(this.name) == -1) {
 			ig.game.oneTimeEvents.energized.push(this.name);
+			first = true;
 		}
+
+		// Energize the target entity in the room
+		if (!this.energized && this.target != null) {
+			var ent = ig.game.getEntityByName( this.target );
+			if (ent) {
+				// Pass in whether or not this is becoming energized for the first time ever
+				ent.electrify(first);
+			}
+		}
+
 		this.energized = true;
 		this.currentAnim = this.anims.energized.rewind();
-		
 	},
 
 	// Energize the player or hurt them

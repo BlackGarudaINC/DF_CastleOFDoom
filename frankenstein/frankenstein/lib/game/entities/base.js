@@ -134,18 +134,22 @@ EntityBase = ig.Entity.extend({
 
 	// Draw a row of horizontal tiles
 	drawHorizontalTiles: function( yoffset ) {
-		if (this.size.x > this.animSheet.width) {
-			var remaining = this.size.x;
-			var offset = 0;
-			while (remaining > 0) {
-				this.currentAnim.draw(
-					this.pos.x - this.offset.x - ig.game._rscreen.x + offset,
-					this.pos.y - this.offset.y - ig.game._rscreen.y + yoffset
-				);
-				remaining -= this.animSheet.width;
-				offset += this.animSheet.width;
-			}
+		var remaining = this.size.x;
+		var offset = 0;
+		while (remaining > 0) {
+			this.currentAnim.draw(
+				this.pos.x - this.offset.x - ig.game._rscreen.x + offset,
+				this.pos.y - this.offset.y - ig.game._rscreen.y + yoffset
+			);
+			remaining -= this.animSheet.width;
+			offset += this.animSheet.width;
 		}
+	},
+
+	// Override if this entity has special properties when an electric item becomes energized
+	// first is true if this is the first time it becomes energized and false otherwise
+	electrify: function(first) {
+
 	},
 
 	// Use this to kill an entity after flashing a few times rather than instantly disappearing
