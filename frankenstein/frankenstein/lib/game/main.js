@@ -18,15 +18,17 @@ ig.module(
 	'game.levels.test2',
 	'game.levels.testsave',
 	'game.levels.testwater',
-	'game.levels.testbosssmall',
-	'game.levels.testboss',
-	'game.levels.testsnake',
-	'game.levels.testskeleton',
+	//'game.levels.testbosssmall',
+	//'game.levels.testboss',
+	//'game.levels.testsnake',
+	//'game.levels.testskeleton',
 	'game.levels.towerstart',
 	'game.levels.towermain',
 	'game.levels.towertop',
-	'game.levels.gargoyletest',
-	'game.levels.4_1'
+	//'game.levels.gargoyletest',
+	'game.levels.4_1',
+	'game.levels.4_2',
+	'game.levels.4_3'
 )
 .defines(function(){
 	
