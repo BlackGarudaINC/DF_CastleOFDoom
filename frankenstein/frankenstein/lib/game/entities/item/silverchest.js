@@ -19,7 +19,7 @@ EntitySilverchest = EntityTreasure.extend({
 
 	_wmIgnore: false,
 
-	// Each silver chest belongs to a group, which is an integer from 1 through X (maybe 4?)
+	// Each silver chest belongs to a group, which is an integer from 1 through 4
 	// At certain pre-defined points throughout the game, a group number is selected,
 	// and all silver chests reset.  The ones that aren't in that group don't show up at all.
 	group: 1,
@@ -30,20 +30,22 @@ EntitySilverchest = EntityTreasure.extend({
 		this.parent( x, y, settings );
 		
 		this.addAnim( 'open', 0.1, [1] );
+	},
 
-		if (ig.system.running) {
-			// If this chest isn't in the current global group, delete it
-			if (this.group != ig.game.treasure.silverGroup) {
-				this.kill();
-			}
+	startUpdate: function() {
+		this.parent();
 
-			this.name = ig.game.currentLevelName + '.' + this.group;
+		// If this chest isn't in the current global group, delete it
+		if (this.group != ig.game.treasure.silverGroup) {
+			this.kill();
+		}
 
-			// Check if this chest was already opened
-			if (ig.game.treasure.silverOpen.indexOf(this.name) != -1) {
-				this.opened = true;
-				this.currentAnim = this.anims.open;
-			}
+		this.name = ig.game.currentLevelName + '.' + this.group;
+
+		// Check if this chest was already opened
+		if (ig.game.treasure.silverOpen.indexOf(this.name) != -1) {
+			this.opened = true;
+			this.currentAnim = this.anims.open;
 		}
 	},
 

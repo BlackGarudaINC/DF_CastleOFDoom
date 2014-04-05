@@ -25,7 +25,8 @@ ig.module(
 	'game.levels.towerstart',
 	'game.levels.towermain',
 	'game.levels.towertop',
-	'game.levels.gargoyletest'
+	'game.levels.gargoyletest',
+	'game.levels.4_1'
 )
 .defines(function(){
 	
@@ -190,8 +191,8 @@ MyGame = ig.Game.extend({
 		// this.font.letterSpacing = -2;		
 		
 		// Load the first level
-		this.currentLevelName = 'Test';
-		this.loadLevel(ig.copy( LevelTest ));
+		this.currentLevelName = '4_1';
+		this.loadLevel(ig.copy( Level4_1 ));
 
 		// Reset the silver chests
 		this.resetSilverChests();
