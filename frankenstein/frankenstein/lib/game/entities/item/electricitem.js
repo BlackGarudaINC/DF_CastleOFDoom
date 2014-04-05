@@ -29,7 +29,6 @@ EntityElectricitem = EntityItem.extend({
 		this.currentAnim = this.anims.idle.rewind();
 
 		this.name = ig.game.currentLevelName + '.' + this.name;
-
 		
 	},
 

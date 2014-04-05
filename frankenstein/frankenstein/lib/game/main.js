@@ -28,7 +28,9 @@ ig.module(
 	//'game.levels.gargoyletest',
 	'game.levels.4_1',
 	'game.levels.4_2',
-	'game.levels.4_3'
+	'game.levels.4_3',
+	'game.levels.4_4',
+	'game.levels.4_5'
 )
 .defines(function(){
 	
@@ -87,7 +89,7 @@ MyGame = ig.Game.extend({
 		doubleJump: true,
 		groundPound: false,
 		energize: true,
-		slide: false,
+		slide: true,
 		electricCharge: false
 	},
 
